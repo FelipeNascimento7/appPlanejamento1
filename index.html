@@ -2512,6 +2512,30 @@
       return Number.isFinite(timestamp) ? timestamp : 0;
     }
 
+
+    function stateHasUserData(state) {
+      if (!state || typeof state !== 'object') {
+        return false;
+      }
+
+      const hasTasks = Array.isArray(state.tasks) && state.tasks.length > 0;
+      const hasTodayPlan = Array.isArray(state.todayPlanIds) && state.todayPlanIds.length > 0;
+      const hasReports = Array.isArray(state.dailyReports) && state.dailyReports.length > 0;
+      const hasUsefulMinutes = normalizeEstimatedMinutes(state.dailyUsefulMinutes) !== null;
+
+      return hasTasks || hasTodayPlan || hasReports || hasUsefulMinutes;
+    }
+
+    function applyCloudState(cloudState) {
+      isApplyingRemoteState = true;
+      applyLoadedState(cloudState);
+      localStorage.setItem(storageKey, JSON.stringify(cloudState));
+      renderCurrentLevel();
+      renderTodayTab();
+      renderReportTable();
+      isApplyingRemoteState = false;
+    }
+
     function initializeGoogleDriveClient() {
       if (!isGoogleDriveConfigured()) {
         updateDriveSyncStatus('Cole seu Client ID no código antes de conectar ao Google Drive.', 'error');
@@ -2727,7 +2751,8 @@
       updateDriveSyncStatus('Carregando dados do Google Drive...', 'syncing');
 
       try {
-        const localState = getSavedLocalState() || getAppState();
+        const savedLocalState = getSavedLocalState();
+        const localState = savedLocalState || getAppState();
         const existingFile = await findDriveStateFile();
 
         if (!existingFile) {
@@ -2738,21 +2763,37 @@
 
         driveFileId = existingFile.id;
         const cloudState = await downloadDriveState(existingFile.id);
-        const localIsNewer = getStateTimestamp(localState) > getStateTimestamp(cloudState);
+        const localHasStoredState = Boolean(savedLocalState);
+        const localHasData = stateHasUserData(savedLocalState);
+        const cloudHasData = stateHasUserData(cloudState);
+        const localTimestamp = getStateTimestamp(savedLocalState);
+        const cloudTimestamp = getStateTimestamp(cloudState) || Date.parse(existingFile.modifiedTime) || 0;
 
-        if (localIsNewer) {
+        if (!localHasStoredState) {
+          applyCloudState(cloudState);
+          updateDriveSyncStatus('Dados carregados do Google Drive.', 'connected');
+          return;
+        }
+
+        if (localHasData && !cloudHasData) {
           await updateDriveStateFile(existingFile.id, localState);
           updateDriveSyncStatus('Dados locais enviados para o Google Drive.', 'connected');
           return;
         }
 
-        isApplyingRemoteState = true;
-        applyLoadedState(cloudState);
-        localStorage.setItem(storageKey, JSON.stringify(cloudState));
-        renderCurrentLevel();
-        renderTodayTab();
-        renderReportTable();
-        isApplyingRemoteState = false;
+        if (!localHasData && cloudHasData) {
+          applyCloudState(cloudState);
+          updateDriveSyncStatus('Dados carregados do Google Drive.', 'connected');
+          return;
+        }
+
+        if (localTimestamp > cloudTimestamp) {
+          await updateDriveStateFile(existingFile.id, localState);
+          updateDriveSyncStatus('Dados locais enviados para o Google Drive.', 'connected');
+          return;
+        }
+
+        applyCloudState(cloudState);
         updateDriveSyncStatus('Dados carregados do Google Drive.', 'connected');
       } finally {
         isApplyingRemoteState = false;
