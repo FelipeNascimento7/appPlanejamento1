@@ -2,35 +2,68 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>ToDo</title>
   <style>
     :root {
       color-scheme: light;
-      --background: #f7f8fa;
+      --background: #f6f6f4;
       --surface: #ffffff;
-      --text: #1e2329;
-      --muted: #67707c;
-      --line: #d8dde5;
-      --accent: #0f766e;
-      --accent-soft: #dff3f0;
-      --shadow: 0 10px 24px rgba(27, 36, 48, 0.08);
+      --surface-muted: #f0f0ed;
+      --text: #171717;
+      --muted: #73716d;
+      --line: #e2e0db;
+      --accent: #111111;
+      --accent-soft: #eeeeea;
+      --danger: #b42318;
+      --radius: 16px;
+      --tap-size: 44px;
+      --content-width: 720px;
     }
 
     * {
       box-sizing: border-box;
     }
 
+    html {
+      min-height: 100%;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      background: var(--background);
+    }
+
     body {
       margin: 0;
-      min-height: 100vh;
-      font-family: Arial, Helvetica, sans-serif;
+      min-height: 100svh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
       background: var(--background);
       color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+      font-size: 16px;
+    }
+
+    button,
+    input,
+    label {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      touch-action: manipulation;
     }
 
     .app {
-      min-height: 100vh;
+      min-height: 100svh;
       display: flex;
       flex-direction: column;
     }
@@ -41,42 +74,41 @@
       z-index: 10;
       display: flex;
       justify-content: center;
-      gap: 8px;
-      padding: 14px 16px;
-      background: var(--surface);
+      gap: 6px;
+      padding: calc(10px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-left)) 10px max(16px, env(safe-area-inset-right));
+      background: rgba(246, 246, 244, 0.92);
       border-bottom: 1px solid var(--line);
-      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
     .tab-button {
-      min-width: 132px;
-      min-height: 44px;
-      padding: 10px 16px;
-      border: 1px solid transparent;
-      border-radius: 8px;
+      min-width: 128px;
+      min-height: var(--tap-size);
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 999px;
       background: transparent;
       color: var(--muted);
-      font: inherit;
       font-weight: 700;
       cursor: pointer;
-      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+      transition: background-color 140ms ease, color 140ms ease;
     }
 
     .tab-button:hover {
-      background: #edf0f4;
+      background: var(--accent-soft);
       color: var(--text);
     }
 
     .tab-button.active {
-      background: var(--accent-soft);
-      border-color: #9ed9d2;
-      color: var(--accent);
+      background: var(--accent);
+      color: var(--surface);
     }
 
     main {
-      width: min(960px, 100%);
+      width: min(var(--content-width), 100%);
       margin: 0 auto;
-      padding: 40px 20px;
+      padding: 34px 20px 56px;
       flex: 1;
     }
 
@@ -88,113 +120,173 @@
       display: block;
     }
 
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.8rem, 6vw, 2.45rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      max-width: 620px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
     .task-composer {
-      display: flex;
-      gap: 10px;
-      width: min(680px, 100%);
-      margin: 24px 0 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      width: 100%;
+      margin: 24px 0 18px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      background: var(--surface);
     }
 
     .task-input {
       width: 100%;
-      min-height: 44px;
+      min-height: var(--tap-size);
       padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--surface);
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
       color: var(--text);
-      font: inherit;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
-    .task-input:focus {
-      outline: 3px solid rgba(15, 118, 110, 0.18);
+    .task-input::placeholder,
+    .due-date-input::placeholder,
+    .estimate-minutes-input::placeholder,
+    .daily-useful-minutes-input::placeholder {
+      color: #9a9791;
+    }
+
+    .task-input:focus,
+    .due-date-input:focus,
+    .estimate-minutes-input:focus,
+    .daily-useful-minutes-input:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .add-button,
+    .save-due-button,
+    .save-estimate-button,
+    .save-useful-time-button,
+    .export-button,
+    .danger-button,
+    .cancel-button,
+    .confirm-delete-button {
+      min-height: var(--tap-size);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .add-button,
+    .save-due-button,
+    .save-estimate-button,
+    .save-useful-time-button,
+    .export-button {
+      background: var(--accent);
+      color: var(--surface);
       border-color: var(--accent);
     }
 
-    .add-button {
-      min-height: 44px;
-      padding: 10px 16px;
-      border: 1px solid var(--accent);
-      border-radius: 8px;
-      background: var(--accent);
-      color: #ffffff;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
+    .add-button:hover,
+    .save-due-button:hover,
+    .save-estimate-button:hover,
+    .save-useful-time-button:hover,
+    .export-button:hover {
+      opacity: 0.88;
     }
 
     .planning-toolbar {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      gap: 14px;
-      width: min(680px, 100%);
-      margin-top: 22px;
+      gap: 12px;
+      width: 100%;
+      margin-top: 16px;
     }
 
     .breadcrumb {
       display: flex;
       align-items: center;
-      gap: 8px;
-      min-height: 36px;
+      gap: 6px;
+      min-height: 38px;
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 0.93rem;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-actions,
+    .settings-actions,
+    .modal-actions {
+      display: flex;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     .toolbar-actions {
-      display: flex;
-      gap: 10px;
+      justify-content: flex-end;
       flex: 0 0 auto;
     }
 
     .breadcrumb-button,
     .back-button,
-    .edit-name-button,
+    .estimate-minutes-button,
     .days-button {
-      min-height: 36px;
+      min-height: 38px;
       padding: 8px 10px;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 999px;
       background: var(--surface);
       color: var(--text);
-      font: inherit;
       cursor: pointer;
     }
 
     .breadcrumb-button.active {
       border-color: transparent;
       background: transparent;
-      color: var(--accent);
-      font-weight: 700;
+      color: var(--text);
+      font-weight: 800;
       cursor: default;
     }
 
-    .back-button {
-      display: none;
-      flex: 0 0 auto;
-    }
-
+    .back-button,
+    .estimate-minutes-button,
     .days-button {
       display: none;
-      border-color: var(--accent);
-      color: var(--accent);
-      font-weight: 700;
     }
 
     .back-button.visible,
-    .edit-name-button.visible,
+    .estimate-minutes-button.visible,
     .days-button.visible {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
     }
 
-    .edit-name-button {
-      display: none;
+    .days-button.visible {
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 800;
     }
 
-    .task-list {
+    .task-list,
+    .today-list {
       display: grid;
       gap: 10px;
       margin: 16px 0 0;
@@ -202,37 +294,39 @@
       list-style: none;
     }
 
-    .task-card {
-      width: min(680px, 100%);
+    .task-card,
+    .today-card {
+      width: 100%;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto auto;
       align-items: stretch;
+      overflow: hidden;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: calc(var(--radius) + 2px);
       background: var(--surface);
-      box-shadow: 0 6px 16px rgba(27, 36, 48, 0.05);
     }
 
     .task-title {
       width: 100%;
-      min-height: 52px;
+      min-height: 54px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 14px;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 13px 14px;
       border: 0;
-      border-radius: 8px;
+      border-radius: 0;
       background: transparent;
       color: var(--text);
-      font: inherit;
-      font-weight: 700;
+      font-weight: 750;
       text-align: left;
       cursor: pointer;
     }
 
     .task-title-content {
       min-width: 0;
+      min-height: 54px;
+      flex: 1 1 auto;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -240,25 +334,55 @@
 
     .task-title-text {
       min-width: 0;
+      display: flex;
+      align-items: center;
+      line-height: 1.2;
       overflow-wrap: anywhere;
     }
+    .task-estimate {
+      flex: 0 0 auto;
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: auto;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--surface);
+      font-size: 0.82rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
 
-    .delete-button {
-      min-width: 44px;
-      min-height: 52px;
+    .task-title.has-status .task-estimate {
+      margin-left: 0;
+    }
+
+
+    .delete-button,
+    .today-action {
+      min-width: var(--tap-size);
+      min-height: 54px;
       padding: 12px;
       border: 0;
       border-left: 1px solid var(--line);
-      border-radius: 0 8px 8px 0;
       background: transparent;
-      color: #b42318;
-      font: inherit;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .delete-button {
+      color: var(--danger);
+    }
+
+    .delete-button:hover {
+      background: #fff4f2;
     }
 
     .task-days {
-      min-height: 52px;
+      min-height: 54px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -266,8 +390,13 @@
       border-left: 1px solid var(--line);
       color: var(--muted);
       font-size: 0.9rem;
-      font-weight: 700;
+      font-weight: 800;
       white-space: nowrap;
+    }
+
+    .task-days.due-today,
+    .task-days.overdue {
+      color: var(--danger);
     }
 
     .due-checkbox-wrap {
@@ -279,54 +408,129 @@
     }
 
     .due-checkbox {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       accent-color: var(--accent);
       cursor: pointer;
-    }
-
-    .task-days.due-today,
-    .task-days.overdue {
-      color: #b42318;
-    }
-
-    .delete-button:hover {
-      background: #fff0ee;
     }
 
     .task-title::after {
       content: attr(data-status);
       flex: 0 0 auto;
-      min-width: 78px;
+      min-width: 76px;
       min-height: 28px;
+      margin-left: auto;
       padding: 4px 8px;
       display: none;
       place-items: center;
-      border-radius: 8px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 0.85rem;
-      font-weight: 700;
+      border-radius: 999px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
     }
 
     .task-title.has-status::after {
       display: grid;
+      align-self: center;
     }
 
-    .empty-state {
+    .empty-state,
+    .today-empty {
       color: var(--muted);
       font-size: 0.95rem;
+      padding: 4px 0;
     }
 
     .today-layout {
       display: grid;
-      gap: 28px;
-      width: min(760px, 100%);
+      gap: 26px;
+      width: 100%;
       margin-top: 28px;
     }
 
+    .today-day-tools {
+      display: grid;
+      gap: 6px;
+      width: 100%;
+      margin-top: 18px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 2px);
+      background: var(--surface);
+    }
+
+    .today-time-button {
+      justify-self: start;
+    }
+
+    .today-time-summary {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .today-time-progress {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .report-dialog {
+      width: min(560px, 100%);
+    }
+
+    .report-table-wrap {
+      width: 100%;
+      margin: 16px 0 18px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .report-table th,
+    .report-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .report-table th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: var(--surface-muted);
+    }
+
+    .report-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .report-table td:last-child,
+    .report-table th:last-child {
+      text-align: right;
+    }
+
+    .report-empty {
+      color: var(--muted);
+      text-align: center !important;
+      white-space: normal !important;
+    }
+
+    .report-percent {
+      font-weight: 900;
+    }
+
     .today-area {
-      padding-top: 4px;
+      padding-top: 22px;
       border-top: 1px solid var(--line);
     }
 
@@ -336,8 +540,8 @@
     }
 
     .today-area h2 {
-      margin: 0 0 8px;
-      font-size: 1.25rem;
+      margin: 0 0 6px;
+      font-size: 1.15rem;
       line-height: 1.2;
     }
 
@@ -345,27 +549,8 @@
       margin-bottom: 14px;
     }
 
-    .today-list {
-      display: grid;
-      gap: 10px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .today-card {
-      width: 100%;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto auto;
-      align-items: stretch;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--surface);
-      box-shadow: 0 6px 16px rgba(27, 36, 48, 0.05);
-    }
-
     .today-main {
-      min-height: 52px;
+      min-height: 54px;
       padding: 12px 14px;
       display: flex;
       flex-direction: column;
@@ -374,29 +559,20 @@
     }
 
     .today-title {
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .today-path {
       color: var(--muted);
-      font-size: 0.85rem;
+      font-size: 0.84rem;
     }
 
     .today-action {
-      min-height: 52px;
-      padding: 10px 12px;
-      border: 0;
-      border-left: 1px solid var(--line);
-      border-radius: 0 8px 8px 0;
-      background: transparent;
       color: var(--accent);
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
     }
 
-    .today-action:hover {
+    .today-action:hover,
+    .today-card.clickable:hover {
       background: var(--accent-soft);
     }
 
@@ -404,55 +580,30 @@
       cursor: pointer;
     }
 
-    .today-card.clickable:hover {
-      border-color: #9ed9d2;
-    }
-
-    .today-empty {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
     .settings-actions {
-      width: min(680px, 100%);
-      margin-top: 28px;
+      width: 100%;
+      margin-top: 26px;
       padding-top: 20px;
       border-top: 1px solid var(--line);
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
     }
 
-    .export-button,
-    .danger-button {
-      min-height: 44px;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
+    .danger-button,
+    .confirm-delete-button {
+      background: var(--danger);
+      color: var(--surface);
+      border-color: var(--danger);
     }
 
-    .export-button {
-      border: 1px solid var(--accent);
-      background: var(--accent);
-      color: #ffffff;
+    .confirm-delete-button:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      filter: grayscale(0.2);
     }
 
-    .export-button:hover {
-      background: #0b5f58;
-      border-color: #0b5f58;
-    }
-
-    .danger-button {
-      border: 1px solid #b42318;
-      background: #b42318;
-      color: #ffffff;
-    }
-
-    .danger-button:hover {
-      background: #8f1d14;
-      border-color: #8f1d14;
+    .cancel-button {
+      background: var(--surface);
+      color: var(--text);
+      border-color: var(--line);
     }
 
     .modal-backdrop {
@@ -462,8 +613,8 @@
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-      background: rgba(30, 35, 41, 0.45);
+      padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+      background: rgba(23, 23, 23, 0.42);
     }
 
     .modal-backdrop.visible {
@@ -471,81 +622,47 @@
     }
 
     .confirm-dialog {
-      width: min(420px, 100%);
-      padding: 22px;
-      border-radius: 8px;
+      width: min(430px, 100%);
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
       background: var(--surface);
-      box-shadow: 0 20px 50px rgba(27, 36, 48, 0.22);
     }
 
     .confirm-dialog h2 {
-      margin: 0 0 10px;
-      font-size: 1.3rem;
+      margin: 0 0 8px;
+      font-size: 1.25rem;
       line-height: 1.2;
     }
 
     .confirm-dialog p {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .modal-actions {
-      display: flex;
       justify-content: flex-end;
-      gap: 10px;
     }
 
-    .cancel-button,
-    .confirm-delete-button {
-      min-height: 42px;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .cancel-button {
+    .due-date-input,
+    .estimate-minutes-input,
+    .daily-useful-minutes-input {
+      width: 100%;
+      min-height: var(--tap-size);
+      padding: 10px 12px;
       border: 1px solid var(--line);
+      border-radius: var(--radius);
       background: var(--surface);
       color: var(--text);
     }
 
-    .confirm-delete-button {
-      border: 1px solid #b42318;
-      background: #b42318;
-      color: #ffffff;
-    }
-
-    .due-date-input {
-      width: 100%;
-      min-height: 44px;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      color: var(--text);
-      font: inherit;
-    }
-
-    .edit-name-input {
-      width: 100%;
-      min-height: 44px;
-      margin: 4px 0 20px;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      color: var(--text);
-      font: inherit;
-    }
-
-    .due-date-input:focus,
-    .edit-name-input:focus {
-      outline: 3px solid rgba(15, 118, 110, 0.18);
-      border-color: var(--accent);
+    .estimate-minutes-input,
+    .daily-useful-minutes-input {
+      margin: 4px 0 18px;
     }
 
     .due-mode-options {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       margin: 12px 0 14px;
     }
 
@@ -553,10 +670,10 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      min-height: 40px;
+      min-height: var(--tap-size);
       padding: 8px 10px;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: var(--radius);
       background: var(--surface);
       cursor: pointer;
     }
@@ -567,7 +684,7 @@
 
     .due-field {
       display: none;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .due-field.active {
@@ -579,58 +696,66 @@
       margin-bottom: 8px;
       color: var(--muted);
       font-size: 0.95rem;
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    .save-due-button {
-      min-height: 42px;
-      padding: 10px 14px;
-      border: 1px solid var(--accent);
-      border-radius: 8px;
-      background: var(--accent);
-      color: #ffffff;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .save-name-button {
-      min-height: 42px;
-      padding: 10px 14px;
-      border: 1px solid var(--accent);
-      border-radius: 8px;
-      background: var(--accent);
-      color: #ffffff;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    h1 {
-      margin: 0 0 12px;
-      font-size: 2rem;
-      line-height: 1.2;
-    }
-
-    p {
-      max-width: 680px;
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.6;
+    @supports (-webkit-touch-callout: none) {
+      input,
+      textarea,
+      select {
+        font-size: 16px !important;
+      }
     }
 
     @media (max-width: 560px) {
+      body {
+        min-height: 100dvh;
+      }
+
+      .app {
+        min-height: 100dvh;
+      }
+
       .top-tabs {
-        justify-content: flex-start;
-        overflow-x: auto;
+        position: fixed;
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        justify-content: space-between;
+        gap: 6px;
+        padding: 8px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+        border-top: 1px solid var(--line);
+        border-bottom: 0;
       }
 
       .tab-button {
-        min-width: max-content;
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 46px;
+        padding: 8px 6px;
+        font-size: 0.88rem;
         white-space: nowrap;
       }
 
-      .task-composer,
+      main {
+        width: 100%;
+        padding: 24px 16px calc(88px + env(safe-area-inset-bottom));
+      }
+
+      h1 {
+        margin-bottom: 6px;
+      }
+
+      .task-composer {
+        grid-template-columns: 1fr;
+        margin-top: 22px;
+      }
+
+      .add-button {
+        width: 100%;
+      }
+
       .planning-toolbar {
         flex-direction: column;
         align-items: stretch;
@@ -638,35 +763,45 @@
 
       .toolbar-actions {
         width: 100%;
-      }
-
-      .due-mode-options {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .back-button.visible,
-      .edit-name-button.visible,
+      .estimate-minutes-button.visible,
       .days-button.visible {
-        justify-content: center;
-        flex: 1;
+        width: 100%;
+        min-width: 0;
+        padding-inline: 8px;
+        font-size: 0.9rem;
       }
 
-      .task-card {
-        grid-template-columns: minmax(0, 1fr) auto;
-      }
-
+      .task-card,
       .today-card {
         grid-template-columns: minmax(0, 1fr) auto;
       }
 
       .task-title {
-        grid-column: 1;
-        grid-row: 1;
+        width: 100%;
+        min-height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 0 14px;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        font-weight: 700;
+        text-align: left;
+        cursor: pointer;
       }
 
       .delete-button {
         grid-column: 2;
         grid-row: 1;
+        min-height: 56px;
       }
 
       .task-days {
@@ -678,17 +813,49 @@
         border-top: 1px solid var(--line);
       }
 
-      .due-checkbox-wrap {
-        min-height: 24px;
+      .task-title.has-status {
+        align-items: center;
+        flex-direction: row;
+      }
+
+      .task-title::after,
+      .task-estimate {
+        align-self: center;
       }
 
       .today-action {
         grid-column: 2;
         grid-row: 1;
+        min-height: 56px;
       }
 
-      main {
-        padding: 32px 16px;
+      .today-main {
+        min-height: 56px;
+      }
+
+      .due-mode-options {
+        flex-direction: column;
+      }
+
+      .today-time-button {
+        width: 100%;
+      }
+
+      .settings-actions,
+      .modal-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .modal-backdrop {
+        align-items: flex-end;
+        padding: 12px max(12px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+      }
+
+      .confirm-dialog {
+        width: 100%;
+        max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        overflow: auto;
       }
     }
   </style>
@@ -719,7 +886,7 @@
           <div class="breadcrumb" id="breadcrumb" aria-label="Caminho atual"></div>
           <div class="toolbar-actions">
             <button class="back-button" id="back-button" type="button">Voltar</button>
-            <button class="edit-name-button" id="edit-name-button" type="button">Editar nome</button>
+            <button class="estimate-minutes-button" id="estimate-minutes-button" type="button">Minutos estimados</button>
             <button class="days-button" id="days-button" type="button">Dias restantes</button>
           </div>
         </div>
@@ -731,6 +898,11 @@
       <section class="tab-panel" id="hoje" aria-labelledby="tab-hoje">
         <h1>Hoje</h1>
         <p>Veja o foco do dia e acompanhe o que precisa sair do papel.</p>
+        <div class="today-day-tools" aria-label="Tempo útil do dia">
+          <button class="export-button today-time-button" id="daily-useful-minutes-button" type="button">Tempo útil do dia</button>
+          <span class="today-time-summary" id="daily-useful-minutes-summary">Tempo útil não definido.</span>
+          <span class="today-time-progress" id="today-time-progress">Estimado hoje: 0 min.</span>
+        </div>
         <div class="today-layout">
           <section class="today-area" aria-labelledby="today-plan-title">
             <h2 id="today-plan-title">Planejamento de hoje</h2>
@@ -754,6 +926,8 @@
         <h1>Configurações</h1>
         <p>Ajuste preferências do app para deixar o fluxo do seu jeito.</p>
         <div class="settings-actions">
+          <button class="export-button" id="finish-day-button" type="button">Concluir o dia</button>
+          <button class="export-button" id="report-button" type="button">Relatório</button>
           <button class="export-button" id="export-data-button" type="button">Exportar dados CSV</button>
           <button class="export-button" id="import-data-button" type="button">Importar dados CSV</button>
           <input id="import-data-input" type="file" accept=".csv,text/csv" hidden>
@@ -785,7 +959,7 @@
         </label>
         <label class="due-mode-option">
           <input type="radio" name="due-mode" value="days">
-          Numero de dias
+          Número de dias
         </label>
       </div>
       <div class="due-field active" id="due-date-field">
@@ -803,14 +977,63 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="edit-name-modal" role="dialog" aria-modal="true" aria-labelledby="edit-name-title">
+  <div class="modal-backdrop" id="estimate-minutes-modal" role="dialog" aria-modal="true" aria-labelledby="estimate-minutes-title">
     <div class="confirm-dialog">
-      <h2 id="edit-name-title">Editar nome do bloco</h2>
-      <p>Digite o novo nome para este bloco.</p>
-      <input class="edit-name-input" id="edit-name-input" type="text" autocomplete="off">
+      <h2 id="estimate-minutes-title">Minutos estimados</h2>
+      <p>Defina quantos minutos esta tarefa deve levar. Deixe vazio para remover a estimativa.</p>
+      <input class="estimate-minutes-input" id="estimate-minutes-input" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex: 25" autocomplete="off">
       <div class="modal-actions">
-        <button class="cancel-button" id="cancel-edit-name" type="button">Cancelar</button>
-        <button class="save-name-button" id="save-edit-name" type="button">Salvar</button>
+        <button class="cancel-button" id="cancel-estimate-minutes" type="button">Cancelar</button>
+        <button class="save-estimate-button" id="save-estimate-minutes" type="button">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="daily-useful-minutes-modal" role="dialog" aria-modal="true" aria-labelledby="daily-useful-minutes-title">
+    <div class="confirm-dialog">
+      <h2 id="daily-useful-minutes-title">Tempo útil do dia</h2>
+      <p>Defina quantos minutos úteis você terá hoje. Deixe vazio para remover o limite.</p>
+      <input class="daily-useful-minutes-input" id="daily-useful-minutes-input" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex: 240" autocomplete="off">
+      <div class="modal-actions">
+        <button class="cancel-button" id="cancel-daily-useful-minutes" type="button">Cancelar</button>
+        <button class="save-useful-time-button" id="save-daily-useful-minutes" type="button">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="finish-day-modal" role="dialog" aria-modal="true" aria-labelledby="finish-day-title">
+    <div class="confirm-dialog">
+      <h2 id="finish-day-title">Concluir o dia?</h2>
+      <p id="finish-day-message">As tarefas marcadas serão apagadas junto com seus sub-blocos.</p>
+      <div class="modal-actions">
+        <button class="cancel-button" id="cancel-finish-day" type="button">Cancelar</button>
+        <button class="confirm-delete-button" id="confirm-finish-day" type="button">Concluir</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-title">
+    <div class="confirm-dialog report-dialog">
+      <h2 id="report-title">Relatório</h2>
+      <p>Acompanhe a conclusão diária com base nos minutos estimados das tarefas adicionadas ao planejamento de hoje.</p>
+      <div class="report-table-wrap">
+        <table class="report-table" aria-label="Relatório diário">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tempo estimado</th>
+              <th>Conclusão</th>
+            </tr>
+          </thead>
+          <tbody id="report-table-body">
+            <tr>
+              <td class="report-empty" colspan="3">Nenhum dia com tarefas estimadas ainda.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-actions">
+        <button class="cancel-button" id="close-report" type="button">Fechar</button>
       </div>
     </div>
   </div>
@@ -835,13 +1058,25 @@
     const emptyState = document.querySelector('#empty-state');
     const breadcrumb = document.querySelector('#breadcrumb');
     const backButton = document.querySelector('#back-button');
-    const editNameButton = document.querySelector('#edit-name-button');
+    const estimateMinutesButton = document.querySelector('#estimate-minutes-button');
     const daysButton = document.querySelector('#days-button');
     const todayPlanList = document.querySelector('#today-plan-list');
     const todayDueList = document.querySelector('#today-due-list');
+    const dailyUsefulMinutesButton = document.querySelector('#daily-useful-minutes-button');
+    const dailyUsefulMinutesSummary = document.querySelector('#daily-useful-minutes-summary');
+    const todayTimeProgress = document.querySelector('#today-time-progress');
     const exportDataButton = document.querySelector('#export-data-button');
     const importDataButton = document.querySelector('#import-data-button');
     const importDataInput = document.querySelector('#import-data-input');
+    const finishDayButton = document.querySelector('#finish-day-button');
+    const finishDayModal = document.querySelector('#finish-day-modal');
+    const finishDayMessage = document.querySelector('#finish-day-message');
+    const cancelFinishDayButton = document.querySelector('#cancel-finish-day');
+    const confirmFinishDayButton = document.querySelector('#confirm-finish-day');
+    const reportButton = document.querySelector('#report-button');
+    const reportModal = document.querySelector('#report-modal');
+    const reportTableBody = document.querySelector('#report-table-body');
+    const closeReportButton = document.querySelector('#close-report');
     const clearDataButton = document.querySelector('#clear-data-button');
     const clearDataModal = document.querySelector('#clear-data-modal');
     const cancelClearDataButton = document.querySelector('#cancel-clear-data');
@@ -858,25 +1093,32 @@
     const dueModeInputs = document.querySelectorAll('input[name="due-mode"]');
     const cancelDueButton = document.querySelector('#cancel-due');
     const saveDueButton = document.querySelector('#save-due');
-    const editNameModal = document.querySelector('#edit-name-modal');
-    const editNameInput = document.querySelector('#edit-name-input');
-    const cancelEditNameButton = document.querySelector('#cancel-edit-name');
-    const saveEditNameButton = document.querySelector('#save-edit-name');
+    const estimateMinutesModal = document.querySelector('#estimate-minutes-modal');
+    const estimateMinutesInput = document.querySelector('#estimate-minutes-input');
+    const cancelEstimateMinutesButton = document.querySelector('#cancel-estimate-minutes');
+    const saveEstimateMinutesButton = document.querySelector('#save-estimate-minutes');
+    const dailyUsefulMinutesModal = document.querySelector('#daily-useful-minutes-modal');
+    const dailyUsefulMinutesInput = document.querySelector('#daily-useful-minutes-input');
+    const cancelDailyUsefulMinutesButton = document.querySelector('#cancel-daily-useful-minutes');
+    const saveDailyUsefulMinutesButton = document.querySelector('#save-daily-useful-minutes');
     const storageKey = 'todo-single-file-state';
     const rootLevel = {
       id: 'root',
       title: 'Planejamento',
       children: [],
       dueDate: null,
-      parent: null
+      parent: null,
+      estimatedMinutes: null
     };
     let nextTaskId = 1;
     let currentLevel = rootLevel;
     let pendingDeleteTask = null;
     let todayPlan = [];
+    let dailyUsefulMinutes = null;
+    let dailyReports = [];
     let lastKnownDate = formatDateValue(getTodayStart());
 
-    function createTaskData(title, parent, dueDate = null, children = [], id = null, checked = false) {
+    function createTaskData(title, parent, dueDate = null, children = [], id = null, checked = false, estimatedMinutes = null) {
       const taskId = id || `task-${nextTaskId++}`;
       const numericId = Number(String(taskId).replace('task-', ''));
 
@@ -890,7 +1132,55 @@
         children,
         parent,
         dueDate,
-        checked
+        checked,
+        estimatedMinutes
+      };
+    }
+
+    function normalizeEstimatedMinutes(value) {
+      const minutes = Number(value);
+
+      if (!Number.isFinite(minutes) || minutes <= 0) {
+        return null;
+      }
+
+      return Math.floor(minutes);
+    }
+
+    function normalizeReportMinutes(value) {
+      const minutes = Number(value);
+
+      if (!Number.isFinite(minutes) || minutes < 0) {
+        return 0;
+      }
+
+      return Math.floor(minutes);
+    }
+
+    function getConclusionPercentage(completedMinutes, estimatedMinutes) {
+      if (!estimatedMinutes) {
+        return 0;
+      }
+
+      return Math.min(100, Math.floor((completedMinutes / estimatedMinutes) * 100));
+    }
+
+    function normalizeDailyReport(report) {
+      if (!report || typeof report.date !== 'string') {
+        return null;
+      }
+
+      const estimatedMinutes = normalizeReportMinutes(report.estimatedMinutes);
+      const completedMinutes = Math.min(
+        normalizeReportMinutes(report.completedMinutes),
+        estimatedMinutes
+      );
+
+      return {
+        date: report.date,
+        estimatedMinutes,
+        completedMinutes,
+        conclusion: getConclusionPercentage(completedMinutes, estimatedMinutes)
       };
     }
 
@@ -900,6 +1190,7 @@
         title: task.title,
         dueDate: task.dueDate,
         checked: task.checked,
+        estimatedMinutes: task.estimatedMinutes,
         children: task.children.map(serializeTask)
       };
     }
@@ -911,7 +1202,8 @@
         savedTask.dueDate || null,
         [],
         savedTask.id,
-        Boolean(savedTask.checked)
+        Boolean(savedTask.checked),
+        normalizeEstimatedMinutes(savedTask.estimatedMinutes)
       );
       task.children = (savedTask.children || []).map((child) => hydrateTask(child, task));
       return task;
@@ -921,6 +1213,8 @@
       const state = {
         tasks: rootLevel.children.map(serializeTask),
         todayPlanIds: todayPlan.map((task) => task.id),
+        dailyUsefulMinutes,
+        dailyReports,
         lastKnownDate
       };
 
@@ -945,9 +1239,13 @@
         todayPlan = (state.todayPlanIds || [])
           .map(findTaskById)
           .filter(Boolean);
+        dailyUsefulMinutes = normalizeEstimatedMinutes(state.dailyUsefulMinutes);
+        dailyReports = Array.isArray(state.dailyReports)
+          ? state.dailyReports.map(normalizeDailyReport).filter(Boolean)
+          : [];
         lastKnownDate = state.lastKnownDate || lastKnownDate;
       } catch (error) {
-        console.warn('Nao foi possivel carregar os dados salvos.', error);
+        console.warn('Não foi possível carregar os dados salvos.', error);
       }
     }
 
@@ -956,6 +1254,8 @@
       currentLevel = rootLevel;
       pendingDeleteTask = null;
       todayPlan = [];
+      dailyUsefulMinutes = null;
+      dailyReports = [];
       nextTaskId = 1;
       lastKnownDate = formatDateValue(getTodayStart());
       localStorage.removeItem(storageKey);
@@ -1028,8 +1328,9 @@
       });
 
       backButton.classList.toggle('visible', currentLevel.parent !== null);
-      editNameButton.classList.toggle('visible', currentLevel.parent !== null);
+      estimateMinutesButton.classList.toggle('visible', currentLevel.parent !== null);
       daysButton.classList.toggle('visible', currentLevel.parent !== null);
+      updateEstimateMinutesButton();
       updateDaysButton();
     }
 
@@ -1065,8 +1366,10 @@
         return;
       }
 
+      saveDailyReportSnapshot(lastKnownDate);
       lastKnownDate = currentDate;
       todayPlan = [];
+      dailyUsefulMinutes = null;
       clearDueDatesFromCheckedTasks();
       renderCurrentLevel();
       renderTodayTab();
@@ -1090,6 +1393,20 @@
       });
     }
 
+    function updateEstimateMinutesButton() {
+      if (!currentLevel.parent) {
+        estimateMinutesButton.textContent = 'Minutos estimados';
+        return;
+      }
+
+      if (!currentLevel.estimatedMinutes) {
+        estimateMinutesButton.textContent = 'Minutos: definir';
+        return;
+      }
+
+      estimateMinutesButton.textContent = `Minutos: ${currentLevel.estimatedMinutes}`;
+    }
+
     function updateDaysButton() {
       if (!currentLevel.parent) {
         daysButton.textContent = 'Dias restantes';
@@ -1097,18 +1414,18 @@
       }
 
       if (!currentLevel.dueDate) {
-        daysButton.textContent = 'Dias restantes: definir';
+        daysButton.textContent = 'Definir dia';
         return;
       }
 
       const daysRemaining = getDaysRemaining(currentLevel.dueDate);
 
       if (daysRemaining === 0) {
-        daysButton.textContent = 'Dias restantes: vence hoje';
+        daysButton.textContent = 'vence hoje';
       } else if (daysRemaining > 0) {
-        daysButton.textContent = `Dias restantes: ${daysRemaining}`;
+        daysButton.textContent = `${daysRemaining} dias`;
       } else {
-        daysButton.textContent = `Venceu ha ${Math.abs(daysRemaining)} dia(s)`;
+        daysButton.textContent = `Há ${Math.abs(daysRemaining)} dia(s)`;
       }
     }
 
@@ -1334,6 +1651,139 @@
       });
     }
 
+    function getTodayEstimatedMinutes() {
+      return todayPlan.reduce((total, task) => {
+        return total + (normalizeEstimatedMinutes(task.estimatedMinutes) || 0);
+      }, 0);
+    }
+
+    function getTodayCompletedEstimatedMinutes() {
+      return todayPlan.reduce((total, task) => {
+        if (!task.checked) {
+          return total;
+        }
+
+        return total + (normalizeEstimatedMinutes(task.estimatedMinutes) || 0);
+      }, 0);
+    }
+
+    function getDailyReportSnapshot(dateValue = lastKnownDate) {
+      const estimatedMinutes = getTodayEstimatedMinutes();
+      const completedMinutes = Math.min(getTodayCompletedEstimatedMinutes(), estimatedMinutes);
+
+      return {
+        date: dateValue,
+        estimatedMinutes,
+        completedMinutes,
+        conclusion: getConclusionPercentage(completedMinutes, estimatedMinutes)
+      };
+    }
+
+    function shouldKeepDailyReport(report) {
+      return report.estimatedMinutes > 0 || report.completedMinutes > 0;
+    }
+
+    function saveDailyReportSnapshot(dateValue = lastKnownDate) {
+      const report = getDailyReportSnapshot(dateValue);
+
+      if (!shouldKeepDailyReport(report)) {
+        return null;
+      }
+
+      const existingIndex = dailyReports.findIndex((savedReport) => savedReport.date === report.date);
+
+      if (existingIndex >= 0) {
+        dailyReports[existingIndex] = report;
+      } else {
+        dailyReports.push(report);
+      }
+
+      dailyReports.sort((firstReport, secondReport) => secondReport.date.localeCompare(firstReport.date));
+      return report;
+    }
+
+    function formatReportDate(dateValue) {
+      const [year, month, day] = dateValue.split('-');
+
+      if (!year || !month || !day) {
+        return dateValue;
+      }
+
+      return `${day}/${month}/${year}`;
+    }
+
+    function getReportRows() {
+      const rowsByDate = new Map();
+
+      dailyReports.forEach((report) => {
+        const normalizedReport = normalizeDailyReport(report);
+
+        if (normalizedReport && shouldKeepDailyReport(normalizedReport)) {
+          rowsByDate.set(normalizedReport.date, normalizedReport);
+        }
+      });
+
+      const todayReport = getDailyReportSnapshot(lastKnownDate);
+      if (shouldKeepDailyReport(todayReport)) {
+        rowsByDate.set(todayReport.date, todayReport);
+      }
+
+      return Array.from(rowsByDate.values())
+        .sort((firstReport, secondReport) => secondReport.date.localeCompare(firstReport.date));
+    }
+
+    function renderReportTable() {
+      const reportRows = getReportRows();
+      reportTableBody.innerHTML = '';
+
+      if (reportRows.length === 0) {
+        const emptyRow = document.createElement('tr');
+        const emptyCell = document.createElement('td');
+        emptyCell.className = 'report-empty';
+        emptyCell.colSpan = 3;
+        emptyCell.textContent = 'Nenhum dia com tarefas estimadas ainda.';
+        emptyRow.append(emptyCell);
+        reportTableBody.append(emptyRow);
+        return;
+      }
+
+      reportRows.forEach((report) => {
+        const row = document.createElement('tr');
+        const dateCell = document.createElement('td');
+        const estimatedCell = document.createElement('td');
+        const conclusionCell = document.createElement('td');
+
+        dateCell.textContent = formatReportDate(report.date);
+        estimatedCell.textContent = `${report.estimatedMinutes} min`;
+        conclusionCell.className = 'report-percent';
+        conclusionCell.textContent = `${report.conclusion}%`;
+
+        row.append(dateCell, estimatedCell, conclusionCell);
+        reportTableBody.append(row);
+      });
+    }
+
+    function updateDailyUsefulMinutesView() {
+      const estimatedMinutes = getTodayEstimatedMinutes();
+
+      if (!dailyUsefulMinutes) {
+        dailyUsefulMinutesButton.textContent = 'Tempo útil do dia';
+        dailyUsefulMinutesSummary.textContent = 'Tempo útil não definido.';
+        todayTimeProgress.textContent = `Estimado hoje: ${estimatedMinutes} min.`;
+        return;
+      }
+
+      const balance = dailyUsefulMinutes - estimatedMinutes;
+      dailyUsefulMinutesButton.textContent = `Tempo útil: ${dailyUsefulMinutes} min`;
+      dailyUsefulMinutesSummary.textContent = `Tempo útil definido: ${dailyUsefulMinutes} min.`;
+
+      if (balance >= 0) {
+        todayTimeProgress.textContent = `Estimado hoje: ${estimatedMinutes} / ${dailyUsefulMinutes} min. Restam ${balance} min.`;
+      } else {
+        todayTimeProgress.textContent = `Estimado hoje: ${estimatedMinutes} / ${dailyUsefulMinutes} min. Excede em ${Math.abs(balance)} min.`;
+      }
+    }
+
     function renderTodayTab() {
       const todayPlanChanged = cleanupTodayPlan();
       if (todayPlanChanged) {
@@ -1365,6 +1815,8 @@
           renderTodayTab();
         }
       );
+
+      updateDailyUsefulMinutesView();
     }
 
     function isTaskInsideDeletedTask(task, deletedTask) {
@@ -1409,11 +1861,12 @@
           task.title,
           task.dueDate || '',
           daysRemaining,
-          isTaskOverdue(task) ? 'sim' : 'nao',
+          task.estimatedMinutes || '',
+          isTaskOverdue(task) ? 'sim' : 'não',
           countOverdueSubtasks(task),
           task.children.length,
-          isTaskInTodayPlan(task) ? 'sim' : 'nao',
-          task.checked ? 'sim' : 'nao'
+          isTaskInTodayPlan(task) ? 'sim' : 'não',
+          task.checked ? 'sim' : 'não'
         ];
 
         return [row, ...getCsvRows(task)];
@@ -1428,6 +1881,7 @@
         'titulo',
         'data_vencimento',
         'dias_restantes',
+        'minutos_estimados',
         'vencida_ou_vence_hoje',
         'subtarefas_vencidas',
         'quantidade_subtarefas',
@@ -1529,7 +1983,8 @@
           record.data_vencimento || null,
           [],
           record.id || null,
-          record.marcado === 'sim'
+          record.marcado === 'sim',
+          normalizeEstimatedMinutes(record.minutos_estimados || record.estimatedMinutes)
         );
 
         parent.children.push(task);
@@ -1555,6 +2010,18 @@
         : 'Nenhum bloco criado ainda.';
     }
 
+    function createEstimatedMinutesBadge(task) {
+      if (!task.estimatedMinutes) {
+        return null;
+      }
+
+      const badge = document.createElement('span');
+      badge.className = 'task-estimate';
+      badge.textContent = `${task.estimatedMinutes} min`;
+      badge.setAttribute('aria-label', `${task.estimatedMinutes} minutos estimados`);
+      return badge;
+    }
+
     function createTaskBlock(task) {
       const item = document.createElement('li');
       item.className = 'task-card';
@@ -1575,6 +2042,10 @@
       titleText.textContent = task.title;
       titleContent.append(titleText);
       titleButton.append(titleContent);
+      const estimatedMinutesBadge = createEstimatedMinutesBadge(task);
+      if (estimatedMinutesBadge) {
+        titleButton.append(estimatedMinutesBadge);
+      }
       updateTaskStatus(titleButton, task);
 
       titleButton.addEventListener('click', () => {
@@ -1710,48 +2181,177 @@
       }
     });
 
-    function closeEditNameModal() {
-      editNameModal.classList.remove('visible');
+    function closeEstimateMinutesModal() {
+      estimateMinutesModal.classList.remove('visible');
       taskInput.focus();
     }
 
-    editNameButton.addEventListener('click', () => {
+    estimateMinutesButton.addEventListener('click', () => {
       if (!currentLevel.parent) {
         return;
       }
 
-      editNameInput.value = currentLevel.title;
-      editNameModal.classList.add('visible');
-      editNameInput.focus();
-      editNameInput.select();
+      estimateMinutesInput.value = currentLevel.estimatedMinutes || '';
+      estimateMinutesModal.classList.add('visible');
+      estimateMinutesInput.focus();
+      estimateMinutesInput.select();
     });
 
-    cancelEditNameButton.addEventListener('click', closeEditNameModal);
+    cancelEstimateMinutesButton.addEventListener('click', closeEstimateMinutesModal);
 
-    editNameModal.addEventListener('click', (event) => {
-      if (event.target === editNameModal) {
-        closeEditNameModal();
+    estimateMinutesModal.addEventListener('click', (event) => {
+      if (event.target === estimateMinutesModal) {
+        closeEstimateMinutesModal();
       }
     });
 
-    saveEditNameButton.addEventListener('click', () => {
-      const newTitle = editNameInput.value.trim();
-
-      if (!newTitle || !currentLevel.parent) {
+    saveEstimateMinutesButton.addEventListener('click', () => {
+      if (!currentLevel.parent) {
         return;
       }
 
-      currentLevel.title = newTitle;
-      closeEditNameModal();
+      currentLevel.estimatedMinutes = normalizeEstimatedMinutes(estimateMinutesInput.value);
+      closeEstimateMinutesModal();
+      updateEstimateMinutesButton();
       saveAppState();
       renderCurrentLevel();
       renderTodayTab();
     });
 
-    editNameInput.addEventListener('keydown', (event) => {
+    estimateMinutesInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         event.preventDefault();
-        saveEditNameButton.click();
+        saveEstimateMinutesButton.click();
+      }
+    });
+
+    function closeDailyUsefulMinutesModal() {
+      dailyUsefulMinutesModal.classList.remove('visible');
+      dailyUsefulMinutesButton.focus();
+    }
+
+    dailyUsefulMinutesButton.addEventListener('click', () => {
+      dailyUsefulMinutesInput.value = dailyUsefulMinutes || '';
+      dailyUsefulMinutesModal.classList.add('visible');
+      dailyUsefulMinutesInput.focus();
+      dailyUsefulMinutesInput.select();
+    });
+
+    cancelDailyUsefulMinutesButton.addEventListener('click', closeDailyUsefulMinutesModal);
+
+    dailyUsefulMinutesModal.addEventListener('click', (event) => {
+      if (event.target === dailyUsefulMinutesModal) {
+        closeDailyUsefulMinutesModal();
+      }
+    });
+
+    saveDailyUsefulMinutesButton.addEventListener('click', () => {
+      dailyUsefulMinutes = normalizeEstimatedMinutes(dailyUsefulMinutesInput.value);
+      closeDailyUsefulMinutesModal();
+      saveAppState();
+      renderTodayTab();
+    });
+
+    dailyUsefulMinutesInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        saveDailyUsefulMinutesButton.click();
+      }
+    });
+
+    function getCheckedTasks() {
+      return getAllTasks().filter((task) => task.checked);
+    }
+
+    function removeCheckedTasks(level = rootLevel) {
+      const removedTasks = [];
+
+      level.children = level.children.filter((task) => {
+        if (task.checked) {
+          removedTasks.push(task);
+          return false;
+        }
+
+        removedTasks.push(...removeCheckedTasks(task));
+        return true;
+      });
+
+      return removedTasks;
+    }
+
+    function closeFinishDayModal() {
+      finishDayModal.classList.remove('visible');
+      finishDayButton.focus();
+    }
+
+    finishDayButton.addEventListener('click', () => {
+      const checkedTasks = getCheckedTasks();
+      const checkedCount = checkedTasks.length;
+      const taskWord = checkedCount === 1 ? 'tarefa marcada' : 'tarefas marcadas';
+      const subtreeWord = checkedCount === 1 ? 'dentro dela' : 'dentro delas';
+
+      if (checkedCount === 0) {
+        finishDayMessage.textContent = 'Nenhuma tarefa está marcada. Marque uma tarefa pelo checkbox antes de concluir o dia.';
+        confirmFinishDayButton.disabled = true;
+        finishDayModal.classList.add('visible');
+        cancelFinishDayButton.focus();
+        return;
+      }
+
+      finishDayMessage.textContent = `Essa ação apaga ${checkedCount} ${taskWord} e todos os sub-blocos ${subtreeWord}.`;
+      confirmFinishDayButton.disabled = false;
+      finishDayModal.classList.add('visible');
+      confirmFinishDayButton.focus();
+    });
+
+    cancelFinishDayButton.addEventListener('click', closeFinishDayModal);
+
+    finishDayModal.addEventListener('click', (event) => {
+      if (event.target === finishDayModal) {
+        closeFinishDayModal();
+      }
+    });
+
+    confirmFinishDayButton.addEventListener('click', () => {
+      const checkedTasks = getCheckedTasks();
+
+      if (checkedTasks.length === 0) {
+        return;
+      }
+
+      saveDailyReportSnapshot(lastKnownDate);
+      const removedTasks = removeCheckedTasks();
+
+      if (removedTasks.some((task) => isTaskInsideDeletedTask(currentLevel, task))) {
+        currentLevel = rootLevel;
+      }
+
+      cleanupTodayPlan();
+      finishDayModal.classList.remove('visible');
+      saveAppState();
+      renderCurrentLevel();
+      renderTodayTab();
+      finishDayButton.focus();
+    });
+
+    function closeReportModal() {
+      reportModal.classList.remove('visible');
+      reportButton.focus();
+    }
+
+    reportButton.addEventListener('click', () => {
+      saveDailyReportSnapshot(lastKnownDate);
+      saveAppState();
+      renderReportTable();
+      reportModal.classList.add('visible');
+      closeReportButton.focus();
+    });
+
+    closeReportButton.addEventListener('click', closeReportModal);
+
+    reportModal.addEventListener('click', (event) => {
+      if (event.target === reportModal) {
+        closeReportModal();
       }
     });
 
@@ -1784,8 +2384,8 @@
         try {
           importTasksFromCsv(String(reader.result || ''));
         } catch (error) {
-          console.warn('Nao foi possivel importar o CSV.', error);
-          alert('Nao foi possivel importar este CSV.');
+          console.warn('Não foi possível importar o CSV.', error);
+          alert('Não foi possível importar este CSV.');
         } finally {
           importDataInput.value = '';
         }
