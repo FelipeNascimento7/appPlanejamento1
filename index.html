@@ -587,6 +587,24 @@
       border-top: 1px solid var(--line);
     }
 
+    .drive-sync-status {
+      width: 100%;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .drive-sync-status[data-state="connected"],
+    .drive-sync-status[data-state="syncing"] {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .drive-sync-status[data-state="error"] {
+      color: var(--danger);
+      font-weight: 800;
+    }
+
     .danger-button,
     .confirm-delete-button {
       background: var(--danger);
@@ -928,6 +946,8 @@
         <div class="settings-actions">
           <button class="export-button" id="finish-day-button" type="button">Concluir o dia</button>
           <button class="export-button" id="report-button" type="button">Relatório</button>
+          <button class="export-button" id="connect-drive-button" type="button">Conectar Google Drive</button>
+          <span class="drive-sync-status" id="drive-sync-status" role="status">Google Drive desconectado.</span>
           <button class="export-button" id="export-data-button" type="button">Exportar dados CSV</button>
           <button class="export-button" id="import-data-button" type="button">Importar dados CSV</button>
           <input id="import-data-input" type="file" accept=".csv,text/csv" hidden>
@@ -1049,6 +1069,7 @@
     </div>
   </div>
 
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanels = document.querySelectorAll('.tab-panel');
@@ -1077,6 +1098,8 @@
     const reportModal = document.querySelector('#report-modal');
     const reportTableBody = document.querySelector('#report-table-body');
     const closeReportButton = document.querySelector('#close-report');
+    const connectDriveButton = document.querySelector('#connect-drive-button');
+    const driveSyncStatus = document.querySelector('#drive-sync-status');
     const clearDataButton = document.querySelector('#clear-data-button');
     const clearDataModal = document.querySelector('#clear-data-modal');
     const cancelClearDataButton = document.querySelector('#cancel-clear-data');
@@ -1102,6 +1125,12 @@
     const cancelDailyUsefulMinutesButton = document.querySelector('#cancel-daily-useful-minutes');
     const saveDailyUsefulMinutesButton = document.querySelector('#save-daily-useful-minutes');
     const storageKey = 'todo-single-file-state';
+    const googleDriveConfig = {
+      clientId: '842845533430-2h8fga8b2iu63t7ltrr39nuelrjbqts5.apps.googleusercontent.com',
+      scope: 'https://www.googleapis.com/auth/drive.appdata',
+      fileName: 'todo-state.json',
+      fileMimeType: 'application/json'
+    };
     const rootLevel = {
       id: 'root',
       title: 'Planejamento',
@@ -1117,6 +1146,12 @@
     let dailyUsefulMinutes = null;
     let dailyReports = [];
     let lastKnownDate = formatDateValue(getTodayStart());
+    let googleAccessToken = null;
+    let googleTokenClient = null;
+    let driveFileId = null;
+    let driveSaveTimer = null;
+    let isApplyingRemoteState = false;
+    let isDriveBusy = false;
 
     function createTaskData(title, parent, dueDate = null, children = [], id = null, checked = false, estimatedMinutes = null) {
       const taskId = id || `task-${nextTaskId++}`;
@@ -1209,16 +1244,40 @@
       return task;
     }
 
-    function saveAppState() {
-      const state = {
+    function getAppState() {
+      return {
+        version: 2,
+        updatedAt: new Date().toISOString(),
         tasks: rootLevel.children.map(serializeTask),
         todayPlanIds: todayPlan.map((task) => task.id),
         dailyUsefulMinutes,
         dailyReports,
         lastKnownDate
       };
+    }
 
+    function saveAppState(options = {}) {
+      const state = getAppState();
       localStorage.setItem(storageKey, JSON.stringify(state));
+
+      if (!options.skipDrive && !isApplyingRemoteState) {
+        scheduleDriveSave();
+      }
+    }
+
+    function applyLoadedState(state) {
+      const safeState = state && typeof state === 'object' ? state : {};
+      nextTaskId = 1;
+      rootLevel.children = (safeState.tasks || []).map((task) => hydrateTask(task, rootLevel));
+      todayPlan = (safeState.todayPlanIds || [])
+        .map(findTaskById)
+        .filter(Boolean);
+      dailyUsefulMinutes = normalizeEstimatedMinutes(safeState.dailyUsefulMinutes);
+      dailyReports = Array.isArray(safeState.dailyReports)
+        ? safeState.dailyReports.map(normalizeDailyReport).filter(Boolean)
+        : [];
+      lastKnownDate = safeState.lastKnownDate || formatDateValue(getTodayStart());
+      currentLevel = rootLevel;
     }
 
     function findTaskById(taskId) {
@@ -1233,17 +1292,7 @@
       }
 
       try {
-        const state = JSON.parse(savedState);
-        nextTaskId = 1;
-        rootLevel.children = (state.tasks || []).map((task) => hydrateTask(task, rootLevel));
-        todayPlan = (state.todayPlanIds || [])
-          .map(findTaskById)
-          .filter(Boolean);
-        dailyUsefulMinutes = normalizeEstimatedMinutes(state.dailyUsefulMinutes);
-        dailyReports = Array.isArray(state.dailyReports)
-          ? state.dailyReports.map(normalizeDailyReport).filter(Boolean)
-          : [];
-        lastKnownDate = state.lastKnownDate || lastKnownDate;
+        applyLoadedState(JSON.parse(savedState));
       } catch (error) {
         console.warn('Não foi possível carregar os dados salvos.', error);
       }
@@ -1258,7 +1307,7 @@
       dailyReports = [];
       nextTaskId = 1;
       lastKnownDate = formatDateValue(getTodayStart());
-      localStorage.removeItem(storageKey);
+      saveAppState();
       renderCurrentLevel();
       renderTodayTab();
     }
@@ -1414,18 +1463,18 @@
       }
 
       if (!currentLevel.dueDate) {
-        daysButton.textContent = 'Definir dia';
+        daysButton.textContent = 'Dias restantes: definir';
         return;
       }
 
       const daysRemaining = getDaysRemaining(currentLevel.dueDate);
 
       if (daysRemaining === 0) {
-        daysButton.textContent = 'vence hoje';
+        daysButton.textContent = 'Dias restantes: vence hoje';
       } else if (daysRemaining > 0) {
-        daysButton.textContent = `${daysRemaining} dias`;
+        daysButton.textContent = `Dias restantes: ${daysRemaining}`;
       } else {
-        daysButton.textContent = `Há ${Math.abs(daysRemaining)} dia(s)`;
+        daysButton.textContent = `Venceu há ${Math.abs(daysRemaining)} dia(s)`;
       }
     }
 
@@ -2424,6 +2473,309 @@
       updateDaysButton();
       saveAppState();
       renderTodayTab();
+    });
+
+    function isGoogleDriveConfigured() {
+      return Boolean(
+        googleDriveConfig.clientId
+          && googleDriveConfig.clientId !== 'COLE_SEU_CLIENT_ID_AQUI'
+          && googleDriveConfig.clientId.endsWith('.apps.googleusercontent.com')
+      );
+    }
+
+    function updateDriveSyncStatus(message, state = 'idle') {
+      driveSyncStatus.textContent = message;
+      driveSyncStatus.dataset.state = state;
+    }
+
+    function getSavedLocalState() {
+      const savedState = localStorage.getItem(storageKey);
+
+      if (!savedState) {
+        return null;
+      }
+
+      try {
+        return JSON.parse(savedState);
+      } catch (error) {
+        console.warn('Não foi possível ler o estado local para sincronização.', error);
+        return null;
+      }
+    }
+
+    function getStateTimestamp(state) {
+      if (!state || !state.updatedAt) {
+        return 0;
+      }
+
+      const timestamp = Date.parse(state.updatedAt);
+      return Number.isFinite(timestamp) ? timestamp : 0;
+    }
+
+    function initializeGoogleDriveClient() {
+      if (!isGoogleDriveConfigured()) {
+        updateDriveSyncStatus('Cole seu Client ID no código antes de conectar ao Google Drive.', 'error');
+        return false;
+      }
+
+      if (!window.google || !window.google.accounts || !window.google.accounts.oauth2) {
+        updateDriveSyncStatus('A biblioteca do Google ainda está carregando. Tente novamente em alguns segundos.', 'syncing');
+        return false;
+      }
+
+      if (googleTokenClient) {
+        return true;
+      }
+
+      googleTokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: googleDriveConfig.clientId,
+        scope: googleDriveConfig.scope,
+        callback: async (response) => {
+          if (!response || response.error) {
+            console.warn('Não foi possível conectar ao Google Drive.', response);
+            updateDriveSyncStatus('Não foi possível conectar ao Google Drive.', 'error');
+            connectDriveButton.disabled = false;
+            return;
+          }
+
+          googleAccessToken = response.access_token;
+          connectDriveButton.textContent = 'Google Drive conectado';
+          updateDriveSyncStatus('Conectado. Sincronizando dados...', 'syncing');
+
+          try {
+            await loadStateFromDrive();
+          } catch (error) {
+            console.warn('Não foi possível carregar os dados do Google Drive.', error);
+            updateDriveSyncStatus('Conectado, mas não foi possível sincronizar agora.', 'error');
+          } finally {
+            connectDriveButton.disabled = false;
+          }
+        }
+      });
+
+      return true;
+    }
+
+    function requestGoogleDriveAccess() {
+      if (!initializeGoogleDriveClient()) {
+        return;
+      }
+
+      connectDriveButton.disabled = true;
+      updateDriveSyncStatus('Abrindo autorização do Google Drive...', 'syncing');
+      googleTokenClient.requestAccessToken({ prompt: googleAccessToken ? '' : 'consent' });
+    }
+
+    async function fetchDrive(url, options = {}) {
+      if (!googleAccessToken) {
+        throw new Error('Google Drive não conectado.');
+      }
+
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...(options.headers || {}),
+          Authorization: `Bearer ${googleAccessToken}`
+        }
+      });
+
+      if (response.status === 401) {
+        googleAccessToken = null;
+        googleTokenClient = null;
+        driveFileId = null;
+        connectDriveButton.textContent = 'Conectar Google Drive';
+        updateDriveSyncStatus('A sessão do Google Drive expirou. Conecte novamente.', 'error');
+      }
+
+      return response;
+    }
+
+    function escapeDriveQueryValue(value) {
+      return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    async function findDriveStateFile() {
+      const query = encodeURIComponent(`name='${escapeDriveQueryValue(googleDriveConfig.fileName)}' and trashed=false`);
+      const response = await fetchDrive(
+        `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${query}&fields=files(id,name,modifiedTime)`
+      );
+
+      if (!response.ok) {
+        throw new Error('Falha ao procurar o arquivo de estado no Google Drive.');
+      }
+
+      const data = await response.json();
+      return data.files && data.files.length ? data.files[0] : null;
+    }
+
+    async function downloadDriveState(fileId) {
+      const response = await fetchDrive(
+        `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`
+      );
+
+      if (!response.ok) {
+        throw new Error('Falha ao baixar o estado do Google Drive.');
+      }
+
+      return response.json();
+    }
+
+    async function createDriveStateFile(state) {
+      const metadata = {
+        name: googleDriveConfig.fileName,
+        mimeType: googleDriveConfig.fileMimeType,
+        parents: ['appDataFolder']
+      };
+      const boundary = `todo_state_boundary_${Date.now()}`;
+      const body = [
+        `--${boundary}`,
+        'Content-Type: application/json; charset=UTF-8',
+        '',
+        JSON.stringify(metadata),
+        `--${boundary}`,
+        'Content-Type: application/json; charset=UTF-8',
+        '',
+        JSON.stringify(state),
+        `--${boundary}--`
+      ].join('\r\n');
+      const response = await fetchDrive(
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': `multipart/related; boundary=${boundary}`
+          },
+          body
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Falha ao criar o arquivo de estado no Google Drive.');
+      }
+
+      const data = await response.json();
+      driveFileId = data.id;
+      return data.id;
+    }
+
+    async function updateDriveStateFile(fileId, state) {
+      const response = await fetchDrive(
+        `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8'
+          },
+          body: JSON.stringify(state)
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Falha ao atualizar o estado no Google Drive.');
+      }
+    }
+
+    async function saveStateToDrive() {
+      if (!googleAccessToken || isDriveBusy) {
+        return;
+      }
+
+      isDriveBusy = true;
+      updateDriveSyncStatus('Salvando no Google Drive...', 'syncing');
+
+      try {
+        const state = getAppState();
+
+        if (!driveFileId) {
+          const existingFile = await findDriveStateFile();
+          driveFileId = existingFile ? existingFile.id : null;
+        }
+
+        if (driveFileId) {
+          await updateDriveStateFile(driveFileId, state);
+        } else {
+          await createDriveStateFile(state);
+        }
+
+        localStorage.setItem(storageKey, JSON.stringify(state));
+        updateDriveSyncStatus(`Google Drive sincronizado às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}.`, 'connected');
+      } catch (error) {
+        console.warn('Não foi possível salvar no Google Drive.', error);
+        updateDriveSyncStatus('Não foi possível salvar no Google Drive agora.', 'error');
+      } finally {
+        isDriveBusy = false;
+      }
+    }
+
+    function scheduleDriveSave() {
+      if (!googleAccessToken) {
+        return;
+      }
+
+      clearTimeout(driveSaveTimer);
+      driveSaveTimer = setTimeout(() => {
+        saveStateToDrive();
+      }, 900);
+    }
+
+    async function loadStateFromDrive() {
+      if (!googleAccessToken || isDriveBusy) {
+        return;
+      }
+
+      isDriveBusy = true;
+      updateDriveSyncStatus('Carregando dados do Google Drive...', 'syncing');
+
+      try {
+        const localState = getSavedLocalState() || getAppState();
+        const existingFile = await findDriveStateFile();
+
+        if (!existingFile) {
+          await createDriveStateFile(localState);
+          updateDriveSyncStatus('Arquivo criado no Google Drive. Sincronização ativa.', 'connected');
+          return;
+        }
+
+        driveFileId = existingFile.id;
+        const cloudState = await downloadDriveState(existingFile.id);
+        const localIsNewer = getStateTimestamp(localState) > getStateTimestamp(cloudState);
+
+        if (localIsNewer) {
+          await updateDriveStateFile(existingFile.id, localState);
+          updateDriveSyncStatus('Dados locais enviados para o Google Drive.', 'connected');
+          return;
+        }
+
+        isApplyingRemoteState = true;
+        applyLoadedState(cloudState);
+        localStorage.setItem(storageKey, JSON.stringify(cloudState));
+        renderCurrentLevel();
+        renderTodayTab();
+        renderReportTable();
+        isApplyingRemoteState = false;
+        updateDriveSyncStatus('Dados carregados do Google Drive.', 'connected');
+      } finally {
+        isApplyingRemoteState = false;
+        isDriveBusy = false;
+      }
+    }
+
+    connectDriveButton.addEventListener('click', requestGoogleDriveAccess);
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && googleAccessToken) {
+        loadStateFromDrive().catch((error) => {
+          console.warn('Não foi possível atualizar dados ao voltar para a aba.', error);
+        });
+      }
+    });
+
+    window.addEventListener('focus', () => {
+      if (googleAccessToken) {
+        loadStateFromDrive().catch((error) => {
+          console.warn('Não foi possível atualizar dados ao focar a janela.', error);
+        });
+      }
     });
 
     loadAppState();
