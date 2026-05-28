@@ -637,6 +637,78 @@
       background: var(--surface);
     }
 
+
+
+    .reorder-dialog {
+      width: min(560px, 100%);
+    }
+
+    .reorder-list {
+      display: grid;
+      gap: 10px;
+      width: 100%;
+      max-height: min(62dvh, 520px);
+      margin: 16px 0 18px;
+      overflow: auto;
+    }
+
+    .reorder-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      align-items: stretch;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .reorder-item-main {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+      padding: 12px;
+    }
+
+    .reorder-item-title {
+      color: var(--text);
+      font-weight: 900;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .reorder-item-meta {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .reorder-move-button {
+      min-width: var(--tap-size);
+      min-height: 100%;
+      padding: 10px 12px;
+      border: 0;
+      border-left: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .reorder-move-button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .reorder-empty {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-align: center;
+      background: var(--surface);
+    }
+
     .today-area {
       padding-top: 22px;
       border-top: 1px solid var(--line);
@@ -1035,6 +1107,7 @@
         <div class="today-day-tools" aria-label="Tempo útil do dia">
           <button class="export-button today-time-button" id="daily-useful-minutes-button" type="button">Tempo útil do dia</button>
           <button class="export-button today-time-button" id="calendar-button" type="button">Calendário</button>
+          <button class="export-button today-time-button" id="reorder-today-button" type="button">Reordenar</button>
           <span class="today-time-summary" id="daily-useful-minutes-summary">Tempo útil não definido.</span>
           <span class="today-time-progress" id="today-time-progress">Estimado hoje: 0 min.</span>
         </div>
@@ -1193,6 +1266,21 @@
     </div>
   </div>
 
+
+
+  <div class="modal-backdrop" id="reorder-today-modal" role="dialog" aria-modal="true" aria-labelledby="reorder-today-title">
+    <div class="confirm-dialog reorder-dialog">
+      <h2 id="reorder-today-title">Reordenar</h2>
+      <p>Altere a ordem das tarefas adicionadas ao planejamento de hoje.</p>
+      <div class="reorder-list" id="reorder-today-list" aria-label="Reordenar planejamento de hoje">
+        <div class="reorder-empty">Nenhuma tarefa adicionada ao planejamento de hoje.</div>
+      </div>
+      <div class="modal-actions">
+        <button class="cancel-button" id="close-reorder-today" type="button">Fechar</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="finish-day-modal" role="dialog" aria-modal="true" aria-labelledby="finish-day-title">
     <div class="confirm-dialog">
       <h2 id="finish-day-title">Concluir o dia?</h2>
@@ -1260,6 +1348,10 @@
     const calendarModal = document.querySelector('#calendar-modal');
     const calendarList = document.querySelector('#calendar-list');
     const closeCalendarButton = document.querySelector('#close-calendar');
+    const reorderTodayButton = document.querySelector('#reorder-today-button');
+    const reorderTodayModal = document.querySelector('#reorder-today-modal');
+    const reorderTodayList = document.querySelector('#reorder-today-list');
+    const closeReorderTodayButton = document.querySelector('#close-reorder-today');
     const dailyUsefulMinutesSummary = document.querySelector('#daily-useful-minutes-summary');
     const todayTimeProgress = document.querySelector('#today-time-progress');
     const exportDataButton = document.querySelector('#export-data-button');
@@ -2185,6 +2277,10 @@
       );
 
       updateDailyUsefulMinutesView();
+
+      if (reorderTodayModal.classList.contains('visible')) {
+        renderReorderTodayList();
+      }
     }
 
     function isTaskInsideDeletedTask(task, deletedTask) {
@@ -2992,6 +3088,115 @@
     calendarModal.addEventListener('click', (event) => {
       if (event.target === calendarModal) {
         closeCalendarModal();
+      }
+    });
+
+
+
+    function getReorderTaskMeta(task) {
+      const details = [];
+      const path = getTaskPath(task);
+
+      if (path) {
+        details.push(path);
+      }
+
+      if (task.dueDate) {
+        details.push(getDaysLabel(task.dueDate));
+      }
+
+      if (task.estimatedMinutes) {
+        details.push(`${task.estimatedMinutes} min`);
+      }
+
+      return details.join(' · ');
+    }
+
+    function moveTodayPlanTask(index, direction) {
+      const targetIndex = index + direction;
+
+      if (targetIndex < 0 || targetIndex >= todayPlan.length) {
+        return;
+      }
+
+      const reorderedTodayPlan = [...todayPlan];
+      const [movedTask] = reorderedTodayPlan.splice(index, 1);
+      reorderedTodayPlan.splice(targetIndex, 0, movedTask);
+      todayPlan = reorderedTodayPlan;
+      saveAppState();
+      renderTodayTab();
+      renderReorderTodayList();
+    }
+
+    function createReorderTodayItem(task, index) {
+      const item = document.createElement('div');
+      item.className = 'reorder-item';
+
+      const main = document.createElement('div');
+      main.className = 'reorder-item-main';
+
+      const title = document.createElement('span');
+      title.className = 'reorder-item-title';
+      title.textContent = task.title;
+
+      const meta = document.createElement('span');
+      meta.className = 'reorder-item-meta';
+      meta.textContent = getReorderTaskMeta(task) || `Posição ${index + 1}`;
+
+      main.append(title, meta);
+
+      const upButton = document.createElement('button');
+      upButton.className = 'reorder-move-button';
+      upButton.type = 'button';
+      upButton.textContent = '↑';
+      upButton.setAttribute('aria-label', `Mover ${task.title} para cima`);
+      upButton.disabled = index === 0;
+      upButton.addEventListener('click', () => moveTodayPlanTask(index, -1));
+
+      const downButton = document.createElement('button');
+      downButton.className = 'reorder-move-button';
+      downButton.type = 'button';
+      downButton.textContent = '↓';
+      downButton.setAttribute('aria-label', `Mover ${task.title} para baixo`);
+      downButton.disabled = index === todayPlan.length - 1;
+      downButton.addEventListener('click', () => moveTodayPlanTask(index, 1));
+
+      item.append(main, upButton, downButton);
+      return item;
+    }
+
+    function renderReorderTodayList() {
+      reorderTodayList.innerHTML = '';
+
+      if (todayPlan.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'reorder-empty';
+        emptyState.textContent = 'Nenhuma tarefa adicionada ao planejamento de hoje.';
+        reorderTodayList.append(emptyState);
+        return;
+      }
+
+      todayPlan.forEach((task, index) => {
+        reorderTodayList.append(createReorderTodayItem(task, index));
+      });
+    }
+
+    function closeReorderTodayModal() {
+      reorderTodayModal.classList.remove('visible');
+      reorderTodayButton.focus();
+    }
+
+    reorderTodayButton.addEventListener('click', () => {
+      renderReorderTodayList();
+      reorderTodayModal.classList.add('visible');
+      closeReorderTodayButton.focus();
+    });
+
+    closeReorderTodayButton.addEventListener('click', closeReorderTodayModal);
+
+    reorderTodayModal.addEventListener('click', (event) => {
+      if (event.target === reorderTodayModal) {
+        closeReorderTodayModal();
       }
     });
 
