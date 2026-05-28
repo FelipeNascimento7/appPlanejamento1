@@ -27,8 +27,8 @@
 
     :root[data-theme="dark"] {
       color-scheme: dark;
-      --background: #0d0d0d;
-      --surface: #000000;
+      --background: #111111;
+      --surface: #171717;
       --surface-muted: #24231f;
       --text: #f6f6f4;
       --muted: #e2e0db;
@@ -1339,6 +1339,8 @@
     let driveSaveTimer = null;
     let isApplyingRemoteState = false;
     let isDriveBusy = false;
+    let pendingDriveSave = false;
+    let shouldForceLocalStateToDrive = false;
 
     function normalizeTheme(value) {
       return value === 'dark' ? 'dark' : 'light';
@@ -2367,9 +2369,21 @@
 
       todayPlan = importedTodayPlan;
       lastKnownDate = formatDateValue(getTodayStart());
-      saveAppState();
+      shouldForceLocalStateToDrive = true;
+      saveAppState({ skipDrive: true });
       renderCurrentLevel();
       renderTodayTab();
+      forceUploadImportedCsvToDrive();
+    }
+
+    async function forceUploadImportedCsvToDrive() {
+      if (!googleAccessToken) {
+        return;
+      }
+
+      clearTimeout(driveSaveTimer);
+      updateDriveSyncStatus('CSV importado. Atualizando Google Drive...', 'syncing');
+      await saveStateToDrive();
     }
 
     function updateEmptyState() {
@@ -3302,8 +3316,28 @@
       }
     }
 
+    async function uploadCurrentLocalStateToDrive(existingFile = null, message = 'Dados locais enviados para o Google Drive.') {
+      const localState = getSavedLocalState() || getAppState();
+
+      if (existingFile && existingFile.id) {
+        driveFileId = existingFile.id;
+        await updateDriveStateFile(existingFile.id, localState);
+      } else {
+        await createDriveStateFile(localState);
+      }
+
+      shouldForceLocalStateToDrive = false;
+      localStorage.setItem(storageKey, JSON.stringify(localState));
+      updateDriveSyncStatus(message, 'connected');
+    }
+
     async function saveStateToDrive() {
-      if (!googleAccessToken || isDriveBusy) {
+      if (!googleAccessToken) {
+        return;
+      }
+
+      if (isDriveBusy) {
+        pendingDriveSave = true;
         return;
       }
 
@@ -3324,6 +3358,7 @@
           await createDriveStateFile(state);
         }
 
+        shouldForceLocalStateToDrive = false;
         localStorage.setItem(storageKey, JSON.stringify(state));
         updateDriveSyncStatus(`Google Drive sincronizado às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}.`, 'connected');
       } catch (error) {
@@ -3331,11 +3366,23 @@
         updateDriveSyncStatus('Não foi possível salvar no Google Drive agora.', 'error');
       } finally {
         isDriveBusy = false;
+
+        if (pendingDriveSave && googleAccessToken) {
+          pendingDriveSave = false;
+          setTimeout(() => {
+            saveStateToDrive();
+          }, 0);
+        }
       }
     }
 
     function scheduleDriveSave() {
       if (!googleAccessToken) {
+        return;
+      }
+
+      if (isDriveBusy) {
+        pendingDriveSave = true;
         return;
       }
 
@@ -3359,13 +3406,23 @@
         const existingFile = await findDriveStateFile();
 
         if (!existingFile) {
-          await createDriveStateFile(localState);
-          updateDriveSyncStatus('Arquivo criado no Google Drive. Sincronização ativa.', 'connected');
+          await uploadCurrentLocalStateToDrive(null, 'Arquivo criado no Google Drive com os dados locais. Sincronização ativa.');
           return;
         }
 
         driveFileId = existingFile.id;
+
+        if (shouldForceLocalStateToDrive) {
+          await uploadCurrentLocalStateToDrive(existingFile, 'CSV importado e enviado para o Google Drive.');
+          return;
+        }
+
         const cloudState = await downloadDriveState(existingFile.id);
+
+        if (shouldForceLocalStateToDrive) {
+          await uploadCurrentLocalStateToDrive(existingFile, 'CSV importado e enviado para o Google Drive.');
+          return;
+        }
         const localHasStoredState = Boolean(savedLocalState);
         const localHasData = stateHasUserData(savedLocalState);
         const cloudHasData = stateHasUserData(cloudState);
