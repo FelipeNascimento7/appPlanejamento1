@@ -16,9 +16,30 @@
       --accent: #111111;
       --accent-soft: #eeeeea;
       --danger: #b42318;
+      --danger-soft: #fff4f2;
+      --placeholder: #9a9791;
+      --nav-background: rgba(246, 246, 244, 0.92);
+      --modal-shade: rgba(23, 23, 23, 0.42);
       --radius: 16px;
       --tap-size: 44px;
       --content-width: 720px;
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --background: #0d0d0d;
+      --surface: #000000;
+      --surface-muted: #24231f;
+      --text: #f6f6f4;
+      --muted: #e2e0db;
+      --line: #73716d;
+      --accent: #f6f6f4;
+      --accent-soft: #2f2e2a;
+      --danger: #ff766b;
+      --danger-soft: rgba(255, 118, 107, 0.14);
+      --placeholder: #aaa7a1;
+      --nav-background: rgba(17, 17, 17, 0.92);
+      --modal-shade: rgba(0, 0, 0, 0.64);
     }
 
     * {
@@ -76,7 +97,7 @@
       justify-content: center;
       gap: 6px;
       padding: calc(10px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-left)) 10px max(16px, env(safe-area-inset-right));
-      background: rgba(246, 246, 244, 0.92);
+      background: var(--nav-background);
       border-bottom: 1px solid var(--line);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
@@ -165,13 +186,15 @@
 
     .task-input::placeholder,
     .due-date-input::placeholder,
+    .task-name-input::placeholder,
     .estimate-minutes-input::placeholder,
     .daily-useful-minutes-input::placeholder {
-      color: #9a9791;
+      color: var(--placeholder);
     }
 
     .task-input:focus,
     .due-date-input:focus,
+    .task-name-input:focus,
     .estimate-minutes-input:focus,
     .daily-useful-minutes-input:focus {
       outline: 2px solid var(--accent);
@@ -180,6 +203,7 @@
 
     .add-button,
     .save-due-button,
+    .save-name-button,
     .save-estimate-button,
     .save-useful-time-button,
     .export-button,
@@ -196,6 +220,7 @@
 
     .add-button,
     .save-due-button,
+    .save-name-button,
     .save-estimate-button,
     .save-useful-time-button,
     .export-button {
@@ -206,6 +231,7 @@
 
     .add-button:hover,
     .save-due-button:hover,
+    .save-name-button:hover,
     .save-estimate-button:hover,
     .save-useful-time-button:hover,
     .export-button:hover {
@@ -245,7 +271,7 @@
     }
 
     .breadcrumb-button,
-    .back-button,
+    .recurrence-button,
     .estimate-minutes-button,
     .days-button {
       min-height: 38px;
@@ -265,13 +291,23 @@
       cursor: default;
     }
 
-    .back-button,
+    .breadcrumb-button.active.editable {
+      border-color: var(--line);
+      background: var(--surface);
+      cursor: pointer;
+    }
+
+    .breadcrumb-button.active.editable:hover {
+      background: var(--accent-soft);
+    }
+
+    .recurrence-button,
     .estimate-minutes-button,
     .days-button {
       display: none;
     }
 
-    .back-button.visible,
+    .recurrence-button.visible,
     .estimate-minutes-button.visible,
     .days-button.visible {
       display: inline-flex;
@@ -378,19 +414,20 @@
     }
 
     .delete-button:hover {
-      background: #fff4f2;
+      background: var(--danger-soft);
     }
 
     .task-days {
       min-height: 54px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
       padding: 10px 12px;
       border-left: 1px solid var(--line);
       color: var(--muted);
       font-size: 0.9rem;
       font-weight: 800;
+      text-align: right;
       white-space: nowrap;
     }
 
@@ -529,6 +566,77 @@
       font-weight: 900;
     }
 
+    .calendar-dialog {
+      width: min(560px, 100%);
+    }
+
+    .calendar-list {
+      display: grid;
+      gap: 14px;
+      width: 100%;
+      max-height: min(62dvh, 520px);
+      margin: 16px 0 18px;
+      overflow: auto;
+    }
+
+    .calendar-day {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .calendar-date {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .calendar-task-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .calendar-task {
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    .calendar-task:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .calendar-task-title {
+      display: block;
+      color: var(--text);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .calendar-task-meta {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .calendar-empty {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-align: center;
+      background: var(--surface);
+    }
+
     .today-area {
       padding-top: 22px;
       border-top: 1px solid var(--line);
@@ -632,7 +740,7 @@
       align-items: center;
       justify-content: center;
       padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
-      background: rgba(23, 23, 23, 0.42);
+      background: var(--modal-shade);
     }
 
     .modal-backdrop.visible {
@@ -662,6 +770,8 @@
     }
 
     .due-date-input,
+    .task-name-input,
+    .task-name-input,
     .estimate-minutes-input,
     .daily-useful-minutes-input {
       width: 100%;
@@ -673,18 +783,21 @@
       color: var(--text);
     }
 
+    .task-name-input,
     .estimate-minutes-input,
     .daily-useful-minutes-input {
       margin: 4px 0 18px;
     }
 
-    .due-mode-options {
+    .due-mode-options,
+    .recurrence-options {
       display: flex;
       gap: 8px;
       margin: 12px 0 14px;
     }
 
-    .due-mode-option {
+    .due-mode-option,
+    .recurrence-option {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -696,7 +809,8 @@
       cursor: pointer;
     }
 
-    .due-mode-option input {
+    .due-mode-option input,
+    .recurrence-option input {
       margin: 0;
     }
 
@@ -785,7 +899,7 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
-      .back-button.visible,
+      .recurrence-button.visible,
       .estimate-minutes-button.visible,
       .days-button.visible {
         width: 100%;
@@ -826,7 +940,8 @@
         grid-column: 1 / -1;
         grid-row: 2;
         min-height: 40px;
-        justify-content: flex-start;
+        justify-content: flex-end;
+        text-align: right;
         border-left: 0;
         border-top: 1px solid var(--line);
       }
@@ -851,7 +966,8 @@
         min-height: 56px;
       }
 
-      .due-mode-options {
+      .due-mode-options,
+      .recurrence-options {
         flex-direction: column;
       }
 
@@ -903,7 +1019,7 @@
         <div class="planning-toolbar">
           <div class="breadcrumb" id="breadcrumb" aria-label="Caminho atual"></div>
           <div class="toolbar-actions">
-            <button class="back-button" id="back-button" type="button">Voltar</button>
+            <button class="recurrence-button" id="recurrence-button" type="button">Recorrência</button>
             <button class="estimate-minutes-button" id="estimate-minutes-button" type="button">Minutos estimados</button>
             <button class="days-button" id="days-button" type="button">Dias restantes</button>
           </div>
@@ -918,6 +1034,7 @@
         <p>Veja o foco do dia e acompanhe o que precisa sair do papel.</p>
         <div class="today-day-tools" aria-label="Tempo útil do dia">
           <button class="export-button today-time-button" id="daily-useful-minutes-button" type="button">Tempo útil do dia</button>
+          <button class="export-button today-time-button" id="calendar-button" type="button">Calendário</button>
           <span class="today-time-summary" id="daily-useful-minutes-summary">Tempo útil não definido.</span>
           <span class="today-time-progress" id="today-time-progress">Estimado hoje: 0 min.</span>
         </div>
@@ -946,6 +1063,7 @@
         <div class="settings-actions">
           <button class="export-button" id="finish-day-button" type="button">Concluir o dia</button>
           <button class="export-button" id="report-button" type="button">Relatório</button>
+          <button class="export-button" id="theme-toggle-button" type="button">Tema escuro</button>
           <button class="export-button" id="connect-drive-button" type="button">Conectar Google Drive</button>
           <span class="drive-sync-status" id="drive-sync-status" role="status">Google Drive desconectado.</span>
           <button class="export-button" id="export-data-button" type="button">Exportar dados CSV</button>
@@ -997,6 +1115,47 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="recurrence-modal" role="dialog" aria-modal="true" aria-labelledby="recurrence-title">
+    <div class="confirm-dialog">
+      <h2 id="recurrence-title">Recorrência</h2>
+      <p>Defina se esta tarefa deve voltar automaticamente após ser concluída.</p>
+      <div class="recurrence-options" role="radiogroup" aria-label="Recorrência da tarefa">
+        <label class="recurrence-option">
+          <input type="radio" name="recurrence-mode" value="none" checked>
+          Sem recorrência
+        </label>
+        <label class="recurrence-option">
+          <input type="radio" name="recurrence-mode" value="daily">
+          Diária
+        </label>
+        <label class="recurrence-option">
+          <input type="radio" name="recurrence-mode" value="weekly">
+          Semanal
+        </label>
+        <label class="recurrence-option">
+          <input type="radio" name="recurrence-mode" value="monthly">
+          Mensal
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="cancel-button" id="cancel-recurrence" type="button">Cancelar</button>
+        <button class="save-due-button" id="save-recurrence" type="button">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="edit-task-name-modal" role="dialog" aria-modal="true" aria-labelledby="edit-task-name-title">
+    <div class="confirm-dialog">
+      <h2 id="edit-task-name-title">Editar nome da tarefa</h2>
+      <p>Atualize o nome da tarefa atual. Essa alteração também será refletida no caminho e nas listas.</p>
+      <input class="task-name-input" id="task-name-input" type="text" placeholder="Nome da tarefa" autocomplete="off">
+      <div class="modal-actions">
+        <button class="cancel-button" id="cancel-edit-task-name" type="button">Cancelar</button>
+        <button class="save-name-button" id="save-edit-task-name" type="button">Salvar</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="estimate-minutes-modal" role="dialog" aria-modal="true" aria-labelledby="estimate-minutes-title">
     <div class="confirm-dialog">
       <h2 id="estimate-minutes-title">Minutos estimados</h2>
@@ -1017,6 +1176,19 @@
       <div class="modal-actions">
         <button class="cancel-button" id="cancel-daily-useful-minutes" type="button">Cancelar</button>
         <button class="save-useful-time-button" id="save-daily-useful-minutes" type="button">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-title">
+    <div class="confirm-dialog calendar-dialog">
+      <h2 id="calendar-title">Calendário</h2>
+      <p>Dias com tarefas agendadas. Cada data mostra as tarefas com vencimento definido.</p>
+      <div class="calendar-list" id="calendar-list" aria-label="Lista de tarefas agendadas">
+        <div class="calendar-empty">Nenhuma tarefa agendada ainda.</div>
+      </div>
+      <div class="modal-actions">
+        <button class="cancel-button" id="close-calendar" type="button">Fechar</button>
       </div>
     </div>
   </div>
@@ -1078,12 +1250,16 @@
     const taskList = document.querySelector('#task-list');
     const emptyState = document.querySelector('#empty-state');
     const breadcrumb = document.querySelector('#breadcrumb');
-    const backButton = document.querySelector('#back-button');
+    const recurrenceButton = document.querySelector('#recurrence-button');
     const estimateMinutesButton = document.querySelector('#estimate-minutes-button');
     const daysButton = document.querySelector('#days-button');
     const todayPlanList = document.querySelector('#today-plan-list');
     const todayDueList = document.querySelector('#today-due-list');
     const dailyUsefulMinutesButton = document.querySelector('#daily-useful-minutes-button');
+    const calendarButton = document.querySelector('#calendar-button');
+    const calendarModal = document.querySelector('#calendar-modal');
+    const calendarList = document.querySelector('#calendar-list');
+    const closeCalendarButton = document.querySelector('#close-calendar');
     const dailyUsefulMinutesSummary = document.querySelector('#daily-useful-minutes-summary');
     const todayTimeProgress = document.querySelector('#today-time-progress');
     const exportDataButton = document.querySelector('#export-data-button');
@@ -1098,6 +1274,7 @@
     const reportModal = document.querySelector('#report-modal');
     const reportTableBody = document.querySelector('#report-table-body');
     const closeReportButton = document.querySelector('#close-report');
+    const themeToggleButton = document.querySelector('#theme-toggle-button');
     const connectDriveButton = document.querySelector('#connect-drive-button');
     const driveSyncStatus = document.querySelector('#drive-sync-status');
     const clearDataButton = document.querySelector('#clear-data-button');
@@ -1116,6 +1293,14 @@
     const dueModeInputs = document.querySelectorAll('input[name="due-mode"]');
     const cancelDueButton = document.querySelector('#cancel-due');
     const saveDueButton = document.querySelector('#save-due');
+    const recurrenceModal = document.querySelector('#recurrence-modal');
+    const recurrenceModeInputs = document.querySelectorAll('input[name="recurrence-mode"]');
+    const cancelRecurrenceButton = document.querySelector('#cancel-recurrence');
+    const saveRecurrenceButton = document.querySelector('#save-recurrence');
+    const editTaskNameModal = document.querySelector('#edit-task-name-modal');
+    const taskNameInput = document.querySelector('#task-name-input');
+    const cancelEditTaskNameButton = document.querySelector('#cancel-edit-task-name');
+    const saveEditTaskNameButton = document.querySelector('#save-edit-task-name');
     const estimateMinutesModal = document.querySelector('#estimate-minutes-modal');
     const estimateMinutesInput = document.querySelector('#estimate-minutes-input');
     const cancelEstimateMinutesButton = document.querySelector('#cancel-estimate-minutes');
@@ -1137,7 +1322,8 @@
       children: [],
       dueDate: null,
       parent: null,
-      estimatedMinutes: null
+      estimatedMinutes: null,
+      recurrence: null
     };
     let nextTaskId = 1;
     let currentLevel = rootLevel;
@@ -1145,6 +1331,7 @@
     let todayPlan = [];
     let dailyUsefulMinutes = null;
     let dailyReports = [];
+    let appTheme = getSavedTheme();
     let lastKnownDate = formatDateValue(getTodayStart());
     let googleAccessToken = null;
     let googleTokenClient = null;
@@ -1153,7 +1340,40 @@
     let isApplyingRemoteState = false;
     let isDriveBusy = false;
 
-    function createTaskData(title, parent, dueDate = null, children = [], id = null, checked = false, estimatedMinutes = null) {
+    function normalizeTheme(value) {
+      return value === 'dark' ? 'dark' : 'light';
+    }
+
+    function getSavedTheme() {
+      try {
+        const savedState = localStorage.getItem(storageKey);
+
+        if (savedState) {
+          const parsedState = JSON.parse(savedState);
+          if (parsedState && parsedState.appTheme) {
+            return normalizeTheme(parsedState.appTheme);
+          }
+        }
+
+        return normalizeTheme(localStorage.getItem(`${storageKey}-theme`));
+      } catch (error) {
+        return 'light';
+      }
+    }
+
+    function updateThemeToggleButton() {
+      themeToggleButton.textContent = appTheme === 'dark' ? 'Tema claro' : 'Tema escuro';
+      themeToggleButton.setAttribute('aria-pressed', String(appTheme === 'dark'));
+    }
+
+    function applyTheme(theme) {
+      appTheme = normalizeTheme(theme);
+      document.documentElement.dataset.theme = appTheme;
+      localStorage.setItem(`${storageKey}-theme`, appTheme);
+      updateThemeToggleButton();
+    }
+
+    function createTaskData(title, parent, dueDate = null, children = [], id = null, checked = false, estimatedMinutes = null, recurrence = null) {
       const taskId = id || `task-${nextTaskId++}`;
       const numericId = Number(String(taskId).replace('task-', ''));
 
@@ -1168,7 +1388,8 @@
         parent,
         dueDate,
         checked,
-        estimatedMinutes
+        estimatedMinutes,
+        recurrence: normalizeRecurrence(recurrence)
       };
     }
 
@@ -1190,6 +1411,70 @@
       }
 
       return Math.floor(minutes);
+    }
+
+    function normalizeRecurrence(value) {
+      return ['daily', 'weekly', 'monthly'].includes(value) ? value : null;
+    }
+
+    function getRecurrenceLabel(value) {
+      const labels = {
+        daily: 'Diária',
+        weekly: 'Semanal',
+        monthly: 'Mensal'
+      };
+
+      return labels[normalizeRecurrence(value)] || 'Sem recorrência';
+    }
+
+    function addMonthsSafely(date, monthsToAdd) {
+      const nextDate = new Date(date.getFullYear(), date.getMonth(), 1);
+      const originalDay = date.getDate();
+      nextDate.setMonth(nextDate.getMonth() + monthsToAdd);
+      const lastDayOfTargetMonth = new Date(nextDate.getFullYear(), nextDate.getMonth() + 1, 0).getDate();
+      nextDate.setDate(Math.min(originalDay, lastDayOfTargetMonth));
+      return nextDate;
+    }
+
+    function addRecurrenceInterval(date, recurrence) {
+      const nextDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+      if (recurrence === 'daily') {
+        nextDate.setDate(nextDate.getDate() + 1);
+        return nextDate;
+      }
+
+      if (recurrence === 'weekly') {
+        nextDate.setDate(nextDate.getDate() + 7);
+        return nextDate;
+      }
+
+      if (recurrence === 'monthly') {
+        return addMonthsSafely(nextDate, 1);
+      }
+
+      return nextDate;
+    }
+
+    function getNextDueDateForRecurrence(task, referenceDateValue = lastKnownDate) {
+      const recurrence = normalizeRecurrence(task.recurrence);
+
+      if (!recurrence) {
+        return task.dueDate || null;
+      }
+
+      const referenceDate = parseLocalDate(referenceDateValue || formatDateValue(getTodayStart()));
+      let nextDate = task.dueDate
+        ? parseLocalDate(task.dueDate)
+        : parseLocalDate(referenceDateValue || formatDateValue(getTodayStart()));
+
+      nextDate = addRecurrenceInterval(nextDate, recurrence);
+
+      while (nextDate <= referenceDate) {
+        nextDate = addRecurrenceInterval(nextDate, recurrence);
+      }
+
+      return formatDateValue(nextDate);
     }
 
     function getConclusionPercentage(completedMinutes, estimatedMinutes) {
@@ -1226,6 +1511,7 @@
         dueDate: task.dueDate,
         checked: task.checked,
         estimatedMinutes: task.estimatedMinutes,
+        recurrence: task.recurrence,
         children: task.children.map(serializeTask)
       };
     }
@@ -1238,7 +1524,8 @@
         [],
         savedTask.id,
         Boolean(savedTask.checked),
-        normalizeEstimatedMinutes(savedTask.estimatedMinutes)
+        normalizeEstimatedMinutes(savedTask.estimatedMinutes),
+        normalizeRecurrence(savedTask.recurrence)
       );
       task.children = (savedTask.children || []).map((child) => hydrateTask(child, task));
       return task;
@@ -1246,12 +1533,13 @@
 
     function getAppState() {
       return {
-        version: 2,
+        version: 3,
         updatedAt: new Date().toISOString(),
         tasks: rootLevel.children.map(serializeTask),
         todayPlanIds: todayPlan.map((task) => task.id),
         dailyUsefulMinutes,
         dailyReports,
+        appTheme,
         lastKnownDate
       };
     }
@@ -1276,6 +1564,7 @@
       dailyReports = Array.isArray(safeState.dailyReports)
         ? safeState.dailyReports.map(normalizeDailyReport).filter(Boolean)
         : [];
+      applyTheme(safeState.appTheme || safeState.theme || appTheme);
       lastKnownDate = safeState.lastKnownDate || formatDateValue(getTodayStart());
       currentLevel = rootLevel;
     }
@@ -1365,7 +1654,16 @@
 
         if (level === currentLevel) {
           button.classList.add('active');
-          button.disabled = true;
+
+          if (level.parent) {
+            button.classList.add('editable');
+            button.disabled = false;
+            button.title = 'Editar nome da tarefa';
+            button.setAttribute('aria-label', `Editar nome de ${level.title}`);
+            button.addEventListener('click', openEditTaskNameModal);
+          } else {
+            button.disabled = true;
+          }
         } else {
           button.addEventListener('click', () => {
             currentLevel = level;
@@ -1376,9 +1674,10 @@
         breadcrumb.append(button);
       });
 
-      backButton.classList.toggle('visible', currentLevel.parent !== null);
+      recurrenceButton.classList.toggle('visible', currentLevel.parent !== null);
       estimateMinutesButton.classList.toggle('visible', currentLevel.parent !== null);
       daysButton.classList.toggle('visible', currentLevel.parent !== null);
+      updateRecurrenceButton();
       updateEstimateMinutesButton();
       updateDaysButton();
     }
@@ -1419,7 +1718,7 @@
       lastKnownDate = currentDate;
       todayPlan = [];
       dailyUsefulMinutes = null;
-      clearDueDatesFromCheckedTasks();
+      completeCheckedTasksForAutomaticDayClose(lastKnownDate);
       renderCurrentLevel();
       renderTodayTab();
       saveAppState();
@@ -1433,13 +1732,31 @@
       return Math.round((dueDate - today) / millisecondsPerDay);
     }
 
-    function clearDueDatesFromCheckedTasks() {
+    function completeCheckedTasksForAutomaticDayClose(referenceDateValue = lastKnownDate) {
       getAllTasks().forEach((task) => {
-        if (task.checked) {
-          task.dueDate = null;
-          task.checked = false;
+        if (!task.checked) {
+          return;
         }
+
+        if (task.recurrence) {
+          task.dueDate = getNextDueDateForRecurrence(task, referenceDateValue);
+        } else {
+          task.dueDate = null;
+        }
+
+        task.checked = false;
       });
+    }
+
+    function updateRecurrenceButton() {
+      if (!currentLevel.parent) {
+        recurrenceButton.textContent = 'Recorrência';
+        return;
+      }
+
+      recurrenceButton.textContent = currentLevel.recurrence
+        ? getRecurrenceLabel(currentLevel.recurrence)
+        : 'Recorrência';
     }
 
     function updateEstimateMinutesButton() {
@@ -1449,11 +1766,11 @@
       }
 
       if (!currentLevel.estimatedMinutes) {
-        estimateMinutesButton.textContent = 'Minutos: definir';
+        estimateMinutesButton.textContent = 'Minutos';
         return;
       }
 
-      estimateMinutesButton.textContent = `Minutos: ${currentLevel.estimatedMinutes}`;
+      estimateMinutesButton.textContent = `${currentLevel.estimatedMinutes} min`;
     }
 
     function updateDaysButton() {
@@ -1463,16 +1780,16 @@
       }
 
       if (!currentLevel.dueDate) {
-        daysButton.textContent = 'Dias restantes: definir';
+        daysButton.textContent = 'Data';
         return;
       }
 
       const daysRemaining = getDaysRemaining(currentLevel.dueDate);
 
       if (daysRemaining === 0) {
-        daysButton.textContent = 'Dias restantes: vence hoje';
+        daysButton.textContent = 'Vence hoje';
       } else if (daysRemaining > 0) {
-        daysButton.textContent = `Dias restantes: ${daysRemaining}`;
+        daysButton.textContent = `Em ${daysRemaining} dia(s)`;
       } else {
         daysButton.textContent = `Venceu há ${Math.abs(daysRemaining)} dia(s)`;
       }
@@ -1911,6 +2228,7 @@
           task.dueDate || '',
           daysRemaining,
           task.estimatedMinutes || '',
+          task.recurrence || '',
           isTaskOverdue(task) ? 'sim' : 'não',
           countOverdueSubtasks(task),
           task.children.length,
@@ -1931,6 +2249,7 @@
         'data_vencimento',
         'dias_restantes',
         'minutos_estimados',
+        'recorrencia',
         'vencida_ou_vence_hoje',
         'subtarefas_vencidas',
         'quantidade_subtarefas',
@@ -2033,7 +2352,8 @@
           [],
           record.id || null,
           record.marcado === 'sim',
-          normalizeEstimatedMinutes(record.minutos_estimados || record.estimatedMinutes)
+          normalizeEstimatedMinutes(record.minutos_estimados || record.estimatedMinutes),
+          normalizeRecurrence(record.recorrencia || record.recurrence)
         );
 
         parent.children.push(task);
@@ -2059,15 +2379,36 @@
         : 'Nenhum bloco criado ainda.';
     }
 
-    function createEstimatedMinutesBadge(task) {
-      if (!task.estimatedMinutes) {
+    function createTaskDaysBadge(task) {
+      if (!task.dueDate && !task.estimatedMinutes) {
         return null;
       }
 
       const badge = document.createElement('span');
-      badge.className = 'task-estimate';
-      badge.textContent = `${task.estimatedMinutes} min`;
-      badge.setAttribute('aria-label', `${task.estimatedMinutes} minutos estimados`);
+      const parts = [];
+      const ariaParts = [];
+
+      if (task.dueDate) {
+        const daysClass = getDaysClass(task.dueDate);
+        badge.className = 'task-days';
+        badge.textContent = getDaysLabel(task.dueDate);
+        parts.push(getDaysLabel(task.dueDate));
+        ariaParts.push(`prazo: ${getDaysLabel(task.dueDate)}`);
+
+        if (daysClass) {
+          badge.classList.add(daysClass);
+        }
+      } else {
+        badge.className = 'task-days';
+      }
+
+      if (task.estimatedMinutes) {
+        parts.push(`${task.estimatedMinutes} min`);
+        ariaParts.push(`${task.estimatedMinutes} minutos estimados`);
+      }
+
+      badge.textContent = parts.join(' · ');
+      badge.setAttribute('aria-label', ariaParts.join(', '));
       return badge;
     }
 
@@ -2091,10 +2432,6 @@
       titleText.textContent = task.title;
       titleContent.append(titleText);
       titleButton.append(titleContent);
-      const estimatedMinutesBadge = createEstimatedMinutesBadge(task);
-      if (estimatedMinutesBadge) {
-        titleButton.append(estimatedMinutesBadge);
-      }
       updateTaskStatus(titleButton, task);
 
       titleButton.addEventListener('click', () => {
@@ -2116,15 +2453,9 @@
 
       item.append(titleButton);
 
-      if (task.dueDate) {
-        const daysBadge = document.createElement('span');
-        const daysClass = getDaysClass(task.dueDate);
-        daysBadge.className = 'task-days';
-        daysBadge.textContent = getDaysLabel(task.dueDate);
-        if (daysClass) {
-          daysBadge.classList.add(daysClass);
-        }
-        item.append(daysBadge);
+      const taskDaysBadge = createTaskDaysBadge(task);
+      if (taskDaysBadge) {
+        item.append(taskDaysBadge);
       }
 
       item.append(deleteButton);
@@ -2179,15 +2510,6 @@
       updateEmptyState();
     }
 
-    backButton.addEventListener('click', () => {
-      if (!currentLevel.parent) {
-        return;
-      }
-
-      currentLevel = currentLevel.parent;
-      renderCurrentLevel();
-    });
-
     taskForm.addEventListener('submit', (event) => {
       event.preventDefault();
       const taskTitle = taskInput.value.trim();
@@ -2227,6 +2549,100 @@
     dueModal.addEventListener('click', (event) => {
       if (event.target === dueModal) {
         closeDueModal();
+      }
+    });
+
+    function closeRecurrenceModal() {
+      recurrenceModal.classList.remove('visible');
+      recurrenceButton.focus();
+    }
+
+    function setRecurrenceMode(value) {
+      const recurrence = normalizeRecurrence(value);
+      recurrenceModeInputs.forEach((input) => {
+        input.checked = input.value === (recurrence || 'none');
+      });
+    }
+
+    recurrenceButton.addEventListener('click', () => {
+      if (!currentLevel.parent) {
+        return;
+      }
+
+      setRecurrenceMode(currentLevel.recurrence || 'none');
+      recurrenceModal.classList.add('visible');
+      saveRecurrenceButton.focus();
+    });
+
+    cancelRecurrenceButton.addEventListener('click', closeRecurrenceModal);
+
+    recurrenceModal.addEventListener('click', (event) => {
+      if (event.target === recurrenceModal) {
+        closeRecurrenceModal();
+      }
+    });
+
+    saveRecurrenceButton.addEventListener('click', () => {
+      if (!currentLevel.parent) {
+        return;
+      }
+
+      const selectedMode = document.querySelector('input[name="recurrence-mode"]:checked')?.value || 'none';
+      currentLevel.recurrence = normalizeRecurrence(selectedMode);
+      closeRecurrenceModal();
+      updateRecurrenceButton();
+      saveAppState();
+      renderCurrentLevel();
+      renderTodayTab();
+    });
+
+    function openEditTaskNameModal() {
+      if (!currentLevel.parent) {
+        return;
+      }
+
+      taskNameInput.value = currentLevel.title;
+      editTaskNameModal.classList.add('visible');
+      taskNameInput.focus();
+      taskNameInput.select();
+    }
+
+    function closeEditTaskNameModal() {
+      editTaskNameModal.classList.remove('visible');
+      taskInput.focus();
+    }
+
+    cancelEditTaskNameButton.addEventListener('click', closeEditTaskNameModal);
+
+    editTaskNameModal.addEventListener('click', (event) => {
+      if (event.target === editTaskNameModal) {
+        closeEditTaskNameModal();
+      }
+    });
+
+    saveEditTaskNameButton.addEventListener('click', () => {
+      if (!currentLevel.parent) {
+        return;
+      }
+
+      const newTitle = taskNameInput.value.trim();
+
+      if (!newTitle) {
+        taskNameInput.focus();
+        return;
+      }
+
+      currentLevel.title = newTitle;
+      closeEditTaskNameModal();
+      saveAppState();
+      renderCurrentLevel();
+      renderTodayTab();
+    });
+
+    taskNameInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        saveEditTaskNameButton.click();
       }
     });
 
@@ -2312,20 +2728,52 @@
       return getAllTasks().filter((task) => task.checked);
     }
 
-    function removeCheckedTasks(level = rootLevel) {
+    function completeOrRemoveCheckedTasks(level = rootLevel, referenceDateValue = lastKnownDate) {
       const removedTasks = [];
+      const rescheduledTasks = [];
 
       level.children = level.children.filter((task) => {
         if (task.checked) {
+          if (task.recurrence) {
+            task.dueDate = getNextDueDateForRecurrence(task, referenceDateValue);
+            task.checked = false;
+            rescheduledTasks.push(task);
+            rescheduledTasks.push(...completeCheckedDescendants(task, referenceDateValue));
+            return true;
+          }
+
           removedTasks.push(task);
           return false;
         }
 
-        removedTasks.push(...removeCheckedTasks(task));
+        const childResult = completeOrRemoveCheckedTasks(task, referenceDateValue);
+        removedTasks.push(...childResult.removedTasks);
+        rescheduledTasks.push(...childResult.rescheduledTasks);
         return true;
       });
 
-      return removedTasks;
+      return { removedTasks, rescheduledTasks };
+    }
+
+    function completeCheckedDescendants(task, referenceDateValue = lastKnownDate) {
+      const rescheduledTasks = [];
+
+      task.children.forEach((child) => {
+        if (child.checked) {
+          if (child.recurrence) {
+            child.dueDate = getNextDueDateForRecurrence(child, referenceDateValue);
+            rescheduledTasks.push(child);
+          } else {
+            child.dueDate = null;
+          }
+
+          child.checked = false;
+        }
+
+        rescheduledTasks.push(...completeCheckedDescendants(child, referenceDateValue));
+      });
+
+      return rescheduledTasks;
     }
 
     function closeFinishDayModal() {
@@ -2336,8 +2784,9 @@
     finishDayButton.addEventListener('click', () => {
       const checkedTasks = getCheckedTasks();
       const checkedCount = checkedTasks.length;
+      const recurringCount = checkedTasks.filter((task) => task.recurrence).length;
+      const removableCount = checkedCount - recurringCount;
       const taskWord = checkedCount === 1 ? 'tarefa marcada' : 'tarefas marcadas';
-      const subtreeWord = checkedCount === 1 ? 'dentro dela' : 'dentro delas';
 
       if (checkedCount === 0) {
         finishDayMessage.textContent = 'Nenhuma tarefa está marcada. Marque uma tarefa pelo checkbox antes de concluir o dia.';
@@ -2347,7 +2796,17 @@
         return;
       }
 
-      finishDayMessage.textContent = `Essa ação apaga ${checkedCount} ${taskWord} e todos os sub-blocos ${subtreeWord}.`;
+      const messageParts = [`${checkedCount} ${taskWord} serão concluídas.`];
+
+      if (removableCount > 0) {
+        messageParts.push(`${removableCount} sem recorrência serão apagadas com seus sub-blocos.`);
+      }
+
+      if (recurringCount > 0) {
+        messageParts.push(`${recurringCount} recorrente(s) terão o checkbox limpo e a data reprogramada.`);
+      }
+
+      finishDayMessage.textContent = messageParts.join(' ');
       confirmFinishDayButton.disabled = false;
       finishDayModal.classList.add('visible');
       confirmFinishDayButton.focus();
@@ -2369,11 +2828,17 @@
       }
 
       saveDailyReportSnapshot(lastKnownDate);
-      const removedTasks = removeCheckedTasks();
+      const { removedTasks } = completeOrRemoveCheckedTasks(rootLevel, lastKnownDate);
 
       if (removedTasks.some((task) => isTaskInsideDeletedTask(currentLevel, task))) {
         currentLevel = rootLevel;
       }
+
+      todayPlan = todayPlan.filter((plannedTask) => {
+        return !checkedTasks.some((completedTask) => {
+          return plannedTask === completedTask || isTaskInsideDeletedTask(plannedTask, completedTask);
+        });
+      });
 
       cleanupTodayPlan();
       finishDayModal.classList.remove('visible');
@@ -2381,6 +2846,139 @@
       renderCurrentLevel();
       renderTodayTab();
       finishDayButton.focus();
+    });
+
+    function getScheduledTasksByDate() {
+      const tasksByDate = new Map();
+
+      getAllTasks()
+        .filter((task) => task.dueDate)
+        .sort((firstTask, secondTask) => {
+          const dateComparison = firstTask.dueDate.localeCompare(secondTask.dueDate);
+
+          if (dateComparison !== 0) {
+            return dateComparison;
+          }
+
+          return getTaskPath(firstTask).localeCompare(getTaskPath(secondTask), 'pt-BR');
+        })
+        .forEach((task) => {
+          if (!tasksByDate.has(task.dueDate)) {
+            tasksByDate.set(task.dueDate, []);
+          }
+
+          tasksByDate.get(task.dueDate).push(task);
+        });
+
+      return tasksByDate;
+    }
+
+    function formatCalendarDate(dateValue) {
+      const date = parseLocalDate(dateValue);
+      const formattedDate = date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      const weekday = date.toLocaleDateString('pt-BR', {
+        weekday: 'long'
+      });
+
+      return `${formattedDate} — ${weekday}`;
+    }
+
+    function getCalendarTaskMeta(task) {
+      const details = [];
+      const path = getTaskPath(task);
+
+      if (path) {
+        details.push(path);
+      }
+
+      if (task.estimatedMinutes) {
+        details.push(`${task.estimatedMinutes} min`);
+      }
+
+      if (task.recurrence) {
+        details.push(getRecurrenceLabel(task.recurrence));
+      }
+
+      if (task.checked) {
+        details.push('marcada');
+      }
+
+      return details.join(' · ');
+    }
+
+    function createCalendarTaskItem(task) {
+      const item = document.createElement('li');
+      item.className = 'calendar-task';
+
+      const title = document.createElement('span');
+      title.className = 'calendar-task-title';
+      title.textContent = task.title;
+      item.append(title);
+
+      const metaText = getCalendarTaskMeta(task);
+      if (metaText) {
+        const meta = document.createElement('span');
+        meta.className = 'calendar-task-meta';
+        meta.textContent = metaText;
+        item.append(meta);
+      }
+
+      return item;
+    }
+
+    function renderCalendarList() {
+      const tasksByDate = getScheduledTasksByDate();
+      calendarList.innerHTML = '';
+
+      if (tasksByDate.size === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'calendar-empty';
+        emptyState.textContent = 'Nenhuma tarefa agendada ainda.';
+        calendarList.append(emptyState);
+        return;
+      }
+
+      tasksByDate.forEach((tasks, dateValue) => {
+        const dayBlock = document.createElement('section');
+        dayBlock.className = 'calendar-day';
+
+        const dateTitle = document.createElement('strong');
+        dateTitle.className = 'calendar-date';
+        dateTitle.textContent = formatCalendarDate(dateValue);
+        dayBlock.append(dateTitle);
+
+        const taskList = document.createElement('ul');
+        taskList.className = 'calendar-task-list';
+        tasks.forEach((task) => {
+          taskList.append(createCalendarTaskItem(task));
+        });
+
+        dayBlock.append(taskList);
+        calendarList.append(dayBlock);
+      });
+    }
+
+    function closeCalendarModal() {
+      calendarModal.classList.remove('visible');
+      calendarButton.focus();
+    }
+
+    calendarButton.addEventListener('click', () => {
+      renderCalendarList();
+      calendarModal.classList.add('visible');
+      closeCalendarButton.focus();
+    });
+
+    closeCalendarButton.addEventListener('click', closeCalendarModal);
+
+    calendarModal.addEventListener('click', (event) => {
+      if (event.target === calendarModal) {
+        closeCalendarModal();
+      }
     });
 
     function closeReportModal() {
@@ -2402,6 +3000,11 @@
       if (event.target === reportModal) {
         closeReportModal();
       }
+    });
+
+    themeToggleButton.addEventListener('click', () => {
+      applyTheme(appTheme === 'dark' ? 'light' : 'dark');
+      saveAppState();
     });
 
     function closeClearDataModal() {
@@ -2819,6 +3422,7 @@
       }
     });
 
+    applyTheme(appTheme);
     loadAppState();
     refreshDateSensitiveViews();
     renderCurrentLevel();
