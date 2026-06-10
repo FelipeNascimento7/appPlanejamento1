@@ -1402,6 +1402,7 @@
     const cancelDailyUsefulMinutesButton = document.querySelector('#cancel-daily-useful-minutes');
     const saveDailyUsefulMinutesButton = document.querySelector('#save-daily-useful-minutes');
     const storageKey = 'todo-single-file-state';
+    const driveAutoSyncKey = `${storageKey}-google-drive-auto-sync`;
     const googleDriveConfig = {
       clientId: '842845533430-2h8fga8b2iu63t7ltrr39nuelrjbqts5.apps.googleusercontent.com',
       scope: 'https://www.googleapis.com/auth/drive.appdata',
@@ -2474,6 +2475,9 @@
 
     async function forceUploadImportedCsvToDrive() {
       if (!googleAccessToken) {
+        pendingDriveSave = true;
+        setDriveAutoSyncEnabled(isDriveAutoSyncEnabled());
+        trySilentGoogleDriveReconnect();
         return;
       }
 
@@ -3310,6 +3314,35 @@
       driveSyncStatus.dataset.state = state;
     }
 
+    function isDriveAutoSyncEnabled() {
+      return localStorage.getItem(driveAutoSyncKey) === 'true';
+    }
+
+    function setDriveAutoSyncEnabled(enabled) {
+      if (enabled) {
+        localStorage.setItem(driveAutoSyncKey, 'true');
+      } else {
+        localStorage.removeItem(driveAutoSyncKey);
+      }
+    }
+
+    function markGoogleDriveConnected() {
+      setDriveAutoSyncEnabled(true);
+      connectDriveButton.textContent = 'Google Drive conectado';
+      connectDriveButton.setAttribute('aria-pressed', 'true');
+    }
+
+    function markGoogleDriveDisconnected(message = 'Google Drive desconectado.', state = 'idle') {
+      googleAccessToken = null;
+      googleTokenClient = null;
+      driveFileId = null;
+      connectDriveButton.textContent = isDriveAutoSyncEnabled()
+        ? 'Reconectar Google Drive'
+        : 'Conectar Google Drive';
+      connectDriveButton.setAttribute('aria-pressed', 'false');
+      updateDriveSyncStatus(message, state);
+    }
+
     function getSavedLocalState() {
       const savedState = localStorage.getItem(storageKey);
 
@@ -3379,17 +3412,25 @@
         callback: async (response) => {
           if (!response || response.error) {
             console.warn('Não foi possível conectar ao Google Drive.', response);
-            updateDriveSyncStatus('Não foi possível conectar ao Google Drive.', 'error');
+            const message = isDriveAutoSyncEnabled()
+              ? 'Não foi possível reconectar automaticamente. Toque em Reconectar Google Drive.'
+              : 'Não foi possível conectar ao Google Drive.';
+            markGoogleDriveDisconnected(message, 'error');
             connectDriveButton.disabled = false;
             return;
           }
 
           googleAccessToken = response.access_token;
-          connectDriveButton.textContent = 'Google Drive conectado';
-          updateDriveSyncStatus('Conectado. Sincronizando dados...', 'syncing');
+          markGoogleDriveConnected();
+          updateDriveSyncStatus('Conectado. Buscando dados do Google Drive...', 'syncing');
 
           try {
             await loadStateFromDrive();
+
+            if (pendingDriveSave || shouldForceLocalStateToDrive) {
+              pendingDriveSave = false;
+              await saveStateToDrive();
+            }
           } catch (error) {
             console.warn('Não foi possível carregar os dados do Google Drive.', error);
             updateDriveSyncStatus('Conectado, mas não foi possível sincronizar agora.', 'error');
@@ -3426,11 +3467,8 @@
       });
 
       if (response.status === 401) {
-        googleAccessToken = null;
-        googleTokenClient = null;
-        driveFileId = null;
-        connectDriveButton.textContent = 'Conectar Google Drive';
-        updateDriveSyncStatus('A sessão do Google Drive expirou. Conecte novamente.', 'error');
+        markGoogleDriveDisconnected('A sessão do Google Drive expirou. Tentando reconectar automaticamente...', 'error');
+        trySilentGoogleDriveReconnect();
       }
 
       return response;
@@ -3583,6 +3621,11 @@
 
     function scheduleDriveSave() {
       if (!googleAccessToken) {
+        if (isDriveAutoSyncEnabled()) {
+          pendingDriveSave = true;
+          updateDriveSyncStatus('Alteração salva localmente. Reconectando para enviar ao Google Drive...', 'syncing');
+          trySilentGoogleDriveReconnect();
+        }
         return;
       }
 
@@ -3666,13 +3709,74 @@
       }
     }
 
+    function requestGoogleDriveAccessSilently() {
+      if (!isDriveAutoSyncEnabled() || googleAccessToken) {
+        return false;
+      }
+
+      if (!initializeGoogleDriveClient()) {
+        return false;
+      }
+
+      updateDriveSyncStatus('Reconectando ao Google Drive automaticamente...', 'syncing');
+      googleTokenClient.requestAccessToken({ prompt: '' });
+      return true;
+    }
+
+    function trySilentGoogleDriveReconnect() {
+      if (!isDriveAutoSyncEnabled() || googleAccessToken) {
+        return;
+      }
+
+      let attempts = 0;
+      const maxAttempts = 40;
+
+      const attemptReconnect = () => {
+        attempts += 1;
+
+        if (googleAccessToken || !isDriveAutoSyncEnabled()) {
+          return;
+        }
+
+        if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+          requestGoogleDriveAccessSilently();
+          return;
+        }
+
+        if (attempts < maxAttempts) {
+          setTimeout(attemptReconnect, 250);
+        } else {
+          updateDriveSyncStatus('Google Drive não reconectou automaticamente. Toque em Reconectar Google Drive.', 'error');
+        }
+      };
+
+      attemptReconnect();
+    }
+
+    function startGoogleDriveAutoSyncOnLoad() {
+      if (!isDriveAutoSyncEnabled()) {
+        markGoogleDriveDisconnected('Google Drive desconectado.', 'idle');
+        return;
+      }
+
+      connectDriveButton.textContent = 'Reconectar Google Drive';
+      updateDriveSyncStatus('Reconectando ao Google Drive automaticamente...', 'syncing');
+      trySilentGoogleDriveReconnect();
+    }
+
     connectDriveButton.addEventListener('click', requestGoogleDriveAccess);
 
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && googleAccessToken) {
+      if (document.hidden) {
+        return;
+      }
+
+      if (googleAccessToken) {
         loadStateFromDrive().catch((error) => {
           console.warn('Não foi possível atualizar dados ao voltar para a aba.', error);
         });
+      } else {
+        trySilentGoogleDriveReconnect();
       }
     });
 
@@ -3681,6 +3785,8 @@
         loadStateFromDrive().catch((error) => {
           console.warn('Não foi possível atualizar dados ao focar a janela.', error);
         });
+      } else {
+        trySilentGoogleDriveReconnect();
       }
     });
 
@@ -3689,6 +3795,7 @@
     refreshDateSensitiveViews();
     renderCurrentLevel();
     renderTodayTab();
+    startGoogleDriveAutoSyncOnLoad();
   </script>
 </body>
 </html>
