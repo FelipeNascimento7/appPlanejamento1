@@ -506,6 +506,34 @@
       font-weight: 800;
     }
 
+    .today-progress-wrap {
+      display: grid;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .today-progress-bar {
+      width: 100%;
+      min-height: 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface-muted);
+    }
+
+    .today-progress-fill {
+      width: 0%;
+      height: 100%;
+      min-height: 14px;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width 180ms ease;
+    }
+
+    .today-progress-fill.over-limit {
+      background: var(--danger);
+    }
+
     .today-time-progress {
       color: var(--muted);
       font-size: 0.95rem;
@@ -911,6 +939,15 @@
       cursor: pointer;
     }
 
+    .today-main.time-editable {
+      cursor: pointer;
+      transition: background-color 140ms ease;
+    }
+
+    .today-main.time-editable:hover {
+      background: var(--accent-soft);
+    }
+
     .settings-actions {
       width: 100%;
       margin-top: 26px;
@@ -1307,7 +1344,12 @@
           <button class="export-button today-time-button" id="daily-useful-minutes-button" type="button">Tempo útil do dia</button>
           <button class="export-button today-time-button" id="reorder-today-button" type="button">Reordenar</button>
           <span class="today-time-summary" id="daily-useful-minutes-summary">Tempo útil não definido.</span>
-          <span class="today-time-progress" id="today-time-progress">Estimado hoje: 0 min.</span>
+          <div class="today-progress-wrap" aria-label="Progresso do tempo planejado para hoje">
+            <div class="today-progress-bar" role="progressbar" aria-valuemin="0" aria-valuenow="0" aria-valuemax="0" aria-describedby="today-time-progress">
+              <div class="today-progress-fill" id="today-time-progress-bar"></div>
+            </div>
+            <span class="today-time-progress" id="today-time-progress">Estimado hoje: 0 min.</span>
+          </div>
         </div>
         <div class="today-layout">
           <section class="today-area" aria-labelledby="today-plan-title">
@@ -1554,6 +1596,8 @@
     const reorderTodayList = document.querySelector('#reorder-today-list');
     const closeReorderTodayButton = document.querySelector('#close-reorder-today');
     const dailyUsefulMinutesSummary = document.querySelector('#daily-useful-minutes-summary');
+    const todayTimeProgressBar = document.querySelector('#today-time-progress-bar');
+    const todayTimeProgressBarWrap = document.querySelector('.today-progress-bar');
     const todayTimeProgress = document.querySelector('#today-time-progress');
     const exportDataButton = document.querySelector('#export-data-button');
     const importDataButton = document.querySelector('#import-data-button');
@@ -1636,6 +1680,7 @@
     let pendingDriveSave = false;
     let shouldForceLocalStateToDrive = false;
     let calendarWeekStart = null;
+    let estimateTargetTask = null;
 
     function normalizeTheme(value) {
       return value === 'dark' ? 'dark' : 'light';
@@ -2254,17 +2299,19 @@
       const item = document.createElement('li');
       item.className = 'today-card';
 
-      if (actionLabel === 'Adicionar hoje') {
-        item.classList.add('clickable');
-        item.addEventListener('click', (event) => {
-          if (!event.target.closest('.today-action')) {
-            actionHandler();
-          }
-        });
-      }
-
       const main = document.createElement('div');
-      main.className = 'today-main';
+      main.className = 'today-main time-editable';
+      main.setAttribute('role', 'button');
+      main.setAttribute('tabindex', '0');
+      main.setAttribute('aria-label', `Definir tempo estimado de ${task.title}`);
+      main.title = 'Toque para definir o tempo estimado';
+      main.addEventListener('click', () => openEstimateMinutesForTask(task));
+      main.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openEstimateMinutesForTask(task);
+        }
+      });
 
       const title = document.createElement('span');
       title.className = 'today-title';
@@ -2279,6 +2326,14 @@
       titleText.className = 'task-title-text';
       titleText.textContent = task.title;
       titleContent.append(titleText);
+
+      if (task.estimatedMinutes) {
+        const estimateBadge = document.createElement('span');
+        estimateBadge.className = 'task-estimate';
+        estimateBadge.textContent = `${task.estimatedMinutes} min`;
+        titleContent.append(estimateBadge);
+      }
+
       title.append(titleContent);
 
       const path = document.createElement('span');
@@ -2443,18 +2498,27 @@
       if (!dailyUsefulMinutes) {
         dailyUsefulMinutesButton.textContent = 'Tempo útil do dia';
         dailyUsefulMinutesSummary.textContent = 'Tempo útil não definido.';
-        todayTimeProgress.textContent = `Estimado hoje: ${estimatedMinutes} min.`;
+        todayTimeProgressBar.style.width = '0%';
+        todayTimeProgressBar.classList.remove('over-limit');
+        todayTimeProgressBarWrap.setAttribute('aria-valuenow', String(estimatedMinutes));
+        todayTimeProgressBarWrap.setAttribute('aria-valuemax', '0');
+        todayTimeProgress.textContent = `Estimado hoje: ${estimatedMinutes} min. Defina o tempo útil do dia para ativar a barra.`;
         return;
       }
 
       const balance = dailyUsefulMinutes - estimatedMinutes;
+      const progressPercentage = Math.min((estimatedMinutes / dailyUsefulMinutes) * 100, 100);
       dailyUsefulMinutesButton.textContent = `Tempo útil: ${dailyUsefulMinutes} min`;
       dailyUsefulMinutesSummary.textContent = `Tempo útil definido: ${dailyUsefulMinutes} min.`;
+      todayTimeProgressBar.style.width = `${progressPercentage}%`;
+      todayTimeProgressBar.classList.toggle('over-limit', balance < 0);
+      todayTimeProgressBarWrap.setAttribute('aria-valuenow', String(Math.max(0, estimatedMinutes)));
+      todayTimeProgressBarWrap.setAttribute('aria-valuemax', String(dailyUsefulMinutes));
 
       if (balance >= 0) {
-        todayTimeProgress.textContent = `Estimado hoje: ${estimatedMinutes} / ${dailyUsefulMinutes} min. Restam ${balance} min.`;
+        todayTimeProgress.textContent = `${estimatedMinutes} / ${dailyUsefulMinutes} min · Restam ${balance} min.`;
       } else {
-        todayTimeProgress.textContent = `Estimado hoje: ${estimatedMinutes} / ${dailyUsefulMinutes} min. Excede em ${Math.abs(balance)} min.`;
+        todayTimeProgress.textContent = `${estimatedMinutes} / ${dailyUsefulMinutes} min · Excede em ${Math.abs(balance)} min.`;
       }
     }
 
@@ -2973,9 +3037,21 @@
       }
     });
 
+    function openEstimateMinutesForTask(task) {
+      if (!task || !task.parent) {
+        return;
+      }
+
+      estimateTargetTask = task;
+      estimateMinutesInput.value = task.estimatedMinutes || '';
+      estimateMinutesModal.classList.add('visible');
+      estimateMinutesInput.focus();
+      estimateMinutesInput.select();
+    }
+
     function closeEstimateMinutesModal() {
       estimateMinutesModal.classList.remove('visible');
-      taskInput.focus();
+      estimateTargetTask = null;
     }
 
     estimateMinutesButton.addEventListener('click', () => {
@@ -2983,10 +3059,7 @@
         return;
       }
 
-      estimateMinutesInput.value = currentLevel.estimatedMinutes || '';
-      estimateMinutesModal.classList.add('visible');
-      estimateMinutesInput.focus();
-      estimateMinutesInput.select();
+      openEstimateMinutesForTask(currentLevel);
     });
 
     cancelEstimateMinutesButton.addEventListener('click', closeEstimateMinutesModal);
@@ -2998,13 +3071,20 @@
     });
 
     saveEstimateMinutesButton.addEventListener('click', () => {
-      if (!currentLevel.parent) {
+      const targetTask = estimateTargetTask || (currentLevel.parent ? currentLevel : null);
+
+      if (!targetTask) {
         return;
       }
 
-      currentLevel.estimatedMinutes = normalizeEstimatedMinutes(estimateMinutesInput.value);
+      targetTask.estimatedMinutes = normalizeEstimatedMinutes(estimateMinutesInput.value);
+      const editingCurrentLevel = targetTask === currentLevel;
       closeEstimateMinutesModal();
-      updateEstimateMinutesButton();
+
+      if (editingCurrentLevel) {
+        updateEstimateMinutesButton();
+      }
+
       saveAppState();
       renderCurrentLevel();
       renderTodayTab();
