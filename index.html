@@ -567,30 +567,79 @@
     }
 
     .calendar-dialog {
-      width: min(560px, 100%);
+      width: min(1180px, 96vw);
+    }
+
+    .calendar-toolbar {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .calendar-nav-button {
+      min-height: var(--tap-size);
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .calendar-nav-button:hover {
+      background: var(--accent-soft);
+    }
+
+    .calendar-week-label {
+      min-width: 0;
+      color: var(--text);
+      font-weight: 900;
+      text-align: center;
+      line-height: 1.25;
     }
 
     .calendar-list {
       display: grid;
-      gap: 14px;
+      grid-template-columns: repeat(7, minmax(145px, 1fr));
+      gap: 10px;
       width: 100%;
-      max-height: min(62dvh, 520px);
-      margin: 16px 0 18px;
+      max-height: min(62dvh, 560px);
+      margin: 14px 0 18px;
+      padding-bottom: 4px;
       overflow: auto;
     }
 
     .calendar-day {
-      padding: 14px;
+      min-width: 0;
+      padding: 12px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: var(--surface);
     }
 
+    .calendar-day.is-today {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+
+    .calendar-weekday {
+      display: block;
+      color: var(--text);
+      font-size: 0.84rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
     .calendar-date {
       display: block;
-      margin-bottom: 10px;
-      color: var(--text);
-      font-weight: 900;
+      margin: 2px 0 12px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 800;
       line-height: 1.25;
     }
 
@@ -603,38 +652,35 @@
     }
 
     .calendar-task {
-      padding-top: 8px;
-      border-top: 1px solid var(--line);
-    }
-
-    .calendar-task:first-child {
-      padding-top: 0;
-      border-top: 0;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-muted);
     }
 
     .calendar-task-title {
       display: block;
       color: var(--text);
+      font-size: 0.9rem;
       font-weight: 800;
+      line-height: 1.25;
       overflow-wrap: anywhere;
     }
 
     .calendar-task-meta {
       display: block;
-      margin-top: 2px;
+      margin-top: 3px;
       color: var(--muted);
-      font-size: 0.88rem;
+      font-size: 0.76rem;
       line-height: 1.35;
       overflow-wrap: anywhere;
     }
 
     .calendar-empty {
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
+      padding: 12px 4px;
       color: var(--muted);
+      font-size: 0.82rem;
       text-align: center;
-      background: var(--surface);
     }
 
 
@@ -1047,6 +1093,28 @@
         width: 100%;
       }
 
+      .calendar-dialog {
+        width: 100%;
+      }
+
+      .calendar-toolbar {
+        grid-template-columns: 44px minmax(0, 1fr) 44px;
+      }
+
+      .calendar-nav-button {
+        width: 44px;
+        padding-inline: 0;
+      }
+
+      .calendar-list {
+        grid-template-columns: repeat(7, minmax(132px, 1fr));
+        scroll-snap-type: x proximity;
+      }
+
+      .calendar-day {
+        scroll-snap-align: start;
+      }
+
       .settings-actions,
       .modal-actions {
         display: grid;
@@ -1082,7 +1150,6 @@
 
     <main>
       <section class="tab-panel active" id="planejamento" aria-labelledby="tab-planejamento">
-        <h1>Planejamento</h1>
         <p>Organize as próximas tarefas e escolha o que merece atenção.</p>
         <form class="task-composer" id="task-form">
           <input class="task-input" id="task-input" type="text" placeholder="Digite uma tarefa" autocomplete="off">
@@ -1102,7 +1169,6 @@
       </section>
 
       <section class="tab-panel" id="hoje" aria-labelledby="tab-hoje">
-        <h1>Hoje</h1>
         <p>Veja o foco do dia e acompanhe o que precisa sair do papel.</p>
         <div class="today-day-tools" aria-label="Tempo útil do dia">
           <button class="export-button today-time-button" id="daily-useful-minutes-button" type="button">Tempo útil do dia</button>
@@ -1131,7 +1197,6 @@
       </section>
 
       <section class="tab-panel" id="configuracoes" aria-labelledby="tab-configuracoes">
-        <h1>Configurações</h1>
         <p>Ajuste preferências do app para deixar o fluxo do seu jeito.</p>
         <div class="settings-actions">
           <button class="export-button" id="finish-day-button" type="button">Concluir o dia</button>
@@ -1256,10 +1321,13 @@
   <div class="modal-backdrop" id="calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-title">
     <div class="confirm-dialog calendar-dialog">
       <h2 id="calendar-title">Calendário</h2>
-      <p>Dias com tarefas agendadas. Cada data mostra as tarefas com vencimento definido.</p>
-      <div class="calendar-list" id="calendar-list" aria-label="Lista de tarefas agendadas">
-        <div class="calendar-empty">Nenhuma tarefa agendada ainda.</div>
+      <p>Visualize a semana e navegue entre as semanas para acompanhar os vencimentos.</p>
+      <div class="calendar-toolbar" aria-label="Navegação semanal do calendário">
+        <button class="calendar-nav-button" id="calendar-previous-week" type="button" aria-label="Semana anterior">←</button>
+        <span class="calendar-week-label" id="calendar-week-label"></span>
+        <button class="calendar-nav-button" id="calendar-next-week" type="button" aria-label="Próxima semana">→</button>
       </div>
+      <div class="calendar-list" id="calendar-list" aria-label="Semana do calendário"></div>
       <div class="modal-actions">
         <button class="cancel-button" id="close-calendar" type="button">Fechar</button>
       </div>
@@ -1347,6 +1415,9 @@
     const calendarButton = document.querySelector('#calendar-button');
     const calendarModal = document.querySelector('#calendar-modal');
     const calendarList = document.querySelector('#calendar-list');
+    const calendarPreviousWeekButton = document.querySelector('#calendar-previous-week');
+    const calendarNextWeekButton = document.querySelector('#calendar-next-week');
+    const calendarWeekLabel = document.querySelector('#calendar-week-label');
     const closeCalendarButton = document.querySelector('#close-calendar');
     const reorderTodayButton = document.querySelector('#reorder-today-button');
     const reorderTodayModal = document.querySelector('#reorder-today-modal');
@@ -1434,6 +1505,7 @@
     let isDriveBusy = false;
     let pendingDriveSave = false;
     let shouldForceLocalStateToDrive = false;
+    let calendarWeekStart = null;
 
     function normalizeTheme(value) {
       return value === 'dark' ? 'dark' : 'light';
@@ -2987,18 +3059,33 @@
       return tasksByDate;
     }
 
-    function formatCalendarDate(dateValue) {
-      const date = parseLocalDate(dateValue);
-      const formattedDate = date.toLocaleDateString('pt-BR', {
+    function getCalendarWeekStart(referenceDate = getTodayStart()) {
+      const date = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
+      const dayOfWeek = date.getDay();
+      const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      date.setDate(date.getDate() - daysSinceMonday);
+      return date;
+    }
+
+    function addCalendarDays(date, days) {
+      const nextDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      nextDate.setDate(nextDate.getDate() + days);
+      return nextDate;
+    }
+
+    function formatCalendarWeekLabel(weekStart) {
+      const weekEnd = addCalendarDays(weekStart, 6);
+      const startLabel = weekStart.toLocaleDateString('pt-BR', {
         day: '2-digit',
-        month: '2-digit',
+        month: 'short'
+      });
+      const endLabel = weekEnd.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'short',
         year: 'numeric'
       });
-      const weekday = date.toLocaleDateString('pt-BR', {
-        weekday: 'long'
-      });
 
-      return `${formattedDate} — ${weekday}`;
+      return `${startLabel} – ${endLabel}`;
     }
 
     function getCalendarTaskMeta(task) {
@@ -3044,36 +3131,56 @@
       return item;
     }
 
-    function renderCalendarList() {
-      const tasksByDate = getScheduledTasksByDate();
-      calendarList.innerHTML = '';
-
-      if (tasksByDate.size === 0) {
-        const emptyState = document.createElement('div');
-        emptyState.className = 'calendar-empty';
-        emptyState.textContent = 'Nenhuma tarefa agendada ainda.';
-        calendarList.append(emptyState);
-        return;
+    function renderCalendarWeek() {
+      if (!calendarWeekStart) {
+        calendarWeekStart = getCalendarWeekStart();
       }
 
-      tasksByDate.forEach((tasks, dateValue) => {
+      const tasksByDate = getScheduledTasksByDate();
+      const todayValue = formatDateValue(getTodayStart());
+      calendarList.innerHTML = '';
+      calendarWeekLabel.textContent = formatCalendarWeekLabel(calendarWeekStart);
+
+      for (let dayIndex = 0; dayIndex < 7; dayIndex += 1) {
+        const date = addCalendarDays(calendarWeekStart, dayIndex);
+        const dateValue = formatDateValue(date);
+        const tasks = tasksByDate.get(dateValue) || [];
+
         const dayBlock = document.createElement('section');
         dayBlock.className = 'calendar-day';
+        if (dateValue === todayValue) {
+          dayBlock.classList.add('is-today');
+        }
 
-        const dateTitle = document.createElement('strong');
+        const weekdayTitle = document.createElement('strong');
+        weekdayTitle.className = 'calendar-weekday';
+        weekdayTitle.textContent = date.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
+        dayBlock.append(weekdayTitle);
+
+        const dateTitle = document.createElement('span');
         dateTitle.className = 'calendar-date';
-        dateTitle.textContent = formatCalendarDate(dateValue);
+        dateTitle.textContent = date.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit'
+        });
         dayBlock.append(dateTitle);
 
-        const taskList = document.createElement('ul');
-        taskList.className = 'calendar-task-list';
-        tasks.forEach((task) => {
-          taskList.append(createCalendarTaskItem(task));
-        });
+        if (tasks.length === 0) {
+          const emptyState = document.createElement('div');
+          emptyState.className = 'calendar-empty';
+          emptyState.textContent = 'Sem tarefas';
+          dayBlock.append(emptyState);
+        } else {
+          const taskList = document.createElement('ul');
+          taskList.className = 'calendar-task-list';
+          tasks.forEach((task) => {
+            taskList.append(createCalendarTaskItem(task));
+          });
+          dayBlock.append(taskList);
+        }
 
-        dayBlock.append(taskList);
         calendarList.append(dayBlock);
-      });
+      }
     }
 
     function closeCalendarModal() {
@@ -3082,9 +3189,20 @@
     }
 
     calendarButton.addEventListener('click', () => {
-      renderCalendarList();
+      calendarWeekStart = getCalendarWeekStart();
+      renderCalendarWeek();
       calendarModal.classList.add('visible');
       closeCalendarButton.focus();
+    });
+
+    calendarPreviousWeekButton.addEventListener('click', () => {
+      calendarWeekStart = addCalendarDays(calendarWeekStart || getCalendarWeekStart(), -7);
+      renderCalendarWeek();
+    });
+
+    calendarNextWeekButton.addEventListener('click', () => {
+      calendarWeekStart = addCalendarDays(calendarWeekStart || getCalendarWeekStart(), 7);
+      renderCalendarWeek();
     });
 
     closeCalendarButton.addEventListener('click', closeCalendarModal);
