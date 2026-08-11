@@ -2251,7 +2251,44 @@
 
     function getSortedTasks(tasks) {
       return [...tasks].sort((firstTask, secondTask) => {
-        return countOverdueSubtasks(secondTask) - countOverdueSubtasks(firstTask);
+        const firstHasSubtasks = firstTask.children.length > 0;
+        const secondHasSubtasks = secondTask.children.length > 0;
+
+        // 1) Tarefas que possuem subtarefas sempre ficam no topo.
+        if (firstHasSubtasks !== secondHasSubtasks) {
+          return firstHasSubtasks ? -1 : 1;
+        }
+
+        // 2) Entre tarefas com subtarefas, prioriza quem possui mais
+        // subtarefas vencidas ou vencendo hoje, contando toda a árvore abaixo.
+        if (firstHasSubtasks && secondHasSubtasks) {
+          const firstUrgentSubtasks = countOverdueSubtasks(firstTask);
+          const secondUrgentSubtasks = countOverdueSubtasks(secondTask);
+
+          if (firstUrgentSubtasks !== secondUrgentSubtasks) {
+            return secondUrgentSubtasks - firstUrgentSubtasks;
+          }
+
+          // Em empate, mantém a ordem original de criação.
+          return 0;
+        }
+
+        // 3) Entre tarefas sem subtarefas, as datas mais antigas ficam primeiro.
+        // Assim: vencidas há mais tempo -> vencidas recentes -> hoje -> futuras -> sem data.
+        if (firstTask.dueDate && secondTask.dueDate) {
+          return firstTask.dueDate.localeCompare(secondTask.dueDate);
+        }
+
+        if (firstTask.dueDate) {
+          return -1;
+        }
+
+        if (secondTask.dueDate) {
+          return 1;
+        }
+
+        // Sem data: mantém a ordem original de criação.
+        return 0;
       });
     }
 
