@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -694,6 +694,100 @@
       text-align: center;
     }
 
+    .queue-list {
+      display: grid;
+      gap: 10px;
+      width: 100%;
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .queue-item {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr) auto;
+      align-items: stretch;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 2px);
+      background: var(--surface);
+    }
+
+    .queue-date {
+      min-height: 66px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      padding: 12px 14px;
+      border-right: 1px solid var(--line);
+      color: var(--text);
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .queue-date-label {
+      font-size: 0.96rem;
+    }
+
+    .queue-date-relative {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .queue-date-relative.overdue,
+    .queue-date-relative.due-today {
+      color: var(--danger);
+    }
+
+    .queue-main {
+      min-width: 0;
+      min-height: 66px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      padding: 12px 14px;
+    }
+
+    .queue-title {
+      color: var(--text);
+      font-weight: 850;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .queue-path {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .queue-meta {
+      min-width: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 12px 14px;
+      border-left: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .queue-empty {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--muted);
+      text-align: center;
+    }
+
 
 
     .reorder-dialog {
@@ -994,8 +1088,8 @@
         flex: 1 1 0;
         min-width: 0;
         min-height: 46px;
-        padding: 8px 3px;
-        font-size: 0.78rem;
+        padding: 8px 2px;
+        font-size: clamp(0.62rem, 2.75vw, 0.75rem);
         white-space: nowrap;
       }
 
@@ -1130,6 +1224,24 @@
         scroll-snap-align: start;
       }
 
+      .queue-item {
+        grid-template-columns: 104px minmax(0, 1fr);
+      }
+
+      .queue-date {
+        border-right: 1px solid var(--line);
+      }
+
+      .queue-meta {
+        grid-column: 1 / -1;
+        min-width: 0;
+        justify-content: flex-start;
+        padding: 8px 12px;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        text-align: left;
+      }
+
       .settings-actions,
       .modal-actions {
         display: grid;
@@ -1160,6 +1272,9 @@
       </button>
       <button class="tab-button" type="button" data-tab="calendario" aria-selected="false">
         Calendário
+      </button>
+      <button class="tab-button" type="button" data-tab="fila" aria-selected="false">
+        Fila
       </button>
       <button class="tab-button" type="button" data-tab="configuracoes" aria-selected="false">
         Configurações
@@ -1221,6 +1336,13 @@
           <button class="calendar-nav-button" id="calendar-next-week" type="button" aria-label="Próxima semana">→</button>
         </div>
         <div class="calendar-list" id="calendar-list" aria-label="Semana do calendário"></div>
+      </section>
+
+      <section class="tab-panel" id="fila" aria-labelledby="tab-fila">
+        <p>Todas as tarefas com data, ordenadas da mais antiga para a mais recente.</p>
+        <ul class="queue-list" id="queue-list" aria-label="Fila de tarefas por data">
+          <li class="queue-empty">Nenhuma tarefa com data definida.</li>
+        </ul>
       </section>
 
       <section class="tab-panel" id="configuracoes" aria-labelledby="tab-configuracoes">
@@ -1426,6 +1548,7 @@
     const calendarPreviousWeekButton = document.querySelector('#calendar-previous-week');
     const calendarNextWeekButton = document.querySelector('#calendar-next-week');
     const calendarWeekLabel = document.querySelector('#calendar-week-label');
+    const queueList = document.querySelector('#queue-list');
     const reorderTodayButton = document.querySelector('#reorder-today-button');
     const reorderTodayModal = document.querySelector('#reorder-today-modal');
     const reorderTodayList = document.querySelector('#reorder-today-list');
@@ -1801,6 +1924,10 @@
             calendarWeekStart = getCalendarWeekStart();
           }
           renderCalendarWeek();
+        }
+
+        if (selectedTab === 'fila') {
+          renderQueue();
         }
       });
     });
@@ -3047,6 +3174,103 @@
       renderTodayTab();
       finishDayButton.focus();
     });
+
+    function getDatedTasksSorted() {
+      return getAllTasks()
+        .filter((task) => task.dueDate)
+        .sort((firstTask, secondTask) => {
+          const dateComparison = firstTask.dueDate.localeCompare(secondTask.dueDate);
+
+          if (dateComparison !== 0) {
+            return dateComparison;
+          }
+
+          return getTaskPath(firstTask).localeCompare(getTaskPath(secondTask), 'pt-BR');
+        });
+    }
+
+    function getQueueTaskMeta(task) {
+      const details = [];
+
+      if (task.estimatedMinutes) {
+        details.push(`${task.estimatedMinutes} min`);
+      }
+
+      if (task.recurrence) {
+        details.push(getRecurrenceLabel(task.recurrence));
+      }
+
+      if (task.checked) {
+        details.push('marcada');
+      }
+
+      return details.join(' · ');
+    }
+
+    function createQueueItem(task) {
+      const item = document.createElement('li');
+      item.className = 'queue-item';
+
+      const dateBox = document.createElement('div');
+      dateBox.className = 'queue-date';
+
+      const dateLabel = document.createElement('span');
+      dateLabel.className = 'queue-date-label';
+      dateLabel.textContent = parseLocalDate(task.dueDate).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+
+      const relativeLabel = document.createElement('span');
+      relativeLabel.className = 'queue-date-relative';
+      const daysClass = getDaysClass(task.dueDate);
+      if (daysClass) {
+        relativeLabel.classList.add(daysClass);
+      }
+      relativeLabel.textContent = getDaysLabel(task.dueDate);
+      dateBox.append(dateLabel, relativeLabel);
+
+      const main = document.createElement('div');
+      main.className = 'queue-main';
+
+      const title = document.createElement('span');
+      title.className = 'queue-title';
+      title.textContent = task.title;
+      main.append(title);
+
+      const parentPath = task.parent ? getTaskPath(task.parent) : '';
+      if (parentPath) {
+        const path = document.createElement('span');
+        path.className = 'queue-path';
+        path.textContent = parentPath;
+        main.append(path);
+      }
+
+      const meta = document.createElement('div');
+      meta.className = 'queue-meta';
+      meta.textContent = getQueueTaskMeta(task) || 'Com data';
+
+      item.append(dateBox, main, meta);
+      return item;
+    }
+
+    function renderQueue() {
+      const tasks = getDatedTasksSorted();
+      queueList.innerHTML = '';
+
+      if (tasks.length === 0) {
+        const emptyState = document.createElement('li');
+        emptyState.className = 'queue-empty';
+        emptyState.textContent = 'Nenhuma tarefa com data definida.';
+        queueList.append(emptyState);
+        return;
+      }
+
+      tasks.forEach((task) => {
+        queueList.append(createQueueItem(task));
+      });
+    }
 
     function getScheduledTasksByDate() {
       const tasksByDate = new Map();
