@@ -3416,9 +3416,8 @@
 
     function getCalendarWeekStart(referenceDate = getTodayStart()) {
       const date = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
-      const dayOfWeek = date.getDay();
-      const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      date.setDate(date.getDate() - daysSinceMonday);
+      const daysSinceSunday = date.getDay();
+      date.setDate(date.getDate() - daysSinceSunday);
       return date;
     }
 
