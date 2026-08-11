@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -570,6 +570,17 @@
       width: min(1180px, 96vw);
     }
 
+    .calendar-tab {
+      width: min(1180px, calc(100vw - 40px));
+      max-width: none;
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .calendar-tab .calendar-list {
+      max-height: none;
+    }
+
     .calendar-toolbar {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
@@ -983,8 +994,8 @@
         flex: 1 1 0;
         min-width: 0;
         min-height: 46px;
-        padding: 8px 6px;
-        font-size: 0.88rem;
+        padding: 8px 3px;
+        font-size: 0.78rem;
         white-space: nowrap;
       }
 
@@ -1097,6 +1108,10 @@
         width: 100%;
       }
 
+      .calendar-tab {
+        width: calc(100vw - 32px);
+      }
+
       .calendar-toolbar {
         grid-template-columns: 44px minmax(0, 1fr) 44px;
       }
@@ -1143,6 +1158,9 @@
       <button class="tab-button" type="button" data-tab="hoje" aria-selected="false">
         Hoje
       </button>
+      <button class="tab-button" type="button" data-tab="calendario" aria-selected="false">
+        Calendário
+      </button>
       <button class="tab-button" type="button" data-tab="configuracoes" aria-selected="false">
         Configurações
       </button>
@@ -1172,7 +1190,6 @@
         <p>Veja o foco do dia e acompanhe o que precisa sair do papel.</p>
         <div class="today-day-tools" aria-label="Tempo útil do dia">
           <button class="export-button today-time-button" id="daily-useful-minutes-button" type="button">Tempo útil do dia</button>
-          <button class="export-button today-time-button" id="calendar-button" type="button">Calendário</button>
           <button class="export-button today-time-button" id="reorder-today-button" type="button">Reordenar</button>
           <span class="today-time-summary" id="daily-useful-minutes-summary">Tempo útil não definido.</span>
           <span class="today-time-progress" id="today-time-progress">Estimado hoje: 0 min.</span>
@@ -1194,6 +1211,16 @@
             </ul>
           </section>
         </div>
+      </section>
+
+      <section class="tab-panel calendar-tab" id="calendario" aria-labelledby="tab-calendario">
+        <p>Visualize a semana e navegue entre as semanas para acompanhar os vencimentos.</p>
+        <div class="calendar-toolbar" aria-label="Navegação semanal do calendário">
+          <button class="calendar-nav-button" id="calendar-previous-week" type="button" aria-label="Semana anterior">←</button>
+          <span class="calendar-week-label" id="calendar-week-label"></span>
+          <button class="calendar-nav-button" id="calendar-next-week" type="button" aria-label="Próxima semana">→</button>
+        </div>
+        <div class="calendar-list" id="calendar-list" aria-label="Semana do calendário"></div>
       </section>
 
       <section class="tab-panel" id="configuracoes" aria-labelledby="tab-configuracoes">
@@ -1318,23 +1345,6 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-title">
-    <div class="confirm-dialog calendar-dialog">
-      <h2 id="calendar-title">Calendário</h2>
-      <p>Visualize a semana e navegue entre as semanas para acompanhar os vencimentos.</p>
-      <div class="calendar-toolbar" aria-label="Navegação semanal do calendário">
-        <button class="calendar-nav-button" id="calendar-previous-week" type="button" aria-label="Semana anterior">←</button>
-        <span class="calendar-week-label" id="calendar-week-label"></span>
-        <button class="calendar-nav-button" id="calendar-next-week" type="button" aria-label="Próxima semana">→</button>
-      </div>
-      <div class="calendar-list" id="calendar-list" aria-label="Semana do calendário"></div>
-      <div class="modal-actions">
-        <button class="cancel-button" id="close-calendar" type="button">Fechar</button>
-      </div>
-    </div>
-  </div>
-
-
 
   <div class="modal-backdrop" id="reorder-today-modal" role="dialog" aria-modal="true" aria-labelledby="reorder-today-title">
     <div class="confirm-dialog reorder-dialog">
@@ -1412,13 +1422,10 @@
     const todayPlanList = document.querySelector('#today-plan-list');
     const todayDueList = document.querySelector('#today-due-list');
     const dailyUsefulMinutesButton = document.querySelector('#daily-useful-minutes-button');
-    const calendarButton = document.querySelector('#calendar-button');
-    const calendarModal = document.querySelector('#calendar-modal');
     const calendarList = document.querySelector('#calendar-list');
     const calendarPreviousWeekButton = document.querySelector('#calendar-previous-week');
     const calendarNextWeekButton = document.querySelector('#calendar-next-week');
     const calendarWeekLabel = document.querySelector('#calendar-week-label');
-    const closeCalendarButton = document.querySelector('#close-calendar');
     const reorderTodayButton = document.querySelector('#reorder-today-button');
     const reorderTodayModal = document.querySelector('#reorder-today-modal');
     const reorderTodayList = document.querySelector('#reorder-today-list');
@@ -1787,6 +1794,13 @@
 
         if (selectedTab === 'hoje') {
           renderTodayTab();
+        }
+
+        if (selectedTab === 'calendario') {
+          if (!calendarWeekStart) {
+            calendarWeekStart = getCalendarWeekStart();
+          }
+          renderCalendarWeek();
         }
       });
     });
@@ -3183,18 +3197,6 @@
       }
     }
 
-    function closeCalendarModal() {
-      calendarModal.classList.remove('visible');
-      calendarButton.focus();
-    }
-
-    calendarButton.addEventListener('click', () => {
-      calendarWeekStart = getCalendarWeekStart();
-      renderCalendarWeek();
-      calendarModal.classList.add('visible');
-      closeCalendarButton.focus();
-    });
-
     calendarPreviousWeekButton.addEventListener('click', () => {
       calendarWeekStart = addCalendarDays(calendarWeekStart || getCalendarWeekStart(), -7);
       renderCalendarWeek();
@@ -3203,14 +3205,6 @@
     calendarNextWeekButton.addEventListener('click', () => {
       calendarWeekStart = addCalendarDays(calendarWeekStart || getCalendarWeekStart(), 7);
       renderCalendarWeek();
-    });
-
-    closeCalendarButton.addEventListener('click', closeCalendarModal);
-
-    calendarModal.addEventListener('click', (event) => {
-      if (event.target === calendarModal) {
-        closeCalendarModal();
-      }
     });
 
 
