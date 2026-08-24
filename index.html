@@ -1686,6 +1686,303 @@
       }
     }
 
+
+    /* ===== PLANEJAMENTO POR TURNOS ===== */
+    .shift-summary-panel {
+      gap: 12px;
+    }
+
+    .shift-panel-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .shift-panel-heading strong,
+    .shift-panel-heading span {
+      display: block;
+    }
+
+    .shift-panel-heading span {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .today-shift-overview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .shift-overview-card {
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface-muted);
+    }
+
+    .shift-overview-card.current {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+
+    .shift-overview-card strong,
+    .shift-overview-card span {
+      display: block;
+    }
+
+    .shift-overview-card strong {
+      font-size: 0.9rem;
+    }
+
+    .shift-overview-card span {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.3;
+    }
+
+    .today-shift-groups {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .today-shift-section {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface-muted);
+    }
+
+    .shift-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .shift-section-header strong,
+    .shift-section-header span {
+      display: block;
+    }
+
+    .shift-section-header span {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    .shift-allocation-button,
+    .calendar-shift-add,
+    .calendar-task-remove {
+      min-height: 38px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .shift-allocation-button:hover,
+    .calendar-shift-add:hover,
+    .calendar-task-remove:hover {
+      background: var(--accent-soft);
+    }
+
+    .today-shift-section .today-list {
+      margin-top: 10px;
+    }
+
+    .today-card.has-shift-control {
+      grid-template-columns: minmax(0, 1fr) auto auto auto;
+    }
+
+    .task-shift-select {
+      min-width: 104px;
+      min-height: 54px;
+      padding: 8px 28px 8px 10px;
+      border: 0;
+      border-left: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .shift-allocation-dialog {
+      width: min(520px, 100%);
+    }
+
+    .shift-field-label {
+      display: block;
+      margin: 16px 0 6px;
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .shift-task-select-modal {
+      width: 100%;
+      min-height: var(--tap-size);
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .shift-modal-hint {
+      margin-top: 8px;
+      font-size: 0.78rem;
+    }
+
+    .calendar-list {
+      grid-template-columns: repeat(7, minmax(220px, 1fr));
+      max-height: none;
+      align-items: start;
+    }
+
+    .calendar-day {
+      display: grid;
+      align-content: start;
+      gap: 8px;
+    }
+
+    .calendar-date {
+      margin-bottom: 4px;
+    }
+
+    .calendar-shifts {
+      display: grid;
+      gap: 10px;
+    }
+
+    .calendar-shift {
+      min-width: 0;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface-muted);
+    }
+
+    .calendar-shift-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .calendar-shift-title {
+      min-width: 0;
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .calendar-shift-count {
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+
+    .calendar-shift-list {
+      display: grid;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .calendar-task {
+      display: grid;
+      gap: 6px;
+      padding: 8px;
+      background: var(--surface);
+    }
+
+    .calendar-task-controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .calendar-task-shift-select {
+      width: 100%;
+      min-width: 0;
+      min-height: 36px;
+      padding: 6px 24px 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .calendar-task-remove {
+      min-height: 36px;
+      padding: 6px 8px;
+      color: var(--danger);
+    }
+
+    .calendar-shift-add {
+      width: 100%;
+      margin-top: 7px;
+      background: transparent;
+    }
+
+    .calendar-empty {
+      padding: 5px 2px;
+      text-align: left;
+      font-size: 0.75rem;
+    }
+
+    @media (max-width: 620px) {
+      .shift-panel-heading {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .today-shift-overview {
+        grid-template-columns: 1fr;
+      }
+
+      .today-card.has-shift-control {
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      .today-card.has-shift-control .task-shift-select {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+        min-height: 42px;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .today-card.has-shift-control .task-days {
+        grid-column: 1 / -1;
+        grid-row: 3;
+      }
+
+      .today-card.has-shift-control .today-action {
+        grid-column: 2;
+        grid-row: 1;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1698,7 +1995,7 @@
         Planejamento
       </button>
       <button class="tab-button" type="button" data-tab="calendario" aria-selected="false">
-        Calendário
+        Semana
       </button>
       <button class="tab-button" type="button" data-tab="fila" aria-selected="false">
         Fila
@@ -1749,16 +2046,15 @@
           <button class="primary-execution-button" id="auto-plan-button" type="button">Montar meu dia</button>
         </div>
 
-        <div class="today-day-tools execution-capacity" aria-label="Capacidade do dia">
-          <button class="export-button today-time-button" id="daily-useful-minutes-button" type="button">Tempo útil do dia</button>
-          <button class="export-button today-time-button" id="reorder-today-button" type="button">Reordenar roteiro</button>
-          <span class="today-time-summary" id="daily-useful-minutes-summary">Tempo útil não definido.</span>
-          <div class="today-progress-wrap" aria-label="Progresso do tempo planejado para hoje">
-            <div class="today-progress-bar" role="progressbar" aria-valuemin="0" aria-valuenow="0" aria-valuemax="0" aria-describedby="today-time-progress">
-              <div class="today-progress-fill" id="today-time-progress-bar"></div>
+        <div class="today-day-tools shift-summary-panel" aria-label="Planejamento por turnos do dia">
+          <div class="shift-panel-heading">
+            <div>
+              <strong>Turnos de hoje</strong>
+              <span>Distribua o que será executado pela manhã, à tarde e à noite.</span>
             </div>
-            <span class="today-time-progress" id="today-time-progress">Estimado hoje: 0 min.</span>
+            <button class="export-button today-time-button" id="reorder-today-button" type="button">Reordenar nos turnos</button>
           </div>
+          <div class="today-shift-overview" id="today-shift-overview" aria-label="Resumo dos turnos"></div>
         </div>
 
         <section class="focus-zone" aria-labelledby="focus-zone-title">
@@ -1808,11 +2104,31 @@
         </section>
 
         <details class="today-route-details" open>
-          <summary>Roteiro completo de hoje</summary>
-          <p>Esta é a ordem do seu dia. Use “Reordenar roteiro” apenas quando realmente precisar.</p>
-          <ul class="today-list" id="today-plan-list" aria-label="Roteiro de hoje">
-            <li class="today-empty">Nenhuma tarefa adicionada para hoje.</li>
-          </ul>
+          <summary>Roteiro de hoje por turnos</summary>
+          <p>Alocar uma tarefa em um turno define quando você pretende executá-la; o vencimento continua independente.</p>
+          <div class="today-shift-groups">
+            <section class="today-shift-section" data-shift="morning">
+              <div class="shift-section-header">
+                <div><strong>Manhã</strong><span id="today-morning-summary">0 tarefas</span></div>
+                <button class="shift-allocation-button" type="button" data-allocate-date="today" data-allocate-shift="morning">+ Alocar</button>
+              </div>
+              <ul class="today-list" id="today-morning-list" aria-label="Tarefas da manhã"></ul>
+            </section>
+            <section class="today-shift-section" data-shift="afternoon">
+              <div class="shift-section-header">
+                <div><strong>Tarde</strong><span id="today-afternoon-summary">0 tarefas</span></div>
+                <button class="shift-allocation-button" type="button" data-allocate-date="today" data-allocate-shift="afternoon">+ Alocar</button>
+              </div>
+              <ul class="today-list" id="today-afternoon-list" aria-label="Tarefas da tarde"></ul>
+            </section>
+            <section class="today-shift-section" data-shift="night">
+              <div class="shift-section-header">
+                <div><strong>Noite</strong><span id="today-night-summary">0 tarefas</span></div>
+                <button class="shift-allocation-button" type="button" data-allocate-date="today" data-allocate-shift="night">+ Alocar</button>
+              </div>
+              <ul class="today-list" id="today-night-list" aria-label="Tarefas da noite"></ul>
+            </section>
+          </div>
         </details>
 
         <details class="today-route-details suggestions-details">
@@ -1835,13 +2151,13 @@
       </section>
 
       <section class="tab-panel calendar-tab" id="calendario" aria-labelledby="tab-calendario">
-        <p>Visualize a semana e navegue entre as semanas para acompanhar os vencimentos.</p>
+        <p>Planeje a execução da semana distribuindo tarefas entre manhã, tarde e noite. A data de vencimento não é alterada.</p>
         <div class="calendar-toolbar" aria-label="Navegação semanal do calendário">
           <button class="calendar-nav-button" id="calendar-previous-week" type="button" aria-label="Semana anterior">←</button>
           <span class="calendar-week-label" id="calendar-week-label"></span>
           <button class="calendar-nav-button" id="calendar-next-week" type="button" aria-label="Próxima semana">→</button>
         </div>
-        <div class="calendar-list" id="calendar-list" aria-label="Semana do calendário"></div>
+        <div class="calendar-list" id="calendar-list" aria-label="Planejamento semanal por turnos"></div>
       </section>
 
       <section class="tab-panel" id="fila" aria-labelledby="tab-fila">
@@ -1961,14 +2277,16 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="daily-useful-minutes-modal" role="dialog" aria-modal="true" aria-labelledby="daily-useful-minutes-title">
-    <div class="confirm-dialog">
-      <h2 id="daily-useful-minutes-title">Tempo útil do dia</h2>
-      <p>Defina quantos minutos úteis você terá hoje. Deixe vazio para remover o limite.</p>
-      <input class="daily-useful-minutes-input" id="daily-useful-minutes-input" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex: 240" autocomplete="off">
+  <div class="modal-backdrop" id="shift-allocation-modal" role="dialog" aria-modal="true" aria-labelledby="shift-allocation-title">
+    <div class="confirm-dialog shift-allocation-dialog">
+      <h2 id="shift-allocation-title">Alocar tarefa</h2>
+      <p id="shift-allocation-context">Escolha uma tarefa para este turno.</p>
+      <label class="shift-field-label" for="shift-task-select">Tarefa</label>
+      <select class="shift-task-select-modal" id="shift-task-select"></select>
+      <p class="shift-modal-hint">Se a tarefa já estiver planejada em outro dia ou turno, ela será movida para este local.</p>
       <div class="modal-actions">
-        <button class="cancel-button" id="cancel-daily-useful-minutes" type="button">Cancelar</button>
-        <button class="save-useful-time-button" id="save-daily-useful-minutes" type="button">Salvar</button>
+        <button class="cancel-button" id="cancel-shift-allocation" type="button">Cancelar</button>
+        <button class="save-useful-time-button" id="save-shift-allocation" type="button">Alocar</button>
       </div>
     </div>
   </div>
@@ -1977,7 +2295,7 @@
   <div class="modal-backdrop" id="reorder-today-modal" role="dialog" aria-modal="true" aria-labelledby="reorder-today-title">
     <div class="confirm-dialog reorder-dialog">
       <h2 id="reorder-today-title">Reordenar</h2>
-      <p>Altere a ordem das tarefas adicionadas ao planejamento de hoje.</p>
+      <p>Altere a ordem das tarefas dentro de cada turno do planejamento de hoje.</p>
       <div class="reorder-list" id="reorder-today-list" aria-label="Reordenar planejamento de hoje">
         <div class="reorder-empty">Nenhuma tarefa adicionada ao planejamento de hoje.</div>
       </div>
@@ -2047,9 +2365,14 @@
     const recurrenceButton = document.querySelector('#recurrence-button');
     const estimateMinutesButton = document.querySelector('#estimate-minutes-button');
     const daysButton = document.querySelector('#days-button');
-    const todayPlanList = document.querySelector('#today-plan-list');
+    const todayMorningList = document.querySelector('#today-morning-list');
+    const todayAfternoonList = document.querySelector('#today-afternoon-list');
+    const todayNightList = document.querySelector('#today-night-list');
+    const todayMorningSummary = document.querySelector('#today-morning-summary');
+    const todayAfternoonSummary = document.querySelector('#today-afternoon-summary');
+    const todayNightSummary = document.querySelector('#today-night-summary');
+    const todayShiftOverview = document.querySelector('#today-shift-overview');
     const todayDueList = document.querySelector('#today-due-list');
-    const dailyUsefulMinutesButton = document.querySelector('#daily-useful-minutes-button');
     const calendarList = document.querySelector('#calendar-list');
     const calendarPreviousWeekButton = document.querySelector('#calendar-previous-week');
     const calendarNextWeekButton = document.querySelector('#calendar-next-week');
@@ -2059,10 +2382,6 @@
     const reorderTodayModal = document.querySelector('#reorder-today-modal');
     const reorderTodayList = document.querySelector('#reorder-today-list');
     const closeReorderTodayButton = document.querySelector('#close-reorder-today');
-    const dailyUsefulMinutesSummary = document.querySelector('#daily-useful-minutes-summary');
-    const todayTimeProgressBar = document.querySelector('#today-time-progress-bar');
-    const todayTimeProgressBarWrap = document.querySelector('.today-progress-bar');
-    const todayTimeProgress = document.querySelector('#today-time-progress');
     const todayDateLabel = document.querySelector('#today-date-label');
     const todayCompletedCount = document.querySelector('#today-completed-count');
     const dailyStartCard = document.querySelector('#daily-start-card');
@@ -2127,10 +2446,12 @@
     const estimateMinutesInput = document.querySelector('#estimate-minutes-input');
     const cancelEstimateMinutesButton = document.querySelector('#cancel-estimate-minutes');
     const saveEstimateMinutesButton = document.querySelector('#save-estimate-minutes');
-    const dailyUsefulMinutesModal = document.querySelector('#daily-useful-minutes-modal');
-    const dailyUsefulMinutesInput = document.querySelector('#daily-useful-minutes-input');
-    const cancelDailyUsefulMinutesButton = document.querySelector('#cancel-daily-useful-minutes');
-    const saveDailyUsefulMinutesButton = document.querySelector('#save-daily-useful-minutes');
+    const shiftAllocationModal = document.querySelector('#shift-allocation-modal');
+    const shiftAllocationTitle = document.querySelector('#shift-allocation-title');
+    const shiftAllocationContext = document.querySelector('#shift-allocation-context');
+    const shiftTaskSelect = document.querySelector('#shift-task-select');
+    const cancelShiftAllocationButton = document.querySelector('#cancel-shift-allocation');
+    const saveShiftAllocationButton = document.querySelector('#save-shift-allocation');
     const storageKey = 'todo-single-file-state';
     const driveAutoSyncKey = `${storageKey}-google-drive-auto-sync`;
     const googleDriveConfig = {
@@ -2152,7 +2473,7 @@
     let currentLevel = rootLevel;
     let pendingDeleteTask = null;
     let todayPlan = [];
-    let dailyUsefulMinutes = null;
+    let pendingShiftAllocation = null;
     let dailyReports = [];
     let appTheme = getSavedTheme();
     let lastKnownDate = formatDateValue(getTodayStart());
@@ -2208,7 +2529,7 @@
       updateThemeToggleButton();
     }
 
-    function createTaskData(title, parent, dueDate = null, children = [], id = null, checked = false, estimatedMinutes = null, recurrence = null) {
+    function createTaskData(title, parent, dueDate = null, children = [], id = null, checked = false, estimatedMinutes = null, recurrence = null, plannedDate = null, plannedShift = null) {
       const taskId = id || `task-${nextTaskId++}`;
       const numericId = Number(String(taskId).replace('task-', ''));
 
@@ -2224,7 +2545,9 @@
         dueDate,
         checked,
         estimatedMinutes,
-        recurrence: normalizeRecurrence(recurrence)
+        recurrence: normalizeRecurrence(recurrence),
+        plannedDate: normalizePlannedDate(plannedDate),
+        plannedShift: normalizePlannedShift(plannedShift)
       };
     }
 
@@ -2250,6 +2573,94 @@
 
     function normalizeRecurrence(value) {
       return ['daily', 'weekly', 'monthly'].includes(value) ? value : null;
+    }
+
+
+    const dayShifts = [
+      { id: 'morning', label: 'Manhã' },
+      { id: 'afternoon', label: 'Tarde' },
+      { id: 'night', label: 'Noite' }
+    ];
+
+    function normalizePlannedShift(value) {
+      return dayShifts.some((shift) => shift.id === value) ? value : null;
+    }
+
+    function normalizePlannedDate(value) {
+      return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
+    }
+
+    function getShiftLabel(value) {
+      return dayShifts.find((shift) => shift.id === normalizePlannedShift(value))?.label || 'Sem turno';
+    }
+
+    function getShiftIndex(value) {
+      const index = dayShifts.findIndex((shift) => shift.id === normalizePlannedShift(value));
+      return index >= 0 ? index : dayShifts.length;
+    }
+
+    function getCurrentDayShift() {
+      const hour = new Date().getHours();
+      if (hour < 12) return 'morning';
+      if (hour < 18) return 'afternoon';
+      return 'night';
+    }
+
+    function getTasksPlannedFor(dateValue, shift = null) {
+      return getAllTasks().filter((task) => {
+        if (task.checked || task.plannedDate !== dateValue) {
+          return false;
+        }
+        return shift ? normalizePlannedShift(task.plannedShift) === shift : true;
+      });
+    }
+
+    function sortTodayPlanByShift() {
+      const originalOrder = new Map(todayPlan.map((task, index) => [task.id, index]));
+      todayPlan.sort((firstTask, secondTask) => {
+        const shiftCompare = getShiftIndex(firstTask.plannedShift) - getShiftIndex(secondTask.plannedShift);
+        if (shiftCompare !== 0) return shiftCompare;
+        return (originalOrder.get(firstTask.id) ?? 0) - (originalOrder.get(secondTask.id) ?? 0);
+      });
+    }
+
+    function syncTodayPlanFromTaskPlans() {
+      const todayValue = formatDateValue(getTodayStart());
+      const plannedToday = getAllTasks().filter((task) => task.plannedDate === todayValue);
+      const plannedIds = new Set(plannedToday.map((task) => task.id));
+      todayPlan = todayPlan.filter((task) => plannedIds.has(task.id));
+      const existingIds = new Set(todayPlan.map((task) => task.id));
+      plannedToday.forEach((task) => {
+        if (!existingIds.has(task.id)) {
+          todayPlan.push(task);
+        }
+      });
+      sortTodayPlanByShift();
+    }
+
+    function planTask(task, dateValue, shift) {
+      if (!task) return;
+      const normalizedDate = normalizePlannedDate(dateValue);
+      const normalizedShift = normalizePlannedShift(shift);
+      if (!normalizedDate || !normalizedShift) return;
+
+      task.plannedDate = normalizedDate;
+      task.plannedShift = normalizedShift;
+      syncTodayPlanFromTaskPlans();
+      if (!executionState.currentTaskId && normalizedDate === formatDateValue(getTodayStart())) {
+        executionState.currentTaskId = todayPlan.find((candidate) => !candidate.checked)?.id || null;
+      }
+    }
+
+    function unplanTask(task) {
+      if (!task) return;
+      task.plannedDate = null;
+      task.plannedShift = null;
+      todayPlan = todayPlan.filter((candidate) => candidate !== task);
+      if (executionState.currentTaskId === task.id) {
+        pauseExecutionTimer(false);
+        executionState.currentTaskId = todayPlan.find((candidate) => !candidate.checked)?.id || null;
+      }
     }
 
     function getRecurrenceLabel(value) {
@@ -2347,6 +2758,8 @@
         checked: task.checked,
         estimatedMinutes: task.estimatedMinutes,
         recurrence: task.recurrence,
+        plannedDate: task.plannedDate,
+        plannedShift: task.plannedShift,
         children: task.children.map(serializeTask)
       };
     }
@@ -2360,7 +2773,9 @@
         savedTask.id,
         Boolean(savedTask.checked),
         normalizeEstimatedMinutes(savedTask.estimatedMinutes),
-        normalizeRecurrence(savedTask.recurrence)
+        normalizeRecurrence(savedTask.recurrence),
+        normalizePlannedDate(savedTask.plannedDate),
+        normalizePlannedShift(savedTask.plannedShift)
       );
       task.children = (savedTask.children || []).map((child) => hydrateTask(child, task));
       return task;
@@ -2368,11 +2783,10 @@
 
     function getAppState() {
       return {
-        version: 3,
+        version: 4,
         updatedAt: new Date().toISOString(),
         tasks: rootLevel.children.map(serializeTask),
         todayPlanIds: todayPlan.map((task) => task.id),
-        dailyUsefulMinutes,
         dailyReports,
         appTheme,
         lastKnownDate,
@@ -2396,7 +2810,11 @@
       todayPlan = (safeState.todayPlanIds || [])
         .map(findTaskById)
         .filter(Boolean);
-      dailyUsefulMinutes = normalizeEstimatedMinutes(safeState.dailyUsefulMinutes);
+      const loadedPlanDate = safeState.lastKnownDate || formatDateValue(getTodayStart());
+      todayPlan.forEach((task) => {
+        if (!task.plannedDate) task.plannedDate = loadedPlanDate;
+        if (!task.plannedShift) task.plannedShift = 'morning';
+      });
       dailyReports = Array.isArray(safeState.dailyReports)
         ? safeState.dailyReports.map(normalizeDailyReport).filter(Boolean)
         : [];
@@ -2429,7 +2847,7 @@
       currentLevel = rootLevel;
       pendingDeleteTask = null;
       todayPlan = [];
-      dailyUsefulMinutes = null;
+      pendingShiftAllocation = null;
       dailyReports = [];
       executionState = normalizeExecutionState(null);
       nextTaskId = 1;
@@ -2563,13 +2981,23 @@
         return;
       }
 
-      saveDailyReportSnapshot(lastKnownDate);
-      lastKnownDate = currentDate;
-      todayPlan = [];
-      dailyUsefulMinutes = null;
+      const previousDate = lastKnownDate;
+      saveDailyReportSnapshot(previousDate);
+
+      // O que ficou pendente no dia anterior não desaparece: volta para a manhã de hoje.
+      getAllTasks().forEach((task) => {
+        if (task.plannedDate && task.plannedDate < currentDate && !task.checked) {
+          task.plannedDate = currentDate;
+          task.plannedShift = 'morning';
+        }
+      });
+
       pauseExecutionTimer(false);
       executionState.currentTaskId = null;
-      completeCheckedTasksForAutomaticDayClose(lastKnownDate);
+      completeCheckedTasksForAutomaticDayClose(previousDate);
+      lastKnownDate = currentDate;
+      syncTodayPlanFromTaskPlans();
+      executionState.currentTaskId = todayPlan.find((task) => !task.checked)?.id || null;
       renderCurrentLevel();
       renderTodayTab();
       saveAppState();
@@ -2595,6 +3023,8 @@
           task.dueDate = null;
         }
 
+        task.plannedDate = null;
+        task.plannedShift = null;
         task.checked = false;
       });
     }
@@ -2889,6 +3319,30 @@
         item.append(daysBadge);
       }
 
+      const todayValue = formatDateValue(getTodayStart());
+      if (task.plannedDate === todayValue) {
+        item.classList.add('has-shift-control');
+        const shiftSelect = document.createElement('select');
+        shiftSelect.className = 'task-shift-select';
+        shiftSelect.setAttribute('aria-label', `Turno de ${task.title}`);
+        dayShifts.forEach((shift) => {
+          const option = document.createElement('option');
+          option.value = shift.id;
+          option.textContent = shift.label;
+          shiftSelect.append(option);
+        });
+        shiftSelect.value = normalizePlannedShift(task.plannedShift) || getCurrentDayShift();
+        shiftSelect.addEventListener('click', (event) => event.stopPropagation());
+        shiftSelect.addEventListener('change', (event) => {
+          event.stopPropagation();
+          planTask(task, todayValue, shiftSelect.value);
+          saveAppState();
+          renderTodayTab();
+          if (calendarWeekStart) renderCalendarWeek();
+        });
+        item.append(shiftSelect);
+      }
+
       const actionButton = document.createElement('button');
       actionButton.className = 'today-action';
       actionButton.type = 'button';
@@ -3027,34 +3481,64 @@
       });
     }
 
-    function updateDailyUsefulMinutesView() {
-      const estimatedMinutes = getTodayEstimatedMinutes();
+    function getShiftTasksForToday(shift) {
+      return todayPlan.filter((task) => normalizePlannedShift(task.plannedShift) === shift);
+    }
 
-      if (!dailyUsefulMinutes) {
-        dailyUsefulMinutesButton.textContent = 'Tempo útil do dia';
-        dailyUsefulMinutesSummary.textContent = 'Tempo útil não definido.';
-        todayTimeProgressBar.style.width = '0%';
-        todayTimeProgressBar.classList.remove('over-limit');
-        todayTimeProgressBarWrap.setAttribute('aria-valuenow', String(estimatedMinutes));
-        todayTimeProgressBarWrap.setAttribute('aria-valuemax', '0');
-        todayTimeProgress.textContent = `Estimado hoje: ${estimatedMinutes} min. Defina o tempo útil do dia para ativar a barra.`;
-        return;
-      }
+    function getShiftMinutes(tasks) {
+      return tasks.reduce((total, task) => total + (normalizeEstimatedMinutes(task.estimatedMinutes) || 0), 0);
+    }
 
-      const balance = dailyUsefulMinutes - estimatedMinutes;
-      const progressPercentage = Math.min((estimatedMinutes / dailyUsefulMinutes) * 100, 100);
-      dailyUsefulMinutesButton.textContent = `Tempo útil: ${dailyUsefulMinutes} min`;
-      dailyUsefulMinutesSummary.textContent = `Tempo útil definido: ${dailyUsefulMinutes} min.`;
-      todayTimeProgressBar.style.width = `${progressPercentage}%`;
-      todayTimeProgressBar.classList.toggle('over-limit', balance < 0);
-      todayTimeProgressBarWrap.setAttribute('aria-valuenow', String(Math.max(0, estimatedMinutes)));
-      todayTimeProgressBarWrap.setAttribute('aria-valuemax', String(dailyUsefulMinutes));
+    function formatShiftSummary(tasks) {
+      const count = tasks.length;
+      const minutes = getShiftMinutes(tasks);
+      const taskLabel = `${count} tarefa${count === 1 ? '' : 's'}`;
+      return minutes > 0 ? `${taskLabel} · ${minutes} min` : taskLabel;
+    }
 
-      if (balance >= 0) {
-        todayTimeProgress.textContent = `${estimatedMinutes} / ${dailyUsefulMinutes} min · Restam ${balance} min.`;
-      } else {
-        todayTimeProgress.textContent = `${estimatedMinutes} / ${dailyUsefulMinutes} min · Excede em ${Math.abs(balance)} min.`;
-      }
+    function renderTodayShiftOverview() {
+      const currentShift = getCurrentDayShift();
+      todayShiftOverview.innerHTML = '';
+
+      dayShifts.forEach((shift) => {
+        const tasks = getShiftTasksForToday(shift.id);
+        const card = document.createElement('div');
+        card.className = 'shift-overview-card';
+        if (shift.id === currentShift) card.classList.add('current');
+
+        const title = document.createElement('strong');
+        title.textContent = shift.label;
+        const meta = document.createElement('span');
+        meta.textContent = formatShiftSummary(tasks);
+        card.append(title, meta);
+        todayShiftOverview.append(card);
+      });
+    }
+
+    function renderTodayShiftLists() {
+      const listMap = {
+        morning: [todayMorningList, todayMorningSummary],
+        afternoon: [todayAfternoonList, todayAfternoonSummary],
+        night: [todayNightList, todayNightSummary]
+      };
+
+      dayShifts.forEach((shift) => {
+        const tasks = getShiftTasksForToday(shift.id);
+        const [listElement, summaryElement] = listMap[shift.id];
+        summaryElement.textContent = formatShiftSummary(tasks);
+        renderTodayList(
+          listElement,
+          tasks,
+          `Nenhuma tarefa alocada para ${shift.label.toLowerCase()}.`,
+          'Remover',
+          (task) => {
+            unplanTask(task);
+            saveAppState();
+            renderTodayTab();
+            if (calendarWeekStart) renderCalendarWeek();
+          }
+        );
+      });
     }
 
     function renderTodayTab() {
@@ -3063,21 +3547,9 @@
         saveAppState();
       }
 
-      renderTodayList(
-        todayPlanList,
-        todayPlan,
-        'Nenhum bloco adicionado para hoje.',
-        'Remover',
-        (task) => {
-          todayPlan = todayPlan.filter((plannedTask) => plannedTask !== task);
-          if (executionState.currentTaskId === task.id) {
-            pauseExecutionTimer(false);
-            executionState.currentTaskId = todayPlan.find((candidate) => !candidate.checked)?.id || null;
-          }
-          saveAppState();
-          renderTodayTab();
-        }
-      );
+      syncTodayPlanFromTaskPlans();
+      renderTodayShiftLists();
+      renderTodayShiftOverview();
 
       renderTodayList(
         todayDueList,
@@ -3086,7 +3558,7 @@
         'Adicionar hoje',
         (task) => {
           if (!isTaskInTodayPlan(task)) {
-            todayPlan.push(task);
+            planTask(task, formatDateValue(getTodayStart()), getCurrentDayShift());
             if (!executionState.currentTaskId) {
               executionState.currentTaskId = task.id;
             }
@@ -3095,8 +3567,6 @@
           renderTodayTab();
         }
       );
-
-      updateDailyUsefulMinutesView();
 
       if (reorderTodayModal.classList.contains('visible')) {
         renderReorderTodayList();
@@ -3142,7 +3612,7 @@
         : {};
 
       return {
-        currentTaskId: safe.currentTaskId !== null && safe.currentTaskId !== undefined && safe.currentTaskId !== '' && Number.isFinite(Number(safe.currentTaskId)) ? Number(safe.currentTaskId) : null,
+        currentTaskId: safe.currentTaskId !== null && safe.currentTaskId !== undefined && safe.currentTaskId !== '' ? String(safe.currentTaskId) : null,
         running: Boolean(safe.running && safe.startedAt),
         startedAt: safe.running && safe.startedAt ? Number(safe.startedAt) : null,
         elapsedByTask: { ...elapsedByTask },
@@ -3304,24 +3774,37 @@
       const index = todayPlan.indexOf(task);
       if (index >= 0) {
         todayPlan.splice(index, 1);
-        todayPlan.push(task);
+        const taskShift = normalizePlannedShift(task.plannedShift) || 'morning';
+        const sameShiftIndexes = todayPlan
+          .map((candidate, candidateIndex) => !candidate.checked && normalizePlannedShift(candidate.plannedShift) === taskShift ? candidateIndex : -1)
+          .filter((candidateIndex) => candidateIndex >= 0);
+
+        if (sameShiftIndexes.length > 0) {
+          todayPlan.splice(Math.max(...sameShiftIndexes) + 1, 0, task);
+        } else {
+          const nextShift = dayShifts[getShiftIndex(taskShift) + 1];
+          if (nextShift) {
+            task.plannedShift = nextShift.id;
+          }
+          todayPlan.push(task);
+          sortTodayPlanByShift();
+        }
       }
       executionState.currentTaskId = todayPlan.find((candidate) => !candidate.checked)?.id || null;
       saveAppState();
       renderTodayTab();
+      if (calendarWeekStart) renderCalendarWeek();
     }
 
     function buildAutomaticTodayPlan() {
       const existing = new Set(todayPlan.map((task) => task.id));
       const allCandidates = getAllTasks()
-        .filter((task) => !task.checked && !existing.has(task.id))
+        .filter((task) => !task.checked && !existing.has(task.id) && !task.plannedDate)
         .sort((firstTask, secondTask) => {
           const firstDate = firstTask.dueDate || '9999-12-31';
           const secondDate = secondTask.dueDate || '9999-12-31';
           const dateCompare = firstDate.localeCompare(secondDate);
-          if (dateCompare !== 0) {
-            return dateCompare;
-          }
+          if (dateCompare !== 0) return dateCompare;
           return getTaskPath(firstTask).localeCompare(getTaskPath(secondTask), 'pt-BR');
         });
 
@@ -3332,35 +3815,22 @@
 
       const urgentCandidates = allCandidates.filter((task) => task.dueDate && getDaysRemaining(task.dueDate) <= 0);
       const futureCandidates = allCandidates.filter((task) => !urgentCandidates.includes(task));
-      const candidates = [...urgentCandidates, ...futureCandidates];
-      let plannedMinutes = getTodayEstimatedMinutes();
-      let additions = 0;
-      const maxWithoutCapacity = 3;
-      const maxWithCapacity = 7;
+      const candidates = [...urgentCandidates, ...futureCandidates].slice(0, 9);
+      const todayValue = formatDateValue(getTodayStart());
+      const currentShiftIndex = Math.max(0, getShiftIndex(getCurrentDayShift()));
+      const activeShifts = dayShifts.slice(currentShiftIndex);
+      const shiftsToUse = activeShifts.length > 0 ? activeShifts : dayShifts;
 
-      for (const task of candidates) {
-        const estimate = normalizeEstimatedMinutes(task.estimatedMinutes) || 0;
+      candidates.forEach((task, index) => {
+        const targetShift = shiftsToUse[index % shiftsToUse.length].id;
+        planTask(task, todayValue, targetShift);
+      });
 
-        if (dailyUsefulMinutes) {
-          if (additions >= maxWithCapacity) {
-            break;
-          }
-
-          if (estimate > 0 && plannedMinutes + estimate > dailyUsefulMinutes && todayPlan.length > 0) {
-            continue;
-          }
-        } else if (additions >= maxWithoutCapacity) {
-          break;
-        }
-
-        todayPlan.push(task);
-        plannedMinutes += estimate;
-        additions += 1;
-      }
-
+      sortTodayPlanByShift();
       executionState.currentTaskId = todayPlan.find((task) => !task.checked)?.id || null;
       saveAppState();
       renderTodayTab();
+      if (calendarWeekStart) renderCalendarWeek();
     }
 
     function createFocusMetaChip(text, urgent = false) {
@@ -3404,7 +3874,8 @@
 
         const estimate = document.createElement('span');
         estimate.className = 'execution-next-estimate';
-        estimate.textContent = task.estimatedMinutes ? `${task.estimatedMinutes} min` : 'sem estimativa';
+        const estimateText = task.estimatedMinutes ? `${task.estimatedMinutes} min` : 'sem estimativa';
+        estimate.textContent = `${getShiftLabel(task.plannedShift)} · ${estimateText}`;
 
         item.append(number, copy, estimate);
         executionNextList.append(item);
@@ -3477,6 +3948,8 @@
         focusTaskPath.textContent = getTaskPath(currentTask);
         focusTaskMeta.innerHTML = '';
 
+        focusTaskMeta.append(createFocusMetaChip(getShiftLabel(currentTask.plannedShift)));
+
         if (currentTask.estimatedMinutes) {
           focusTaskMeta.append(createFocusMetaChip(`${currentTask.estimatedMinutes} min estimados`));
         }
@@ -3536,6 +4009,8 @@
           isTaskOverdue(task) ? 'sim' : 'não',
           countOverdueSubtasks(task),
           task.children.length,
+          task.plannedDate || '',
+          task.plannedShift || '',
           isTaskInTodayPlan(task) ? 'sim' : 'não',
           task.checked ? 'sim' : 'não'
         ];
@@ -3557,6 +4032,8 @@
         'vencida_ou_vence_hoje',
         'subtarefas_vencidas',
         'quantidade_subtarefas',
+        'data_planejada',
+        'turno_planejado',
         'planejamento_hoje',
         'marcado'
       ];
@@ -3657,7 +4134,9 @@
           record.id || null,
           record.marcado === 'sim',
           normalizeEstimatedMinutes(record.minutos_estimados || record.estimatedMinutes),
-          normalizeRecurrence(record.recorrencia || record.recurrence)
+          normalizeRecurrence(record.recorrencia || record.recurrence),
+          normalizePlannedDate(record.data_planejada || record.plannedDate),
+          normalizePlannedShift(record.turno_planejado || record.plannedShift)
         );
 
         parent.children.push(task);
@@ -3665,12 +4144,15 @@
         stack.length = level + 1;
 
         if (record.planejamento_hoje === 'sim') {
+          if (!task.plannedDate) task.plannedDate = formatDateValue(getTodayStart());
+          if (!task.plannedShift) task.plannedShift = 'morning';
           importedTodayPlan.push(task);
         }
       });
 
       todayPlan = importedTodayPlan;
       lastKnownDate = formatDateValue(getTodayStart());
+      syncTodayPlanFromTaskPlans();
       shouldForceLocalStateToDrive = true;
       saveAppState({ skipDrive: true });
       renderCurrentLevel();
@@ -4025,39 +4507,6 @@
       }
     });
 
-    function closeDailyUsefulMinutesModal() {
-      dailyUsefulMinutesModal.classList.remove('visible');
-      dailyUsefulMinutesButton.focus();
-    }
-
-    dailyUsefulMinutesButton.addEventListener('click', () => {
-      dailyUsefulMinutesInput.value = dailyUsefulMinutes || '';
-      dailyUsefulMinutesModal.classList.add('visible');
-      dailyUsefulMinutesInput.focus();
-      dailyUsefulMinutesInput.select();
-    });
-
-    cancelDailyUsefulMinutesButton.addEventListener('click', closeDailyUsefulMinutesModal);
-
-    dailyUsefulMinutesModal.addEventListener('click', (event) => {
-      if (event.target === dailyUsefulMinutesModal) {
-        closeDailyUsefulMinutesModal();
-      }
-    });
-
-    saveDailyUsefulMinutesButton.addEventListener('click', () => {
-      dailyUsefulMinutes = normalizeEstimatedMinutes(dailyUsefulMinutesInput.value);
-      closeDailyUsefulMinutesModal();
-      saveAppState();
-      renderTodayTab();
-    });
-
-    dailyUsefulMinutesInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        saveDailyUsefulMinutesButton.click();
-      }
-    });
 
     function getCheckedTasks() {
       return getAllTasks().filter((task) => task.checked);
@@ -4071,6 +4520,8 @@
         if (task.checked) {
           if (task.recurrence) {
             task.dueDate = getNextDueDateForRecurrence(task, referenceDateValue);
+            task.plannedDate = null;
+            task.plannedShift = null;
             task.checked = false;
             rescheduledTasks.push(task);
             rescheduledTasks.push(...completeCheckedDescendants(task, referenceDateValue));
@@ -4102,6 +4553,8 @@
             child.dueDate = null;
           }
 
+          child.plannedDate = null;
+          child.plannedShift = null;
           child.checked = false;
         }
 
@@ -4177,11 +4630,13 @@
       });
 
       cleanupTodayPlan();
+      syncTodayPlanFromTaskPlans();
       executionState.currentTaskId = todayPlan.find((task) => !task.checked)?.id || null;
       finishDayModal.classList.remove('visible');
       saveAppState();
       renderCurrentLevel();
       renderTodayTab();
+      if (calendarWeekStart) renderCalendarWeek();
       finishDayButton.focus();
     });
 
@@ -4282,31 +4737,6 @@
       });
     }
 
-    function getScheduledTasksByDate() {
-      const tasksByDate = new Map();
-
-      getAllTasks()
-        .filter((task) => task.dueDate)
-        .sort((firstTask, secondTask) => {
-          const dateComparison = firstTask.dueDate.localeCompare(secondTask.dueDate);
-
-          if (dateComparison !== 0) {
-            return dateComparison;
-          }
-
-          return getTaskPath(firstTask).localeCompare(getTaskPath(secondTask), 'pt-BR');
-        })
-        .forEach((task) => {
-          if (!tasksByDate.has(task.dueDate)) {
-            tasksByDate.set(task.dueDate, []);
-          }
-
-          tasksByDate.get(task.dueDate).push(task);
-        });
-
-      return tasksByDate;
-    }
-
     function getCalendarWeekStart(referenceDate = getTodayStart()) {
       const date = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
       const daysSinceSunday = date.getDay();
@@ -4322,43 +4752,20 @@
 
     function formatCalendarWeekLabel(weekStart) {
       const weekEnd = addCalendarDays(weekStart, 6);
-      const startLabel = weekStart.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'short'
-      });
-      const endLabel = weekEnd.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
-
+      const startLabel = weekStart.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+      const endLabel = weekEnd.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
       return `${startLabel} – ${endLabel}`;
     }
 
     function getCalendarTaskMeta(task) {
       const details = [];
-      const path = getTaskPath(task);
-
-      if (path) {
-        details.push(path);
-      }
-
-      if (task.estimatedMinutes) {
-        details.push(`${task.estimatedMinutes} min`);
-      }
-
-      if (task.recurrence) {
-        details.push(getRecurrenceLabel(task.recurrence));
-      }
-
-      if (task.checked) {
-        details.push('marcada');
-      }
-
+      if (task.dueDate) details.push(`vence ${formatReportDate(task.dueDate)}`);
+      if (task.estimatedMinutes) details.push(`${task.estimatedMinutes} min`);
+      if (task.recurrence) details.push(getRecurrenceLabel(task.recurrence));
       return details.join(' · ');
     }
 
-    function createCalendarTaskItem(task) {
+    function createCalendarTaskItem(task, dateValue) {
       const item = document.createElement('li');
       item.className = 'calendar-task';
 
@@ -4375,15 +4782,112 @@
         item.append(meta);
       }
 
+      const controls = document.createElement('div');
+      controls.className = 'calendar-task-controls';
+      const shiftSelect = document.createElement('select');
+      shiftSelect.className = 'calendar-task-shift-select';
+      shiftSelect.setAttribute('aria-label', `Mover ${task.title} para outro turno`);
+      dayShifts.forEach((shift) => {
+        const option = document.createElement('option');
+        option.value = shift.id;
+        option.textContent = shift.label;
+        shiftSelect.append(option);
+      });
+      shiftSelect.value = normalizePlannedShift(task.plannedShift) || 'morning';
+      shiftSelect.addEventListener('change', () => {
+        planTask(task, dateValue, shiftSelect.value);
+        saveAppState();
+        renderCalendarWeek();
+        renderTodayTab();
+      });
+
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.className = 'calendar-task-remove';
+      removeButton.textContent = '×';
+      removeButton.setAttribute('aria-label', `Remover ${task.title} do planejamento`);
+      removeButton.addEventListener('click', () => {
+        unplanTask(task);
+        saveAppState();
+        renderCalendarWeek();
+        renderTodayTab();
+      });
+
+      controls.append(shiftSelect, removeButton);
+      item.append(controls);
       return item;
     }
 
-    function renderCalendarWeek() {
-      if (!calendarWeekStart) {
-        calendarWeekStart = getCalendarWeekStart();
+    function openShiftAllocationModal(dateValue, shift) {
+      const normalizedDate = dateValue === 'today' ? formatDateValue(getTodayStart()) : normalizePlannedDate(dateValue);
+      const normalizedShift = normalizePlannedShift(shift);
+      if (!normalizedDate || !normalizedShift) return;
+
+      pendingShiftAllocation = { dateValue: normalizedDate, shift: normalizedShift };
+      const formattedDate = parseLocalDate(normalizedDate).toLocaleDateString('pt-BR', {
+        weekday: 'long', day: '2-digit', month: '2-digit'
+      });
+      shiftAllocationTitle.textContent = `Alocar em ${getShiftLabel(normalizedShift).toLowerCase()}`;
+      shiftAllocationContext.textContent = `${formattedDate} · ${getShiftLabel(normalizedShift)}. Escolha uma tarefa pendente.`;
+      shiftTaskSelect.innerHTML = '';
+
+      const tasks = getAllTasks()
+        .filter((task) => !task.checked)
+        .sort((firstTask, secondTask) => {
+          const firstDate = firstTask.dueDate || '9999-12-31';
+          const secondDate = secondTask.dueDate || '9999-12-31';
+          const dateCompare = firstDate.localeCompare(secondDate);
+          if (dateCompare !== 0) return dateCompare;
+          return getTaskPath(firstTask).localeCompare(getTaskPath(secondTask), 'pt-BR');
+        });
+
+      if (tasks.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'Nenhuma tarefa pendente disponível';
+        shiftTaskSelect.append(option);
+        shiftTaskSelect.disabled = true;
+        saveShiftAllocationButton.disabled = true;
+      } else {
+        shiftTaskSelect.disabled = false;
+        saveShiftAllocationButton.disabled = false;
+        tasks.forEach((task) => {
+          const option = document.createElement('option');
+          option.value = task.id;
+          const due = task.dueDate ? ` · vence ${formatReportDate(task.dueDate)}` : '';
+          const currentPlan = task.plannedDate
+            ? ` · atual: ${formatReportDate(task.plannedDate)} ${getShiftLabel(task.plannedShift).toLowerCase()}`
+            : '';
+          option.textContent = `${getTaskPath(task)}${due}${currentPlan}`;
+          shiftTaskSelect.append(option);
+        });
       }
 
-      const tasksByDate = getScheduledTasksByDate();
+      shiftAllocationModal.classList.add('visible');
+      shiftTaskSelect.focus();
+    }
+
+    function closeShiftAllocationModal() {
+      shiftAllocationModal.classList.remove('visible');
+      pendingShiftAllocation = null;
+    }
+
+    function bindShiftAllocationButtons(root = document) {
+      root.querySelectorAll('[data-allocate-shift]').forEach((button) => {
+        if (button.dataset.shiftBound === 'true') return;
+        button.dataset.shiftBound = 'true';
+        button.addEventListener('click', () => {
+          const dateValue = button.dataset.allocateDate === 'today'
+            ? formatDateValue(getTodayStart())
+            : button.dataset.allocateDate;
+          openShiftAllocationModal(dateValue, button.dataset.allocateShift);
+        });
+      });
+    }
+
+    function renderCalendarWeek() {
+      if (!calendarWeekStart) calendarWeekStart = getCalendarWeekStart();
+
       const todayValue = formatDateValue(getTodayStart());
       calendarList.innerHTML = '';
       calendarWeekLabel.textContent = formatCalendarWeekLabel(calendarWeekStart);
@@ -4391,43 +4895,64 @@
       for (let dayIndex = 0; dayIndex < 7; dayIndex += 1) {
         const date = addCalendarDays(calendarWeekStart, dayIndex);
         const dateValue = formatDateValue(date);
-        const tasks = tasksByDate.get(dateValue) || [];
-
         const dayBlock = document.createElement('section');
         dayBlock.className = 'calendar-day';
-        if (dateValue === todayValue) {
-          dayBlock.classList.add('is-today');
-        }
+        if (dateValue === todayValue) dayBlock.classList.add('is-today');
 
         const weekdayTitle = document.createElement('strong');
         weekdayTitle.className = 'calendar-weekday';
         weekdayTitle.textContent = date.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
-        dayBlock.append(weekdayTitle);
-
         const dateTitle = document.createElement('span');
         dateTitle.className = 'calendar-date';
-        dateTitle.textContent = date.toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit'
+        dateTitle.textContent = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        dayBlock.append(weekdayTitle, dateTitle);
+
+        const shiftsWrap = document.createElement('div');
+        shiftsWrap.className = 'calendar-shifts';
+        dayShifts.forEach((shift) => {
+          const tasks = getTasksPlannedFor(dateValue, shift.id);
+          const shiftBlock = document.createElement('section');
+          shiftBlock.className = 'calendar-shift';
+
+          const header = document.createElement('div');
+          header.className = 'calendar-shift-header';
+          const title = document.createElement('span');
+          title.className = 'calendar-shift-title';
+          title.textContent = shift.label;
+          const count = document.createElement('span');
+          count.className = 'calendar-shift-count';
+          const minutes = getShiftMinutes(tasks);
+          count.textContent = minutes > 0 ? `${tasks.length} · ${minutes} min` : String(tasks.length);
+          header.append(title, count);
+          shiftBlock.append(header);
+
+          const list = document.createElement('ul');
+          list.className = 'calendar-shift-list';
+          if (tasks.length === 0) {
+            const empty = document.createElement('li');
+            empty.className = 'calendar-empty';
+            empty.textContent = 'Livre';
+            list.append(empty);
+          } else {
+            tasks.forEach((task) => list.append(createCalendarTaskItem(task, dateValue)));
+          }
+          shiftBlock.append(list);
+
+          const addButton = document.createElement('button');
+          addButton.type = 'button';
+          addButton.className = 'calendar-shift-add';
+          addButton.textContent = '+ Alocar tarefa';
+          addButton.dataset.allocateDate = dateValue;
+          addButton.dataset.allocateShift = shift.id;
+          shiftBlock.append(addButton);
+          shiftsWrap.append(shiftBlock);
         });
-        dayBlock.append(dateTitle);
 
-        if (tasks.length === 0) {
-          const emptyState = document.createElement('div');
-          emptyState.className = 'calendar-empty';
-          emptyState.textContent = 'Sem tarefas';
-          dayBlock.append(emptyState);
-        } else {
-          const taskList = document.createElement('ul');
-          taskList.className = 'calendar-task-list';
-          tasks.forEach((task) => {
-            taskList.append(createCalendarTaskItem(task));
-          });
-          dayBlock.append(taskList);
-        }
-
+        dayBlock.append(shiftsWrap);
         calendarList.append(dayBlock);
       }
+
+      bindShiftAllocationButtons(calendarList);
     }
 
     calendarPreviousWeekButton.addEventListener('click', () => {
@@ -4439,6 +4964,24 @@
       calendarWeekStart = addCalendarDays(calendarWeekStart || getCalendarWeekStart(), 7);
       renderCalendarWeek();
     });
+
+
+    cancelShiftAllocationButton.addEventListener('click', closeShiftAllocationModal);
+    shiftAllocationModal.addEventListener('click', (event) => {
+      if (event.target === shiftAllocationModal) closeShiftAllocationModal();
+    });
+    saveShiftAllocationButton.addEventListener('click', () => {
+      if (!pendingShiftAllocation || !shiftTaskSelect.value) return;
+      const task = findTaskById(shiftTaskSelect.value);
+      if (!task) return;
+      planTask(task, pendingShiftAllocation.dateValue, pendingShiftAllocation.shift);
+      closeShiftAllocationModal();
+      saveAppState();
+      renderTodayTab();
+      renderCalendarWeek();
+    });
+
+    bindShiftAllocationButtons(document);
 
 
 
@@ -4458,19 +5001,31 @@
         details.push(`${task.estimatedMinutes} min`);
       }
 
+      if (task.plannedDate === formatDateValue(getTodayStart()) && task.plannedShift) {
+        details.push(getShiftLabel(task.plannedShift));
+      }
+
       return details.join(' · ');
     }
 
     function moveTodayPlanTask(index, direction) {
-      const targetIndex = index + direction;
+      const task = todayPlan[index];
+      if (!task) return;
 
-      if (targetIndex < 0 || targetIndex >= todayPlan.length) {
+      const shift = normalizePlannedShift(task.plannedShift);
+      const sameShiftIndexes = todayPlan
+        .map((candidate, candidateIndex) => normalizePlannedShift(candidate.plannedShift) === shift ? candidateIndex : -1)
+        .filter((candidateIndex) => candidateIndex >= 0);
+      const positionInShift = sameShiftIndexes.indexOf(index);
+      const targetPosition = positionInShift + direction;
+
+      if (positionInShift < 0 || targetPosition < 0 || targetPosition >= sameShiftIndexes.length) {
         return;
       }
 
+      const targetIndex = sameShiftIndexes[targetPosition];
       const reorderedTodayPlan = [...todayPlan];
-      const [movedTask] = reorderedTodayPlan.splice(index, 1);
-      reorderedTodayPlan.splice(targetIndex, 0, movedTask);
+      [reorderedTodayPlan[index], reorderedTodayPlan[targetIndex]] = [reorderedTodayPlan[targetIndex], reorderedTodayPlan[index]];
       todayPlan = reorderedTodayPlan;
       saveAppState();
       renderTodayTab();
@@ -4499,7 +5054,11 @@
       upButton.type = 'button';
       upButton.textContent = '↑';
       upButton.setAttribute('aria-label', `Mover ${task.title} para cima`);
-      upButton.disabled = index === 0;
+      const sameShiftIndexes = todayPlan
+        .map((candidate, candidateIndex) => normalizePlannedShift(candidate.plannedShift) === normalizePlannedShift(task.plannedShift) ? candidateIndex : -1)
+        .filter((candidateIndex) => candidateIndex >= 0);
+      const positionInShift = sameShiftIndexes.indexOf(index);
+      upButton.disabled = positionInShift <= 0;
       upButton.addEventListener('click', () => moveTodayPlanTask(index, -1));
 
       const downButton = document.createElement('button');
@@ -4507,7 +5066,7 @@
       downButton.type = 'button';
       downButton.textContent = '↓';
       downButton.setAttribute('aria-label', `Mover ${task.title} para baixo`);
-      downButton.disabled = index === todayPlan.length - 1;
+      downButton.disabled = positionInShift < 0 || positionInShift >= sameShiftIndexes.length - 1;
       downButton.addEventListener('click', () => moveTodayPlanTask(index, 1));
 
       item.append(main, upButton, downButton);
@@ -4644,6 +5203,7 @@
       updateDaysButton();
       saveAppState();
       renderTodayTab();
+      if (calendarWeekStart) renderCalendarWeek();
     });
 
     function isGoogleDriveConfigured() {
@@ -4721,9 +5281,8 @@
       const hasTasks = Array.isArray(state.tasks) && state.tasks.length > 0;
       const hasTodayPlan = Array.isArray(state.todayPlanIds) && state.todayPlanIds.length > 0;
       const hasReports = Array.isArray(state.dailyReports) && state.dailyReports.length > 0;
-      const hasUsefulMinutes = normalizeEstimatedMinutes(state.dailyUsefulMinutes) !== null;
 
-      return hasTasks || hasTodayPlan || hasReports || hasUsefulMinutes;
+      return hasTasks || hasTodayPlan || hasReports;
     }
 
     function applyCloudState(cloudState) {
@@ -4732,6 +5291,7 @@
       localStorage.setItem(storageKey, JSON.stringify(cloudState));
       renderCurrentLevel();
       renderTodayTab();
+      if (calendarWeekStart) renderCalendarWeek();
       renderReportTable();
       isApplyingRemoteState = false;
     }
@@ -5138,6 +5698,7 @@
     applyTheme(appTheme);
     loadAppState();
     refreshDateSensitiveViews();
+    syncTodayPlanFromTaskPlans();
     renderCurrentLevel();
     renderTodayTab();
     startGoogleDriveAutoSyncOnLoad();
