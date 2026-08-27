@@ -126,6 +126,11 @@
       color: var(--surface);
     }
 
+    .mobile-tab-nav-button,
+    .mobile-tab-current {
+      display: none;
+    }
+
     main {
       width: min(var(--content-width), 100%);
       margin: 0 auto;
@@ -630,7 +635,7 @@
 
     .calendar-toolbar {
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-columns: auto minmax(0, 1fr);
       align-items: center;
       gap: 10px;
       margin-top: 16px;
@@ -1243,20 +1248,55 @@
         right: 0;
         bottom: 0;
         left: 0;
-        justify-content: space-between;
-        gap: 6px;
-        padding: 8px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr) 44px;
+        align-items: center;
+        gap: 10px;
+        padding: 10px max(12px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
         border-top: 1px solid var(--line);
         border-bottom: 0;
       }
 
       .tab-button {
-        flex: 1 1 0;
+        display: none;
+      }
+
+      .mobile-tab-nav-button {
+        min-width: 44px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--text);
+        font-size: 1rem;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .mobile-tab-nav-button:disabled {
+        opacity: 0.34;
+        cursor: not-allowed;
+      }
+
+      .mobile-tab-current {
         min-width: 0;
         min-height: 46px;
-        padding: 8px 2px;
-        font-size: clamp(0.62rem, 2.75vw, 0.75rem);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: var(--accent);
+        color: var(--surface);
+        font-size: 0.95rem;
+        font-weight: 800;
+        text-align: center;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       main {
@@ -1328,8 +1368,8 @@
         grid-column: 1 / -1;
         grid-row: 2;
         min-height: 40px;
-        justify-content: flex-end;
-        text-align: right;
+        justify-content: center;
+        text-align: center;
         border-left: 0;
         border-top: 1px solid var(--line);
       }
@@ -1381,12 +1421,22 @@
       }
 
       .calendar-list {
-        grid-template-columns: repeat(7, minmax(132px, 1fr));
-        scroll-snap-type: x proximity;
+        width: 100%;
+        grid-template-columns: repeat(7, 100%);
+        gap: 10px;
+        overflow-x: auto;
+        overflow-y: visible;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
       }
 
       .calendar-day {
+        width: 100%;
+        min-width: 0;
         scroll-snap-align: start;
+        scroll-snap-stop: always;
       }
 
       .queue-item {
@@ -1394,6 +1444,8 @@
       }
 
       .queue-date {
+        align-items: center;
+        text-align: center;
         border-right: 1px solid var(--line);
       }
 
@@ -1903,24 +1955,7 @@
       color: var(--muted);
       font-size: 0.76rem;
     }
-
-    .calendar-task-remove {
-      min-height: 38px;
-      padding: 7px 10px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--surface);
-      color: var(--text);
-      font-size: 0.8rem;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .calendar-task-remove:hover {
-      background: var(--accent-soft);
-    }
-
-    .today-shift-section .today-list {
+.today-shift-section .today-list {
       margin-top: 10px;
     }
 
@@ -2033,36 +2068,23 @@
       gap: 6px;
       padding: 8px;
       background: var(--surface);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .calendar-task:active {
+      cursor: grabbing;
     }
 
     .calendar-task-head {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      gap: 7px;
-      align-items: stretch;
+      display: block;
     }
 
     .calendar-task-text {
       min-width: 0;
       padding: 2px 0;
     }
-
-    .calendar-task .task-drag-handle {
-      min-width: 34px;
-      min-height: 42px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--surface-muted);
-    }
-
-    .calendar-task-remove {
-      min-width: 34px;
-      min-height: 42px;
-      padding: 6px 8px;
-      color: var(--danger);
-    }
-
-    .calendar-empty {
+.calendar-empty {
       padding: 5px 2px;
       text-align: left;
       font-size: 0.75rem;
@@ -2101,7 +2123,8 @@
         grid-column: 1 / -1;
         grid-row: 2;
         min-height: 40px;
-        justify-content: flex-start;
+        justify-content: center;
+        text-align: center;
         border-left: 0;
         border-top: 1px solid var(--line);
       }
@@ -2147,11 +2170,44 @@
       }
     }
 
+  
+
+    /* ===== MOBILE: CADA COLUNA DE DIA OCUPA TODA A LARGURA ÚTIL ===== */
+    @media (max-width: 900px) {
+      #calendario.calendar-tab {
+        width: calc(100vw - 32px);
+        max-width: none;
+      }
+
+      #calendario .calendar-list {
+        width: 100%;
+        grid-template-columns: repeat(7, 100%);
+        gap: 10px;
+        overflow-x: auto;
+        overflow-y: visible;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      #calendario .calendar-day {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+      }
+    }
+
   </style>
 </head>
 <body>
   <div class="app">
     <nav class="top-tabs" aria-label="Abas principais">
+      <button class="mobile-tab-nav-button" id="mobile-tab-prev" type="button" aria-label="Aba anterior">←</button>
+      <div class="mobile-tab-current" id="mobile-tab-current" aria-live="polite">Hoje</div>
+      <button class="mobile-tab-nav-button" id="mobile-tab-next" type="button" aria-label="Próxima aba">→</button>
       <button class="tab-button active" type="button" data-tab="hoje" aria-selected="true">
         Hoje
       </button>
@@ -2501,6 +2557,9 @@
   <script>
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanels = document.querySelectorAll('.tab-panel');
+    const mobileTabPrevButton = document.querySelector('#mobile-tab-prev');
+    const mobileTabNextButton = document.querySelector('#mobile-tab-next');
+    const mobileTabCurrent = document.querySelector('#mobile-tab-current');
     const taskForm = document.querySelector('#task-form');
     const taskInput = document.querySelector('#task-input');
     const taskList = document.querySelector('#task-list');
@@ -2580,6 +2639,7 @@
     const confirmCompletionButton = document.querySelector('#confirm-completion');
     const editTaskModal = document.querySelector('#edit-task-modal');
     const editTaskNameInput = document.querySelector('#edit-task-name');
+    const editTaskRecurrenceLabel = document.querySelector('label[for="edit-task-recurrence"]');
     const editTaskRecurrenceSelect = document.querySelector('#edit-task-recurrence');
     const editTaskShiftLabel = document.querySelector('label[for="edit-task-shift"]');
     const editTaskShiftSelect = document.querySelector('#edit-task-shift');
@@ -2676,6 +2736,31 @@
 
     function taskHasSubtasks(task) {
       return Boolean(task?.parent && Array.isArray(task.children) && task.children.length > 0);
+    }
+
+    function clearSchedulingFromParentTask(task) {
+      if (!task || !taskHasSubtasks(task)) return false;
+
+      let changed = false;
+      if (task.recurrence !== null) changed = true;
+      if (task.dueDate !== null) changed = true;
+      if (task.plannedDate !== null) changed = true;
+      if (task.plannedShift !== null) changed = true;
+
+      task.recurrence = null;
+      task.dueDate = null;
+      task.plannedDate = null;
+      task.plannedShift = null;
+      return changed;
+    }
+
+    function enforceParentTaskSchedulingRules() {
+      let changed = false;
+      getAllTasks().forEach((task) => {
+        if (clearSchedulingFromParentTask(task)) changed = true;
+      });
+      if (changed) syncTodayPlanFromTaskPlans();
+      return changed;
     }
 
     function getTaskDisplayTitle(task) {
@@ -2816,6 +2901,12 @@
 
     function syncRoutineTask(task, routineDay, referenceValue = formatDateValue(getTodayStart())) {
       if (!task || !routineDay) return false;
+
+      // Tarefas com subtarefas funcionam apenas como contêineres.
+      if (taskHasSubtasks(task)) {
+        return clearSchedulingFromParentTask(task);
+      }
+
       let changed = false;
       const currentDueDate = normalizePlannedDate(task.dueDate);
       let dueDate = currentDueDate;
@@ -3028,6 +3119,11 @@
       let changed = false;
 
       getAllTasks().forEach((task) => {
+        if (taskHasSubtasks(task)) {
+          if (clearSchedulingFromParentTask(task)) changed = true;
+          return;
+        }
+
         const dueDate = normalizePlannedDate(task.dueDate);
         if (!dueDate || task.checked) {
           return;
@@ -3127,7 +3223,7 @@
     }
 
     function planTask(task, dateValue, shift) {
-      if (!task) return;
+      if (!task || taskHasSubtasks(task)) return;
       const normalizedDate = normalizePlannedDate(dateValue);
       const normalizedShift = normalizePlannedShift(shift);
       if (!normalizedDate || !normalizedShift) return;
@@ -3284,6 +3380,7 @@
     }
 
     function saveAppState(options = {}) {
+      enforceParentTaskSchedulingRules();
       const state = getAppState();
       localStorage.setItem(storageKey, JSON.stringify(state));
 
@@ -3312,6 +3409,7 @@
       executionState = normalizeExecutionState(safeState.executionState);
       currentLevel = rootLevel;
       ensureRoutineStructure();
+      enforceParentTaskSchedulingRules();
     }
 
     function findTaskById(taskId) {
@@ -3347,39 +3445,79 @@
       renderTodayTab();
     }
 
+
+    const tabSequence = ['hoje', 'planejamento', 'calendario', 'fila', 'configuracoes'];
+    const tabLabels = {
+      hoje: 'Hoje',
+      planejamento: 'Planejamento',
+      calendario: 'Semana',
+      fila: 'Fila',
+      configuracoes: 'Configurações'
+    };
+
+    function updateMobileTabNavigation(selectedTab) {
+      if (!mobileTabCurrent || !mobileTabPrevButton || !mobileTabNextButton) return;
+      const currentIndex = tabSequence.indexOf(selectedTab);
+      mobileTabCurrent.textContent = tabLabels[selectedTab] || selectedTab;
+      mobileTabPrevButton.disabled = currentIndex <= 0;
+      mobileTabNextButton.disabled = currentIndex >= tabSequence.length - 1;
+    }
+
+    function activateTab(selectedTab) {
+      refreshDateSensitiveViews();
+
+      tabButtons.forEach((tabButton) => {
+        const isActive = tabButton.dataset.tab === selectedTab;
+        tabButton.classList.toggle('active', isActive);
+        tabButton.setAttribute('aria-selected', String(isActive));
+      });
+
+      tabPanels.forEach((panel) => {
+        panel.classList.toggle('active', panel.id === selectedTab);
+      });
+
+      if (selectedTab === 'hoje') {
+        renderTodayTab();
+      }
+
+      if (selectedTab === 'calendario') {
+        if (!calendarWeekStart) {
+          calendarWeekStart = getCalendarWeekStart();
+        }
+        renderCalendarWeek();
+      }
+
+      if (selectedTab === 'fila') {
+        renderQueue();
+      }
+
+      updateMobileTabNavigation(selectedTab);
+    }
+
     tabButtons.forEach((button) => {
       button.id = `tab-${button.dataset.tab}`;
-
       button.addEventListener('click', () => {
-        refreshDateSensitiveViews();
-        const selectedTab = button.dataset.tab;
-
-        tabButtons.forEach((tabButton) => {
-          const isActive = tabButton === button;
-          tabButton.classList.toggle('active', isActive);
-          tabButton.setAttribute('aria-selected', String(isActive));
-        });
-
-        tabPanels.forEach((panel) => {
-          panel.classList.toggle('active', panel.id === selectedTab);
-        });
-
-        if (selectedTab === 'hoje') {
-          renderTodayTab();
-        }
-
-        if (selectedTab === 'calendario') {
-          if (!calendarWeekStart) {
-            calendarWeekStart = getCalendarWeekStart();
-          }
-          renderCalendarWeek();
-        }
-
-        if (selectedTab === 'fila') {
-          renderQueue();
-        }
+        activateTab(button.dataset.tab);
       });
     });
+
+    mobileTabPrevButton?.addEventListener('click', () => {
+      const currentTabButton = document.querySelector('.tab-button.active');
+      const currentIndex = tabSequence.indexOf(currentTabButton?.dataset.tab || 'hoje');
+      if (currentIndex > 0) {
+        activateTab(tabSequence[currentIndex - 1]);
+      }
+    });
+
+    mobileTabNextButton?.addEventListener('click', () => {
+      const currentTabButton = document.querySelector('.tab-button.active');
+      const currentIndex = tabSequence.indexOf(currentTabButton?.dataset.tab || 'hoje');
+      if (currentIndex >= 0 && currentIndex < tabSequence.length - 1) {
+        activateTab(tabSequence[currentIndex + 1]);
+      }
+    });
+
+    updateMobileTabNavigation(document.querySelector('.tab-button.active')?.dataset.tab || 'hoje');
 
     function getCurrentPath() {
       const path = [];
@@ -3431,7 +3569,7 @@
         breadcrumb.append(button);
       });
 
-      deleteCurrentButton.classList.toggle('visible', currentLevel.parent !== null);
+      deleteCurrentButton.classList.toggle('visible', currentLevel.parent !== null && !isRoutineStructureTask(currentLevel));
     }
 
     function parseLocalDate(dateValue) {
@@ -4380,7 +4518,7 @@
     function buildAutomaticTodayPlan() {
       const existing = new Set(todayPlan.map((task) => task.id));
       const allCandidates = getAllTasks()
-        .filter((task) => !task.checked && !existing.has(task.id) && !task.plannedDate)
+        .filter((task) => !taskHasSubtasks(task) && !task.checked && !existing.has(task.id) && !task.plannedDate)
         .sort((firstTask, secondTask) => {
           const firstDate = firstTask.dueDate || '9999-12-31';
           const secondDate = secondTask.dueDate || '9999-12-31';
@@ -4854,7 +4992,7 @@
     });
 
     deleteCurrentButton.addEventListener('click', () => {
-      if (!currentLevel.parent) {
+      if (!currentLevel.parent || isRoutineStructureTask(currentLevel)) {
         return;
       }
 
@@ -4923,6 +5061,11 @@
       }
       currentLevel.children.push(newTask);
 
+      // Ao ganhar a primeira subtarefa, a tarefa-pai deixa de ser agendável.
+      if (currentLevel.parent) {
+        clearSchedulingFromParentTask(currentLevel);
+      }
+
       saveAppState();
       renderCurrentLevel();
       renderTodayTab();
@@ -4940,18 +5083,26 @@
       editTaskNameInput.value = task.title || '';
 
       const isRoutineStructure = isRoutineStructureTask(task);
+      const hasSubtasks = taskHasSubtasks(task);
+      const schedulingLocked = isRoutineStructure || hasSubtasks;
       const routineDay = getRoutineDayDefinitionForTask(task);
 
-      editTaskRecurrenceSelect.value = routineDay ? 'weekly' : (normalizeRecurrence(task.recurrence) || 'none');
-      editTaskRecurrenceSelect.disabled = Boolean(routineDay);
+      editTaskRecurrenceSelect.value = routineDay && !hasSubtasks
+        ? 'weekly'
+        : (normalizeRecurrence(task.recurrence) || 'none');
+      editTaskRecurrenceSelect.disabled = Boolean(routineDay) || schedulingLocked;
 
-      // ROTINA e os sete dias são apenas organizadores: não possuem Data nem Turno.
-      editTaskShiftLabel.hidden = isRoutineStructure;
-      editTaskShiftSelect.hidden = isRoutineStructure;
-      editTaskDateLabel.hidden = isRoutineStructure;
-      editTaskDateInput.hidden = isRoutineStructure;
+      // Tarefas com subtarefas são apenas contêineres: não possuem
+      // Recorrência, Turno nem Data.
+      editTaskRecurrenceLabel.hidden = schedulingLocked;
+      editTaskRecurrenceSelect.hidden = schedulingLocked;
+      editTaskShiftLabel.hidden = schedulingLocked;
+      editTaskShiftSelect.hidden = schedulingLocked;
+      editTaskDateLabel.hidden = schedulingLocked;
+      editTaskDateInput.hidden = schedulingLocked;
 
-      if (isRoutineStructure) {
+      if (schedulingLocked) {
+        editTaskRecurrenceSelect.value = 'none';
         editTaskShiftSelect.value = 'morning';
         editTaskDateInput.value = '';
       } else {
@@ -4966,6 +5117,8 @@
 
     function closeEditTaskModal() {
       editTaskModal.classList.remove('visible');
+      editTaskRecurrenceLabel.hidden = false;
+      editTaskRecurrenceSelect.hidden = false;
       editTaskRecurrenceSelect.disabled = false;
       editTaskShiftLabel.hidden = false;
       editTaskShiftSelect.hidden = false;
@@ -4997,19 +5150,20 @@
       const previousDueDate = normalizePlannedDate(editTargetTask.dueDate);
       let newDueDate = normalizePlannedDate(editTaskDateInput.value);
       const isRoutineStructure = isRoutineStructureTask(editTargetTask);
+      const hasSubtasks = taskHasSubtasks(editTargetTask);
       const routineDay = getRoutineDayDefinitionForTask(editTargetTask);
 
       editTargetTask.title = isRoutineDayStructureTask(editTargetTask)
         ? newTitle.toLocaleUpperCase('pt-BR')
         : newTitle;
 
-      if (isRoutineStructure) {
-        // ROTINA e Segunda–Domingo são somente contêineres organizacionais.
+      if (isRoutineStructure || hasSubtasks) {
+        // Qualquer tarefa com subtarefas funciona apenas como contêiner.
         editTargetTask.recurrence = null;
         editTargetTask.dueDate = null;
         editTargetTask.plannedDate = null;
         editTargetTask.plannedShift = null;
-        editTargetTask.checked = false;
+        if (isRoutineStructure) editTargetTask.checked = false;
       } else if (routineDay) {
         editTargetTask.plannedShift = normalizePlannedShift(editTaskShiftSelect.value) || 'morning';
         newDueDate = getDateOnOrAfterForWeekday(newDueDate || formatDateValue(getTodayStart()), routineDay.weekday);
@@ -5334,11 +5488,27 @@
     function createCalendarTaskItem(task, dateValue) {
       const item = document.createElement('li');
       item.className = 'calendar-task planned-task-draggable';
+      item.draggable = true;
+      item.title = 'Arraste a tarefa para outro dia ou turno';
+      item.setAttribute('aria-label', `Arrastar ${task.title} para outro dia ou turno`);
+
+      item.addEventListener('dragstart', (event) => {
+        draggedPlannedTaskId = task.id;
+        item.classList.add('is-dragging');
+        if (event.dataTransfer) {
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', task.id);
+        }
+      });
+
+      item.addEventListener('dragend', () => {
+        draggedPlannedTaskId = null;
+        item.classList.remove('is-dragging');
+        clearPlanningDropTargets();
+      });
 
       const head = document.createElement('div');
       head.className = 'calendar-task-head';
-
-      const dragHandle = makeTaskDragHandle(task, item);
 
       const text = document.createElement('div');
       text.className = 'calendar-task-text';
@@ -5356,22 +5526,7 @@
         text.append(meta);
       }
 
-      if (isRoutineRecurringTask(task)) {
-        head.append(dragHandle, text);
-      } else {
-        const removeButton = document.createElement('button');
-        removeButton.type = 'button';
-        removeButton.className = 'calendar-task-remove';
-        removeButton.textContent = '×';
-        removeButton.setAttribute('aria-label', `Remover ${task.title} do planejamento`);
-        removeButton.addEventListener('click', () => {
-          unplanTask(task);
-          saveAppState();
-          renderCalendarWeek();
-          renderTodayTab();
-        });
-        head.append(dragHandle, text, removeButton);
-      }
+      head.append(text);
       item.append(head);
       return item;
     }
