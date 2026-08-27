@@ -370,6 +370,10 @@
       line-height: 1.2;
       overflow-wrap: anywhere;
     }
+
+    .task-name-has-subtasks {
+      font-weight: 900 !important;
+    }
     .task-estimate {
       flex: 0 0 auto;
       min-height: 28px;
@@ -2437,6 +2441,30 @@
       updateThemeToggleButton();
     }
 
+    function normalizeTaskTitle(value) {
+      const lowerTitle = String(value ?? '').trim().toLocaleLowerCase('pt-BR');
+      if (!lowerTitle) return '';
+
+      // Mantém o nome em formato de frase: somente a primeira letra encontrada em maiúscula.
+      return lowerTitle.replace(/\p{L}/u, (letter) => letter.toLocaleUpperCase('pt-BR'));
+    }
+
+    function taskHasSubtasks(task) {
+      return Boolean(task?.parent && Array.isArray(task.children) && task.children.length > 0);
+    }
+
+    function getTaskDisplayTitle(task) {
+      const normalizedTitle = normalizeTaskTitle(task?.title || '');
+      return taskHasSubtasks(task)
+        ? normalizedTitle.toLocaleUpperCase('pt-BR')
+        : normalizedTitle;
+    }
+
+    function applyTaskNamePresentation(element, task) {
+      element.textContent = getTaskDisplayTitle(task);
+      element.classList.toggle('task-name-has-subtasks', taskHasSubtasks(task));
+    }
+
     function createTaskData(title, parent, dueDate = null, children = [], id = null, checked = false, recurrence = null, plannedDate = null, plannedShift = null) {
       const taskId = id || `task-${nextTaskId++}`;
       const numericId = Number(String(taskId).replace('task-', ''));
@@ -2447,7 +2475,7 @@
 
       return {
         id: taskId,
-        title,
+        title: normalizeTaskTitle(title),
         children,
         parent,
         dueDate,
@@ -2908,7 +2936,7 @@
         const button = document.createElement('button');
         button.className = 'breadcrumb-button';
         button.type = 'button';
-        button.textContent = level.title;
+        applyTaskNamePresentation(button, level);
 
         if (level === currentLevel) {
           button.classList.add('active');
@@ -3208,7 +3236,7 @@
 
       const titleText = document.createElement('span');
       titleText.className = 'task-title-text';
-      titleText.textContent = task.title;
+      applyTaskNamePresentation(titleText, task);
       titleContent.append(titleText);
 
       title.append(titleContent);
@@ -3756,7 +3784,7 @@
         const copy = document.createElement('div');
         copy.className = 'execution-next-copy';
         const title = document.createElement('strong');
-        title.textContent = task.title;
+        applyTaskNamePresentation(title, task);
         const path = document.createElement('span');
         path.textContent = getTaskPath(task);
         copy.append(title, path);
@@ -3832,7 +3860,7 @@
         focusStatus.classList.remove('running');
         focusTimer.textContent = '00:00:00';
       } else {
-        focusTaskTitle.textContent = currentTask.title;
+        applyTaskNamePresentation(focusTaskTitle, currentTask);
         focusTaskPath.textContent = getTaskPath(currentTask);
         focusTaskMeta.innerHTML = '';
 
@@ -4110,7 +4138,7 @@
 
       const titleText = document.createElement('span');
       titleText.className = 'task-title-text';
-      titleText.textContent = task.title;
+      applyTaskNamePresentation(titleText, task);
       titleContent.append(titleText);
       titleButton.append(titleContent);
       updateTaskStatus(titleButton, task);
@@ -4210,7 +4238,7 @@
 
     taskForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      const taskTitle = taskInput.value.trim();
+      const taskTitle = normalizeTaskTitle(taskInput.value);
 
       if (!taskTitle) {
         return;
@@ -4257,7 +4285,7 @@
         return;
       }
 
-      const newTitle = editTaskNameInput.value.trim();
+      const newTitle = normalizeTaskTitle(editTaskNameInput.value);
       if (!newTitle) {
         editTaskNameInput.focus();
         return;
@@ -4485,7 +4513,7 @@
 
       const title = document.createElement('span');
       title.className = 'queue-title';
-      title.textContent = task.title;
+      applyTaskNamePresentation(title, task);
       main.append(title);
 
       const parentPath = task.parent ? getTaskPath(task.parent) : '';
@@ -4562,7 +4590,7 @@
 
       const title = document.createElement('span');
       title.className = 'calendar-task-title';
-      title.textContent = task.title;
+      applyTaskNamePresentation(title, task);
       text.append(title);
 
       const metaText = getCalendarTaskMeta(task);
@@ -4721,7 +4749,7 @@
 
       const title = document.createElement('span');
       title.className = 'reorder-item-title';
-      title.textContent = task.title;
+      applyTaskNamePresentation(title, task);
 
       const meta = document.createElement('span');
       meta.className = 'reorder-item-meta';
