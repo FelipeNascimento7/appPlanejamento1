@@ -187,7 +187,7 @@
     .task-input::placeholder,
     .due-date-input::placeholder,
     .task-name-input::placeholder,
-    .estimate-minutes-input::placeholder,
+    .task-shift-select::placeholder,
     .daily-useful-minutes-input::placeholder {
       color: var(--placeholder);
     }
@@ -195,7 +195,7 @@
     .task-input:focus,
     .due-date-input:focus,
     .task-name-input:focus,
-    .estimate-minutes-input:focus,
+    .task-shift-select:focus,
     .daily-useful-minutes-input:focus {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
@@ -204,7 +204,7 @@
     .add-button,
     .save-due-button,
     .save-name-button,
-    .save-estimate-button,
+    .save-task-shift-button,
     .save-useful-time-button,
     .export-button,
     .danger-button,
@@ -221,7 +221,7 @@
     .add-button,
     .save-due-button,
     .save-name-button,
-    .save-estimate-button,
+    .save-task-shift-button,
     .save-useful-time-button,
     .export-button {
       background: var(--accent);
@@ -232,7 +232,7 @@
     .add-button:hover,
     .save-due-button:hover,
     .save-name-button:hover,
-    .save-estimate-button:hover,
+    .save-task-shift-button:hover,
     .save-useful-time-button:hover,
     .export-button:hover {
       opacity: 0.88;
@@ -271,9 +271,7 @@
     }
 
     .breadcrumb-button,
-    .recurrence-button,
-    .estimate-minutes-button,
-    .days-button {
+    .delete-current-button {
       min-height: 38px;
       padding: 8px 10px;
       border: 1px solid var(--line);
@@ -301,24 +299,21 @@
       background: var(--accent-soft);
     }
 
-    .recurrence-button,
-    .estimate-minutes-button,
-    .days-button {
+    .delete-current-button {
       display: none;
+      border-color: var(--danger);
+      color: var(--danger);
+      font-weight: 800;
     }
 
-    .recurrence-button.visible,
-    .estimate-minutes-button.visible,
-    .days-button.visible {
+    .delete-current-button.visible {
       display: inline-flex;
       align-items: center;
       justify-content: center;
     }
 
-    .days-button.visible {
-      border-color: var(--accent);
-      color: var(--accent);
-      font-weight: 800;
+    .delete-current-button:hover {
+      background: var(--danger-soft);
     }
 
     .task-list,
@@ -397,6 +392,7 @@
 
 
     .delete-button,
+    .edit-button,
     .today-action {
       min-width: var(--tap-size);
       min-height: 54px;
@@ -415,6 +411,14 @@
 
     .delete-button:hover {
       background: var(--danger-soft);
+    }
+
+    .edit-button {
+      color: var(--accent);
+    }
+
+    .edit-button:hover {
+      background: var(--accent-soft);
     }
 
     .task-days {
@@ -1032,7 +1036,7 @@
     .due-date-input,
     .task-name-input,
     .task-name-input,
-    .estimate-minutes-input,
+    .task-shift-select,
     .daily-useful-minutes-input {
       width: 100%;
       min-height: var(--tap-size);
@@ -1044,8 +1048,9 @@
     }
 
     .task-name-input,
-    .estimate-minutes-input,
-    .daily-useful-minutes-input {
+    .task-shift-select,
+    .daily-useful-minutes-input,
+    #edit-task-date {
       margin: 4px 0 18px;
     }
 
@@ -1156,12 +1161,10 @@
       .toolbar-actions {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: 1fr;
       }
 
-      .recurrence-button.visible,
-      .estimate-minutes-button.visible,
-      .days-button.visible {
+      .delete-current-button.visible {
         width: 100%;
         min-width: 0;
         padding-inline: 8px;
@@ -1190,7 +1193,8 @@
         cursor: pointer;
       }
 
-      .delete-button {
+      .delete-button,
+      .edit-button {
         grid-column: 2;
         grid-row: 1;
         min-height: 56px;
@@ -1585,7 +1589,7 @@
     }
 
     .execution-next-copy span,
-    .execution-next-estimate {
+    .execution-next-shift {
       color: var(--muted);
       font-size: 0.76rem;
     }
@@ -1776,8 +1780,6 @@
       font-size: 0.76rem;
     }
 
-    .shift-allocation-button,
-    .calendar-shift-add,
     .calendar-task-remove {
       min-height: 38px;
       padding: 7px 10px;
@@ -1790,8 +1792,6 @@
       cursor: pointer;
     }
 
-    .shift-allocation-button:hover,
-    .calendar-shift-add:hover,
     .calendar-task-remove:hover {
       background: var(--accent-soft);
     }
@@ -1843,33 +1843,6 @@
     .calendar-shift.is-drop-target .calendar-empty {
       color: var(--accent);
       font-weight: 800;
-    }
-
-    .shift-allocation-dialog {
-      width: min(520px, 100%);
-    }
-
-    .shift-field-label {
-      display: block;
-      margin: 16px 0 6px;
-      color: var(--text);
-      font-size: 0.82rem;
-      font-weight: 800;
-    }
-
-    .shift-task-select-modal {
-      width: 100%;
-      min-height: var(--tap-size);
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--surface);
-      color: var(--text);
-    }
-
-    .shift-modal-hint {
-      margin-top: 8px;
-      font-size: 0.78rem;
     }
 
     .calendar-list {
@@ -1965,12 +1938,6 @@
       color: var(--danger);
     }
 
-    .calendar-shift-add {
-      width: 100%;
-      margin-top: 7px;
-      background: transparent;
-    }
-
     .calendar-empty {
       padding: 5px 2px;
       text-align: left;
@@ -2048,9 +2015,7 @@
         <div class="planning-toolbar">
           <div class="breadcrumb" id="breadcrumb" aria-label="Caminho atual"></div>
           <div class="toolbar-actions">
-            <button class="recurrence-button" id="recurrence-button" type="button">Recorrência</button>
-            <button class="estimate-minutes-button" id="estimate-minutes-button" type="button">Minutos estimados</button>
-            <button class="days-button" id="days-button" type="button">Dias restantes</button>
+            <button class="delete-current-button" id="delete-current-button" type="button">Apagar</button>
           </div>
         </div>
         <ul class="task-list" id="task-list" aria-label="Tarefas do planejamento">
@@ -2143,21 +2108,18 @@
             <section class="today-shift-section" data-shift="morning">
               <div class="shift-section-header">
                 <div><strong>Manhã</strong><span id="today-morning-summary">0 tarefas</span></div>
-                <button class="shift-allocation-button" type="button" data-allocate-date="today" data-allocate-shift="morning">+ Alocar</button>
               </div>
               <ul class="today-list" id="today-morning-list" aria-label="Tarefas da manhã"></ul>
             </section>
             <section class="today-shift-section" data-shift="afternoon">
               <div class="shift-section-header">
                 <div><strong>Tarde</strong><span id="today-afternoon-summary">0 tarefas</span></div>
-                <button class="shift-allocation-button" type="button" data-allocate-date="today" data-allocate-shift="afternoon">+ Alocar</button>
               </div>
               <ul class="today-list" id="today-afternoon-list" aria-label="Tarefas da tarde"></ul>
             </section>
             <section class="today-shift-section" data-shift="night">
               <div class="shift-section-header">
                 <div><strong>Noite</strong><span id="today-night-summary">0 tarefas</span></div>
-                <button class="shift-allocation-button" type="button" data-allocate-date="today" data-allocate-shift="night">+ Alocar</button>
               </div>
               <ul class="today-list" id="today-night-list" aria-label="Tarefas da noite"></ul>
             </section>
@@ -2219,8 +2181,8 @@
 
   <div class="modal-backdrop" id="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
     <div class="confirm-dialog">
-      <h2 id="delete-title">Apagar bloco?</h2>
-      <p id="delete-message">Essa ação remove o bloco e todos os sub-blocos dentro dele.</p>
+      <h2 id="delete-title">Apagar tarefa?</h2>
+      <p id="delete-message">Essa ação remove a tarefa e todas as subtarefas dentro dela.</p>
       <div class="modal-actions">
         <button class="cancel-button" id="cancel-delete" type="button">Cancelar</button>
         <button class="confirm-delete-button" id="confirm-delete" type="button">Apagar</button>
@@ -2228,102 +2190,38 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="due-modal" role="dialog" aria-modal="true" aria-labelledby="due-title">
+  <div class="modal-backdrop" id="edit-task-modal" role="dialog" aria-modal="true" aria-labelledby="edit-task-title">
     <div class="confirm-dialog">
-      <h2 id="due-title">Definir vencimento</h2>
-      <p>Escolha uma data ou digite quantos dias faltam.</p>
-      <div class="due-mode-options" role="radiogroup" aria-label="Modo de vencimento">
-        <label class="due-mode-option">
-          <input type="radio" name="due-mode" value="date" checked>
-          Escolher data
-        </label>
-        <label class="due-mode-option">
-          <input type="radio" name="due-mode" value="days">
-          Número de dias
-        </label>
-      </div>
-      <div class="due-field active" id="due-date-field">
-        <label for="due-date-input">Data de vencimento</label>
-        <input class="due-date-input" id="due-date-input" type="date">
-      </div>
-      <div class="due-field" id="due-days-field">
-        <label for="due-days-input">Dias restantes</label>
-        <input class="due-date-input" id="due-days-input" type="number" min="0" step="1" placeholder="Ex: 7">
-      </div>
+      <h2 id="edit-task-title">Editar tarefa</h2>
+      <p>Altere as principais informações da tarefa em um único lugar.</p>
+
+      <label class="shift-field-label" for="edit-task-name">Nome</label>
+      <input class="task-name-input" id="edit-task-name" type="text" placeholder="Nome da tarefa" autocomplete="off">
+
+      <label class="shift-field-label" for="edit-task-recurrence">Recorrência</label>
+      <select class="task-shift-select" id="edit-task-recurrence" aria-label="Recorrência da tarefa">
+        <option value="none">Sem recorrência</option>
+        <option value="daily">Diária</option>
+        <option value="weekly">Semanal</option>
+        <option value="monthly">Mensal</option>
+      </select>
+
+      <label class="shift-field-label" for="edit-task-shift">Turno</label>
+      <select class="task-shift-select" id="edit-task-shift" aria-label="Turno da tarefa">
+        <option value="morning">Manhã</option>
+        <option value="afternoon">Tarde</option>
+        <option value="night">Noite</option>
+      </select>
+
+      <label class="shift-field-label" for="edit-task-date">Data</label>
+      <input class="due-date-input" id="edit-task-date" type="date">
+
       <div class="modal-actions">
-        <button class="cancel-button" id="cancel-due" type="button">Cancelar</button>
-        <button class="save-due-button" id="save-due" type="button">Salvar</button>
+        <button class="cancel-button" id="cancel-edit-task" type="button">Cancelar</button>
+        <button class="save-name-button" id="save-edit-task" type="button">Salvar</button>
       </div>
     </div>
   </div>
-
-  <div class="modal-backdrop" id="recurrence-modal" role="dialog" aria-modal="true" aria-labelledby="recurrence-title">
-    <div class="confirm-dialog">
-      <h2 id="recurrence-title">Recorrência</h2>
-      <p>Defina se esta tarefa deve voltar automaticamente após ser concluída.</p>
-      <div class="recurrence-options" role="radiogroup" aria-label="Recorrência da tarefa">
-        <label class="recurrence-option">
-          <input type="radio" name="recurrence-mode" value="none" checked>
-          Sem recorrência
-        </label>
-        <label class="recurrence-option">
-          <input type="radio" name="recurrence-mode" value="daily">
-          Diária
-        </label>
-        <label class="recurrence-option">
-          <input type="radio" name="recurrence-mode" value="weekly">
-          Semanal
-        </label>
-        <label class="recurrence-option">
-          <input type="radio" name="recurrence-mode" value="monthly">
-          Mensal
-        </label>
-      </div>
-      <div class="modal-actions">
-        <button class="cancel-button" id="cancel-recurrence" type="button">Cancelar</button>
-        <button class="save-due-button" id="save-recurrence" type="button">Salvar</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="edit-task-name-modal" role="dialog" aria-modal="true" aria-labelledby="edit-task-name-title">
-    <div class="confirm-dialog">
-      <h2 id="edit-task-name-title">Editar nome da tarefa</h2>
-      <p>Atualize o nome da tarefa atual. Essa alteração também será refletida no caminho e nas listas.</p>
-      <input class="task-name-input" id="task-name-input" type="text" placeholder="Nome da tarefa" autocomplete="off">
-      <div class="modal-actions">
-        <button class="cancel-button" id="cancel-edit-task-name" type="button">Cancelar</button>
-        <button class="save-name-button" id="save-edit-task-name" type="button">Salvar</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="estimate-minutes-modal" role="dialog" aria-modal="true" aria-labelledby="estimate-minutes-title">
-    <div class="confirm-dialog">
-      <h2 id="estimate-minutes-title">Minutos estimados</h2>
-      <p>Defina quantos minutos esta tarefa deve levar. Deixe vazio para remover a estimativa.</p>
-      <input class="estimate-minutes-input" id="estimate-minutes-input" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex: 25" autocomplete="off">
-      <div class="modal-actions">
-        <button class="cancel-button" id="cancel-estimate-minutes" type="button">Cancelar</button>
-        <button class="save-estimate-button" id="save-estimate-minutes" type="button">Salvar</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="shift-allocation-modal" role="dialog" aria-modal="true" aria-labelledby="shift-allocation-title">
-    <div class="confirm-dialog shift-allocation-dialog">
-      <h2 id="shift-allocation-title">Alocar tarefa</h2>
-      <p id="shift-allocation-context">Escolha uma tarefa para este turno.</p>
-      <label class="shift-field-label" for="shift-task-select">Tarefa</label>
-      <select class="shift-task-select-modal" id="shift-task-select"></select>
-      <p class="shift-modal-hint">Se a tarefa já estiver planejada em outro dia ou turno, ela será movida para este local.</p>
-      <div class="modal-actions">
-        <button class="cancel-button" id="cancel-shift-allocation" type="button">Cancelar</button>
-        <button class="save-useful-time-button" id="save-shift-allocation" type="button">Alocar</button>
-      </div>
-    </div>
-  </div>
-
 
   <div class="modal-backdrop" id="reorder-today-modal" role="dialog" aria-modal="true" aria-labelledby="reorder-today-title">
     <div class="confirm-dialog reorder-dialog">
@@ -2352,19 +2250,19 @@
   <div class="modal-backdrop" id="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-title">
     <div class="confirm-dialog report-dialog">
       <h2 id="report-title">Relatório</h2>
-      <p>Acompanhe a conclusão diária com base nos minutos estimados das tarefas adicionadas ao planejamento de hoje.</p>
+      <p>Acompanhe a conclusão diária com base na quantidade de tarefas planejadas e concluídas.</p>
       <div class="report-table-wrap">
         <table class="report-table" aria-label="Relatório diário">
           <thead>
             <tr>
               <th>Data</th>
-              <th>Tempo estimado</th>
+              <th>Tarefas</th>
               <th>Conclusão</th>
             </tr>
           </thead>
           <tbody id="report-table-body">
             <tr>
-              <td class="report-empty" colspan="3">Nenhum dia com tarefas estimadas ainda.</td>
+              <td class="report-empty" colspan="3">Nenhum dia com tarefas planejadas ainda.</td>
             </tr>
           </tbody>
         </table>
@@ -2395,9 +2293,7 @@
     const taskList = document.querySelector('#task-list');
     const emptyState = document.querySelector('#empty-state');
     const breadcrumb = document.querySelector('#breadcrumb');
-    const recurrenceButton = document.querySelector('#recurrence-button');
-    const estimateMinutesButton = document.querySelector('#estimate-minutes-button');
-    const daysButton = document.querySelector('#days-button');
+    const deleteCurrentButton = document.querySelector('#delete-current-button');
     const todayMorningList = document.querySelector('#today-morning-list');
     const todayAfternoonList = document.querySelector('#today-afternoon-list');
     const todayNightList = document.querySelector('#today-night-list');
@@ -2459,32 +2355,13 @@
     const deleteMessage = document.querySelector('#delete-message');
     const cancelDeleteButton = document.querySelector('#cancel-delete');
     const confirmDeleteButton = document.querySelector('#confirm-delete');
-    const dueModal = document.querySelector('#due-modal');
-    const dueDateInput = document.querySelector('#due-date-input');
-    const dueDaysInput = document.querySelector('#due-days-input');
-    const dueDateField = document.querySelector('#due-date-field');
-    const dueDaysField = document.querySelector('#due-days-field');
-    const dueModeInputs = document.querySelectorAll('input[name="due-mode"]');
-    const cancelDueButton = document.querySelector('#cancel-due');
-    const saveDueButton = document.querySelector('#save-due');
-    const recurrenceModal = document.querySelector('#recurrence-modal');
-    const recurrenceModeInputs = document.querySelectorAll('input[name="recurrence-mode"]');
-    const cancelRecurrenceButton = document.querySelector('#cancel-recurrence');
-    const saveRecurrenceButton = document.querySelector('#save-recurrence');
-    const editTaskNameModal = document.querySelector('#edit-task-name-modal');
-    const taskNameInput = document.querySelector('#task-name-input');
-    const cancelEditTaskNameButton = document.querySelector('#cancel-edit-task-name');
-    const saveEditTaskNameButton = document.querySelector('#save-edit-task-name');
-    const estimateMinutesModal = document.querySelector('#estimate-minutes-modal');
-    const estimateMinutesInput = document.querySelector('#estimate-minutes-input');
-    const cancelEstimateMinutesButton = document.querySelector('#cancel-estimate-minutes');
-    const saveEstimateMinutesButton = document.querySelector('#save-estimate-minutes');
-    const shiftAllocationModal = document.querySelector('#shift-allocation-modal');
-    const shiftAllocationTitle = document.querySelector('#shift-allocation-title');
-    const shiftAllocationContext = document.querySelector('#shift-allocation-context');
-    const shiftTaskSelect = document.querySelector('#shift-task-select');
-    const cancelShiftAllocationButton = document.querySelector('#cancel-shift-allocation');
-    const saveShiftAllocationButton = document.querySelector('#save-shift-allocation');
+    const editTaskModal = document.querySelector('#edit-task-modal');
+    const editTaskNameInput = document.querySelector('#edit-task-name');
+    const editTaskRecurrenceSelect = document.querySelector('#edit-task-recurrence');
+    const editTaskShiftSelect = document.querySelector('#edit-task-shift');
+    const editTaskDateInput = document.querySelector('#edit-task-date');
+    const cancelEditTaskButton = document.querySelector('#cancel-edit-task');
+    const saveEditTaskButton = document.querySelector('#save-edit-task');
     const storageKey = 'todo-single-file-state';
     const driveAutoSyncKey = `${storageKey}-google-drive-auto-sync`;
     const googleDriveConfig = {
@@ -2499,14 +2376,12 @@
       children: [],
       dueDate: null,
       parent: null,
-      estimatedMinutes: null,
       recurrence: null
     };
     let nextTaskId = 1;
     let currentLevel = rootLevel;
     let pendingDeleteTask = null;
     let todayPlan = [];
-    let pendingShiftAllocation = null;
     let dailyReports = [];
     let appTheme = getSavedTheme();
     let lastKnownDate = formatDateValue(getTodayStart());
@@ -2519,7 +2394,7 @@
     let pendingDriveSave = false;
     let shouldForceLocalStateToDrive = false;
     let calendarWeekStart = null;
-    let estimateTargetTask = null;
+    let editTargetTask = null;
     let executionState = {
       currentTaskId: null,
       running: false,
@@ -2562,7 +2437,7 @@
       updateThemeToggleButton();
     }
 
-    function createTaskData(title, parent, dueDate = null, children = [], id = null, checked = false, estimatedMinutes = null, recurrence = null, plannedDate = null, plannedShift = null) {
+    function createTaskData(title, parent, dueDate = null, children = [], id = null, checked = false, recurrence = null, plannedDate = null, plannedShift = null) {
       const taskId = id || `task-${nextTaskId++}`;
       const numericId = Number(String(taskId).replace('task-', ''));
 
@@ -2577,31 +2452,10 @@
         parent,
         dueDate,
         checked,
-        estimatedMinutes,
         recurrence: normalizeRecurrence(recurrence),
         plannedDate: normalizePlannedDate(plannedDate),
         plannedShift: normalizePlannedShift(plannedShift)
       };
-    }
-
-    function normalizeEstimatedMinutes(value) {
-      const minutes = Number(value);
-
-      if (!Number.isFinite(minutes) || minutes <= 0) {
-        return null;
-      }
-
-      return Math.floor(minutes);
-    }
-
-    function normalizeReportMinutes(value) {
-      const minutes = Number(value);
-
-      if (!Number.isFinite(minutes) || minutes < 0) {
-        return 0;
-      }
-
-      return Math.floor(minutes);
     }
 
     function normalizeRecurrence(value) {
@@ -2695,6 +2549,38 @@
       return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
     }
 
+    function syncDatedTasksToPlanning() {
+      let changed = false;
+
+      getAllTasks().forEach((task) => {
+        const dueDate = normalizePlannedDate(task.dueDate);
+        if (!dueDate || task.checked) {
+          return;
+        }
+
+        const shift = normalizePlannedShift(task.plannedShift) || 'morning';
+
+        // Uma tarefa com Data definida deve entrar automaticamente no planejamento
+        // daquele dia. Mantemos uma realocação manual existente, mas preenchemos
+        // planejamentos ausentes (inclusive dados salvos por versões anteriores).
+        if (!normalizePlannedDate(task.plannedDate)) {
+          task.plannedDate = dueDate;
+          changed = true;
+        }
+
+        if (task.plannedShift !== shift) {
+          task.plannedShift = shift;
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        syncTodayPlanFromTaskPlans();
+      }
+
+      return changed;
+    }
+
     function getShiftLabel(value) {
       return dayShifts.find((shift) => shift.id === normalizePlannedShift(value))?.label || 'Sem turno';
     }
@@ -2760,7 +2646,6 @@
     function unplanTask(task) {
       if (!task) return;
       task.plannedDate = null;
-      task.plannedShift = null;
       todayPlan = todayPlan.filter((candidate) => candidate !== task);
       if (executionState.currentTaskId === task.id) {
         pauseExecutionTimer(false);
@@ -2828,12 +2713,12 @@
       return formatDateValue(nextDate);
     }
 
-    function getConclusionPercentage(completedMinutes, estimatedMinutes) {
-      if (!estimatedMinutes) {
+    function getConclusionPercentage(completedTasks, plannedTasks) {
+      if (!plannedTasks) {
         return 0;
       }
 
-      return Math.min(100, Math.floor((completedMinutes / estimatedMinutes) * 100));
+      return Math.min(100, Math.floor((completedTasks / plannedTasks) * 100));
     }
 
     function normalizeDailyReport(report) {
@@ -2841,17 +2726,21 @@
         return null;
       }
 
-      const estimatedMinutes = normalizeReportMinutes(report.estimatedMinutes);
-      const completedMinutes = Math.min(
-        normalizeReportMinutes(report.completedMinutes),
-        estimatedMinutes
+      const plannedTasks = Math.max(0, Math.floor(Number(report.plannedTasks) || 0));
+      const completedTasks = Math.min(
+        Math.max(0, Math.floor(Number(report.completedTasks) || 0)),
+        plannedTasks
       );
+
+      if (!plannedTasks && !completedTasks) {
+        return null;
+      }
 
       return {
         date: report.date,
-        estimatedMinutes,
-        completedMinutes,
-        conclusion: getConclusionPercentage(completedMinutes, estimatedMinutes)
+        plannedTasks,
+        completedTasks,
+        conclusion: getConclusionPercentage(completedTasks, plannedTasks)
       };
     }
 
@@ -2861,7 +2750,6 @@
         title: task.title,
         dueDate: task.dueDate,
         checked: task.checked,
-        estimatedMinutes: task.estimatedMinutes,
         recurrence: task.recurrence,
         plannedDate: task.plannedDate,
         plannedShift: task.plannedShift,
@@ -2877,7 +2765,6 @@
         [],
         savedTask.id,
         Boolean(savedTask.checked),
-        normalizeEstimatedMinutes(savedTask.estimatedMinutes),
         normalizeRecurrence(savedTask.recurrence),
         normalizePlannedDate(savedTask.plannedDate),
         normalizePlannedShift(savedTask.plannedShift)
@@ -2888,7 +2775,7 @@
 
     function getAppState() {
       return {
-        version: 4,
+        version: 5,
         updatedAt: new Date().toISOString(),
         tasks: rootLevel.children.map(serializeTask),
         todayPlanIds: todayPlan.map((task) => task.id),
@@ -2952,7 +2839,6 @@
       currentLevel = rootLevel;
       pendingDeleteTask = null;
       todayPlan = [];
-      pendingShiftAllocation = null;
       dailyReports = [];
       executionState = normalizeExecutionState(null);
       nextTaskId = 1;
@@ -3030,9 +2916,9 @@
           if (level.parent) {
             button.classList.add('editable');
             button.disabled = false;
-            button.title = 'Editar nome da tarefa';
-            button.setAttribute('aria-label', `Editar nome de ${level.title}`);
-            button.addEventListener('click', openEditTaskNameModal);
+            button.title = 'Editar tarefa';
+            button.setAttribute('aria-label', `Editar ${level.title}`);
+            button.addEventListener('click', () => openEditTaskModal(level));
           } else {
             button.disabled = true;
           }
@@ -3046,12 +2932,7 @@
         breadcrumb.append(button);
       });
 
-      recurrenceButton.classList.toggle('visible', currentLevel.parent !== null);
-      estimateMinutesButton.classList.toggle('visible', currentLevel.parent !== null);
-      daysButton.classList.toggle('visible', currentLevel.parent !== null);
-      updateRecurrenceButton();
-      updateEstimateMinutesButton();
-      updateDaysButton();
+      deleteCurrentButton.classList.toggle('visible', currentLevel.parent !== null);
     }
 
     function parseLocalDate(dateValue) {
@@ -3093,7 +2974,7 @@
       getAllTasks().forEach((task) => {
         if (task.plannedDate && task.plannedDate < currentDate && !task.checked) {
           task.plannedDate = currentDate;
-          task.plannedShift = 'morning';
+          task.plannedShift = normalizePlannedShift(task.plannedShift) || 'morning';
         }
       });
 
@@ -3129,57 +3010,10 @@
         }
 
         task.plannedDate = null;
-        task.plannedShift = null;
         task.checked = false;
       });
     }
 
-    function updateRecurrenceButton() {
-      if (!currentLevel.parent) {
-        recurrenceButton.textContent = 'Recorrência';
-        return;
-      }
-
-      recurrenceButton.textContent = currentLevel.recurrence
-        ? getRecurrenceLabel(currentLevel.recurrence)
-        : 'Recorrência';
-    }
-
-    function updateEstimateMinutesButton() {
-      if (!currentLevel.parent) {
-        estimateMinutesButton.textContent = 'Minutos estimados';
-        return;
-      }
-
-      if (!currentLevel.estimatedMinutes) {
-        estimateMinutesButton.textContent = 'Minutos';
-        return;
-      }
-
-      estimateMinutesButton.textContent = `${currentLevel.estimatedMinutes} min`;
-    }
-
-    function updateDaysButton() {
-      if (!currentLevel.parent) {
-        daysButton.textContent = 'Dias restantes';
-        return;
-      }
-
-      if (!currentLevel.dueDate) {
-        daysButton.textContent = 'Data';
-        return;
-      }
-
-      const daysRemaining = getDaysRemaining(currentLevel.dueDate);
-
-      if (daysRemaining === 0) {
-        daysButton.textContent = 'Vence hoje';
-      } else if (daysRemaining > 0) {
-        daysButton.textContent = `Em ${daysRemaining} dia(s)`;
-      } else {
-        daysButton.textContent = `Venceu há ${Math.abs(daysRemaining)} dia(s)`;
-      }
-    }
 
     function getDaysLabel(dateValue) {
       const daysRemaining = getDaysRemaining(dateValue);
@@ -3242,26 +3076,6 @@
       renderTodayTab();
     }
 
-    function setDueMode(mode) {
-      dueModeInputs.forEach((input) => {
-        input.checked = input.value === mode;
-      });
-
-      dueDateField.classList.toggle('active', mode === 'date');
-      dueDaysField.classList.toggle('active', mode === 'days');
-    }
-
-    dueModeInputs.forEach((input) => {
-      input.addEventListener('change', () => {
-        setDueMode(input.value);
-
-        if (input.value === 'days') {
-          dueDaysInput.focus();
-        } else {
-          dueDateInput.focus();
-        }
-      });
-    });
 
     function isTaskOverdue(task) {
       return !task.checked && task.dueDate && getDaysRemaining(task.dueDate) <= 0;
@@ -3373,13 +3187,13 @@
       main.className = 'today-main time-editable';
       main.setAttribute('role', 'button');
       main.setAttribute('tabindex', '0');
-      main.setAttribute('aria-label', `Definir tempo estimado de ${task.title}`);
-      main.title = 'Toque para definir o tempo estimado';
-      main.addEventListener('click', () => openEstimateMinutesForTask(task));
+      main.setAttribute('aria-label', `Editar ${task.title}`);
+      main.title = 'Toque para editar a tarefa';
+      main.addEventListener('click', () => openEditTaskModal(task));
       main.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          openEstimateMinutesForTask(task);
+          openEditTaskModal(task);
         }
       });
 
@@ -3396,13 +3210,6 @@
       titleText.className = 'task-title-text';
       titleText.textContent = task.title;
       titleContent.append(titleText);
-
-      if (task.estimatedMinutes) {
-        const estimateBadge = document.createElement('span');
-        estimateBadge.className = 'task-estimate';
-        estimateBadge.textContent = `${task.estimatedMinutes} min`;
-        titleContent.append(estimateBadge);
-      }
 
       title.append(titleContent);
 
@@ -3457,36 +3264,28 @@
       });
     }
 
-    function getTodayEstimatedMinutes() {
-      return todayPlan.reduce((total, task) => {
-        return total + (normalizeEstimatedMinutes(task.estimatedMinutes) || 0);
-      }, 0);
+    function getTodayPlannedTaskCount() {
+      return todayPlan.length;
     }
 
-    function getTodayCompletedEstimatedMinutes() {
-      return todayPlan.reduce((total, task) => {
-        if (!task.checked) {
-          return total;
-        }
-
-        return total + (normalizeEstimatedMinutes(task.estimatedMinutes) || 0);
-      }, 0);
+    function getTodayCompletedTaskCount() {
+      return todayPlan.filter((task) => task.checked).length;
     }
 
     function getDailyReportSnapshot(dateValue = lastKnownDate) {
-      const estimatedMinutes = getTodayEstimatedMinutes();
-      const completedMinutes = Math.min(getTodayCompletedEstimatedMinutes(), estimatedMinutes);
+      const plannedTasks = getTodayPlannedTaskCount();
+      const completedTasks = Math.min(getTodayCompletedTaskCount(), plannedTasks);
 
       return {
         date: dateValue,
-        estimatedMinutes,
-        completedMinutes,
-        conclusion: getConclusionPercentage(completedMinutes, estimatedMinutes)
+        plannedTasks,
+        completedTasks,
+        conclusion: getConclusionPercentage(completedTasks, plannedTasks)
       };
     }
 
     function shouldKeepDailyReport(report) {
-      return report.estimatedMinutes > 0 || report.completedMinutes > 0;
+      return report.plannedTasks > 0 || report.completedTasks > 0;
     }
 
     function saveDailyReportSnapshot(dateValue = lastKnownDate) {
@@ -3547,7 +3346,7 @@
         const emptyCell = document.createElement('td');
         emptyCell.className = 'report-empty';
         emptyCell.colSpan = 3;
-        emptyCell.textContent = 'Nenhum dia com tarefas estimadas ainda.';
+        emptyCell.textContent = 'Nenhum dia com tarefas planejadas ainda.';
         emptyRow.append(emptyCell);
         reportTableBody.append(emptyRow);
         return;
@@ -3560,7 +3359,7 @@
         const conclusionCell = document.createElement('td');
 
         dateCell.textContent = formatReportDate(report.date);
-        estimatedCell.textContent = `${report.estimatedMinutes} min`;
+        estimatedCell.textContent = `${report.completedTasks}/${report.plannedTasks}`;
         conclusionCell.className = 'report-percent';
         conclusionCell.textContent = `${report.conclusion}%`;
 
@@ -3573,15 +3372,9 @@
       return todayPlan.filter((task) => normalizePlannedShift(task.plannedShift) === shift);
     }
 
-    function getShiftMinutes(tasks) {
-      return tasks.reduce((total, task) => total + (normalizeEstimatedMinutes(task.estimatedMinutes) || 0), 0);
-    }
-
     function formatShiftSummary(tasks) {
       const count = tasks.length;
-      const minutes = getShiftMinutes(tasks);
-      const taskLabel = `${count} tarefa${count === 1 ? '' : 's'}`;
-      return minutes > 0 ? `${taskLabel} · ${minutes} min` : taskLabel;
+      return `${count} tarefa${count === 1 ? '' : 's'}`;
     }
 
     function renderTodayShiftOverview() {
@@ -3617,7 +3410,7 @@
         renderTodayList(
           listElement,
           tasks,
-          `Nenhuma tarefa alocada para ${shift.label.toLowerCase()}.`,
+          `Nenhuma tarefa neste turno (${shift.label.toLowerCase()}).`,
           'Remover',
           (task) => {
             unplanTask(task);
@@ -3637,8 +3430,9 @@
     }
 
     function renderTodayTab() {
+      const datedTasksChanged = syncDatedTasksToPlanning();
       const todayPlanChanged = cleanupTodayPlan();
-      if (todayPlanChanged) {
+      if (datedTasksChanged || todayPlanChanged) {
         saveAppState();
       }
 
@@ -3653,7 +3447,7 @@
         'Adicionar hoje',
         (task) => {
           if (!isTaskInTodayPlan(task)) {
-            planTask(task, formatDateValue(getTodayStart()), getCurrentDayShift());
+            planTask(task, formatDateValue(getTodayStart()), normalizePlannedShift(task.plannedShift) || getCurrentDayShift());
             if (!executionState.currentTaskId) {
               executionState.currentTaskId = task.id;
             }
@@ -3917,7 +3711,7 @@
       const shiftsToUse = activeShifts.length > 0 ? activeShifts : dayShifts;
 
       candidates.forEach((task, index) => {
-        const targetShift = shiftsToUse[index % shiftsToUse.length].id;
+        const targetShift = normalizePlannedShift(task.plannedShift) || shiftsToUse[index % shiftsToUse.length].id;
         planTask(task, todayValue, targetShift);
       });
 
@@ -3967,12 +3761,11 @@
         path.textContent = getTaskPath(task);
         copy.append(title, path);
 
-        const estimate = document.createElement('span');
-        estimate.className = 'execution-next-estimate';
-        const estimateText = task.estimatedMinutes ? `${task.estimatedMinutes} min` : 'sem estimativa';
-        estimate.textContent = `${getShiftLabel(task.plannedShift)} · ${estimateText}`;
+        const shift = document.createElement('span');
+        shift.className = 'execution-next-shift';
+        shift.textContent = getShiftLabel(task.plannedShift);
 
-        item.append(number, copy, estimate);
+        item.append(number, copy, shift);
         executionNextList.append(item);
       });
     }
@@ -4045,17 +3838,13 @@
 
         focusTaskMeta.append(createFocusMetaChip(getShiftLabel(currentTask.plannedShift)));
 
-        if (currentTask.estimatedMinutes) {
-          focusTaskMeta.append(createFocusMetaChip(`${currentTask.estimatedMinutes} min estimados`));
-        }
-
         if (currentTask.dueDate) {
           const daysRemaining = getDaysRemaining(currentTask.dueDate);
           focusTaskMeta.append(createFocusMetaChip(getDaysLabel(currentTask.dueDate), daysRemaining <= 0));
         }
 
-        if (!currentTask.estimatedMinutes && !currentTask.dueDate) {
-          focusTaskMeta.append(createFocusMetaChip('Sem estimativa e sem data'));
+        if (!currentTask.dueDate) {
+          focusTaskMeta.append(createFocusMetaChip('Sem data'));
         }
 
         focusTimer.textContent = formatExecutionTime(getTaskElapsedSeconds(currentTask));
@@ -4099,7 +3888,6 @@
           task.title,
           task.dueDate || '',
           daysRemaining,
-          task.estimatedMinutes || '',
           task.recurrence || '',
           isTaskOverdue(task) ? 'sim' : 'não',
           countOverdueSubtasks(task),
@@ -4122,7 +3910,6 @@
         'titulo',
         'data_vencimento',
         'dias_restantes',
-        'minutos_estimados',
         'recorrencia',
         'vencida_ou_vence_hoje',
         'subtarefas_vencidas',
@@ -4228,7 +4015,6 @@
           [],
           record.id || null,
           record.marcado === 'sim',
-          normalizeEstimatedMinutes(record.minutos_estimados || record.estimatedMinutes),
           normalizeRecurrence(record.recorrencia || record.recurrence),
           normalizePlannedDate(record.data_planejada || record.plannedDate),
           normalizePlannedShift(record.turno_planejado || record.plannedShift)
@@ -4276,31 +4062,30 @@
     }
 
     function createTaskDaysBadge(task) {
-      if (!task.dueDate && !task.estimatedMinutes) {
+      const selectedShift = normalizePlannedShift(task.plannedShift);
+      if (!task.dueDate && !selectedShift) {
         return null;
       }
 
       const badge = document.createElement('span');
+      badge.className = 'task-days';
       const parts = [];
       const ariaParts = [];
 
       if (task.dueDate) {
         const daysClass = getDaysClass(task.dueDate);
-        badge.className = 'task-days';
-        badge.textContent = getDaysLabel(task.dueDate);
         parts.push(getDaysLabel(task.dueDate));
         ariaParts.push(`prazo: ${getDaysLabel(task.dueDate)}`);
 
         if (daysClass) {
           badge.classList.add(daysClass);
         }
-      } else {
-        badge.className = 'task-days';
       }
 
-      if (task.estimatedMinutes) {
-        parts.push(`${task.estimatedMinutes} min`);
-        ariaParts.push(`${task.estimatedMinutes} minutos estimados`);
+      if (selectedShift) {
+        const shiftLabel = getShiftLabel(selectedShift);
+        parts.push(shiftLabel);
+        ariaParts.push(`turno: ${shiftLabel}`);
       }
 
       badge.textContent = parts.join(' · ');
@@ -4335,16 +4120,14 @@
         renderCurrentLevel();
       });
 
-      const deleteButton = document.createElement('button');
-      deleteButton.className = 'delete-button';
-      deleteButton.type = 'button';
-      deleteButton.textContent = 'Apagar';
+      const editButton = document.createElement('button');
+      editButton.className = 'edit-button';
+      editButton.type = 'button';
+      editButton.textContent = 'Editar';
+      editButton.setAttribute('aria-label', `Editar ${task.title}`);
 
-      deleteButton.addEventListener('click', () => {
-        pendingDeleteTask = task;
-        deleteMessage.textContent = `Essa ação remove "${task.title}" e todos os sub-blocos dentro dele.`;
-        deleteModal.classList.add('visible');
-        confirmDeleteButton.focus();
+      editButton.addEventListener('click', () => {
+        openEditTaskModal(task);
       });
 
       item.append(titleButton);
@@ -4354,7 +4137,7 @@
         item.append(taskDaysBadge);
       }
 
-      item.append(deleteButton);
+      item.append(editButton);
 
       return item;
     }
@@ -4373,19 +4156,38 @@
       }
     });
 
+    deleteCurrentButton.addEventListener('click', () => {
+      if (!currentLevel.parent) {
+        return;
+      }
+
+      pendingDeleteTask = currentLevel;
+      deleteMessage.textContent = `Essa ação remove "${currentLevel.title}" e todas as subtarefas dentro dela.`;
+      deleteModal.classList.add('visible');
+      confirmDeleteButton.focus();
+    });
+
     confirmDeleteButton.addEventListener('click', () => {
-      if (!pendingDeleteTask) {
+      if (!pendingDeleteTask || !pendingDeleteTask.parent) {
         return;
       }
 
       const deletedTask = pendingDeleteTask;
-      currentLevel.children = currentLevel.children.filter((child) => child !== deletedTask);
+      const parentLevel = deletedTask.parent;
+      parentLevel.children = parentLevel.children.filter((child) => child !== deletedTask);
       cleanupTodayPlan(deletedTask);
+
+      if (currentLevel === deletedTask) {
+        currentLevel = parentLevel;
+      }
+
       pendingDeleteTask = null;
       deleteModal.classList.remove('visible');
       saveAppState();
       renderCurrentLevel();
       renderTodayTab();
+      renderQueue();
+      if (calendarWeekStart) renderCalendarWeek();
       taskInput.focus();
     });
 
@@ -4421,187 +4223,76 @@
       taskInput.focus();
     });
 
-    function closeDueModal() {
-      dueModal.classList.remove('visible');
-      taskInput.focus();
-    }
-
-    daysButton.addEventListener('click', () => {
-      if (!currentLevel.parent) {
-        return;
-      }
-
-      dueDateInput.value = currentLevel.dueDate || '';
-      dueDaysInput.value = currentLevel.dueDate
-        ? Math.max(0, getDaysRemaining(currentLevel.dueDate))
-        : '';
-      setDueMode('date');
-      dueModal.classList.add('visible');
-      dueDateInput.focus();
-    });
-
-    cancelDueButton.addEventListener('click', closeDueModal);
-
-    dueModal.addEventListener('click', (event) => {
-      if (event.target === dueModal) {
-        closeDueModal();
-      }
-    });
-
-    function closeRecurrenceModal() {
-      recurrenceModal.classList.remove('visible');
-      recurrenceButton.focus();
-    }
-
-    function setRecurrenceMode(value) {
-      const recurrence = normalizeRecurrence(value);
-      recurrenceModeInputs.forEach((input) => {
-        input.checked = input.value === (recurrence || 'none');
-      });
-    }
-
-    recurrenceButton.addEventListener('click', () => {
-      if (!currentLevel.parent) {
-        return;
-      }
-
-      setRecurrenceMode(currentLevel.recurrence || 'none');
-      recurrenceModal.classList.add('visible');
-      saveRecurrenceButton.focus();
-    });
-
-    cancelRecurrenceButton.addEventListener('click', closeRecurrenceModal);
-
-    recurrenceModal.addEventListener('click', (event) => {
-      if (event.target === recurrenceModal) {
-        closeRecurrenceModal();
-      }
-    });
-
-    saveRecurrenceButton.addEventListener('click', () => {
-      if (!currentLevel.parent) {
-        return;
-      }
-
-      const selectedMode = document.querySelector('input[name="recurrence-mode"]:checked')?.value || 'none';
-      currentLevel.recurrence = normalizeRecurrence(selectedMode);
-      closeRecurrenceModal();
-      updateRecurrenceButton();
-      saveAppState();
-      renderCurrentLevel();
-      renderTodayTab();
-    });
-
-    function openEditTaskNameModal() {
-      if (!currentLevel.parent) {
-        return;
-      }
-
-      taskNameInput.value = currentLevel.title;
-      editTaskNameModal.classList.add('visible');
-      taskNameInput.focus();
-      taskNameInput.select();
-    }
-
-    function closeEditTaskNameModal() {
-      editTaskNameModal.classList.remove('visible');
-      taskInput.focus();
-    }
-
-    cancelEditTaskNameButton.addEventListener('click', closeEditTaskNameModal);
-
-    editTaskNameModal.addEventListener('click', (event) => {
-      if (event.target === editTaskNameModal) {
-        closeEditTaskNameModal();
-      }
-    });
-
-    saveEditTaskNameButton.addEventListener('click', () => {
-      if (!currentLevel.parent) {
-        return;
-      }
-
-      const newTitle = taskNameInput.value.trim();
-
-      if (!newTitle) {
-        taskNameInput.focus();
-        return;
-      }
-
-      currentLevel.title = newTitle;
-      closeEditTaskNameModal();
-      saveAppState();
-      renderCurrentLevel();
-      renderTodayTab();
-    });
-
-    taskNameInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        saveEditTaskNameButton.click();
-      }
-    });
-
-    function openEstimateMinutesForTask(task) {
+    function openEditTaskModal(task) {
       if (!task || !task.parent) {
         return;
       }
 
-      estimateTargetTask = task;
-      estimateMinutesInput.value = task.estimatedMinutes || '';
-      estimateMinutesModal.classList.add('visible');
-      estimateMinutesInput.focus();
-      estimateMinutesInput.select();
+      editTargetTask = task;
+      editTaskNameInput.value = task.title || '';
+      editTaskRecurrenceSelect.value = normalizeRecurrence(task.recurrence) || 'none';
+      editTaskShiftSelect.value = normalizePlannedShift(task.plannedShift) || getCurrentDayShift();
+      editTaskDateInput.value = task.dueDate || '';
+      editTaskModal.classList.add('visible');
+      editTaskNameInput.focus();
+      editTaskNameInput.select();
     }
 
-    function closeEstimateMinutesModal() {
-      estimateMinutesModal.classList.remove('visible');
-      estimateTargetTask = null;
+    function closeEditTaskModal() {
+      editTaskModal.classList.remove('visible');
+      editTargetTask = null;
+      taskInput.focus();
     }
 
-    estimateMinutesButton.addEventListener('click', () => {
-      if (!currentLevel.parent) {
-        return;
-      }
+    cancelEditTaskButton.addEventListener('click', closeEditTaskModal);
 
-      openEstimateMinutesForTask(currentLevel);
-    });
-
-    cancelEstimateMinutesButton.addEventListener('click', closeEstimateMinutesModal);
-
-    estimateMinutesModal.addEventListener('click', (event) => {
-      if (event.target === estimateMinutesModal) {
-        closeEstimateMinutesModal();
+    editTaskModal.addEventListener('click', (event) => {
+      if (event.target === editTaskModal) {
+        closeEditTaskModal();
       }
     });
 
-    saveEstimateMinutesButton.addEventListener('click', () => {
-      const targetTask = estimateTargetTask || (currentLevel.parent ? currentLevel : null);
-
-      if (!targetTask) {
+    saveEditTaskButton.addEventListener('click', () => {
+      if (!editTargetTask) {
         return;
       }
 
-      targetTask.estimatedMinutes = normalizeEstimatedMinutes(estimateMinutesInput.value);
-      const editingCurrentLevel = targetTask === currentLevel;
-      closeEstimateMinutesModal();
-
-      if (editingCurrentLevel) {
-        updateEstimateMinutesButton();
+      const newTitle = editTaskNameInput.value.trim();
+      if (!newTitle) {
+        editTaskNameInput.focus();
+        return;
       }
 
+      const previousDueDate = normalizePlannedDate(editTargetTask.dueDate);
+      const newDueDate = normalizePlannedDate(editTaskDateInput.value);
+
+      editTargetTask.title = newTitle;
+      editTargetTask.recurrence = normalizeRecurrence(editTaskRecurrenceSelect.value);
+      editTargetTask.plannedShift = normalizePlannedShift(editTaskShiftSelect.value) || 'morning';
+      editTargetTask.dueDate = newDueDate;
+
+      // A Data escolhida no modal também define o dia em Hoje/Semana.
+      if (newDueDate) {
+        editTargetTask.plannedDate = newDueDate;
+      } else if (previousDueDate && editTargetTask.plannedDate === previousDueDate) {
+        editTargetTask.plannedDate = null;
+      }
+
+      syncTodayPlanFromTaskPlans();
+      closeEditTaskModal();
       saveAppState();
       renderCurrentLevel();
       renderTodayTab();
+      renderQueue();
+      if (calendarWeekStart) renderCalendarWeek();
     });
 
-    estimateMinutesInput.addEventListener('keydown', (event) => {
+    editTaskNameInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         event.preventDefault();
-        saveEstimateMinutesButton.click();
+        saveEditTaskButton.click();
       }
     });
-
 
     function getCheckedTasks() {
       return getAllTasks().filter((task) => task.checked);
@@ -4616,7 +4307,6 @@
           if (task.recurrence) {
             task.dueDate = getNextDueDateForRecurrence(task, referenceDateValue);
             task.plannedDate = null;
-            task.plannedShift = null;
             task.checked = false;
             rescheduledTasks.push(task);
             rescheduledTasks.push(...completeCheckedDescendants(task, referenceDateValue));
@@ -4649,7 +4339,6 @@
           }
 
           child.plannedDate = null;
-          child.plannedShift = null;
           child.checked = false;
         }
 
@@ -4752,8 +4441,8 @@
     function getQueueTaskMeta(task) {
       const details = [];
 
-      if (task.estimatedMinutes) {
-        details.push(`${task.estimatedMinutes} min`);
+      if (normalizePlannedShift(task.plannedShift)) {
+        details.push(getShiftLabel(task.plannedShift));
       }
 
       if (task.recurrence) {
@@ -4855,7 +4544,6 @@
     function getCalendarTaskMeta(task) {
       const details = [];
       if (task.dueDate) details.push(`vence ${formatReportDate(task.dueDate)}`);
-      if (task.estimatedMinutes) details.push(`${task.estimatedMinutes} min`);
       if (task.recurrence) details.push(getRecurrenceLabel(task.recurrence));
       return details.join(' · ');
     }
@@ -4902,75 +4590,13 @@
       return item;
     }
 
-    function openShiftAllocationModal(dateValue, shift) {
-      const normalizedDate = dateValue === 'today' ? formatDateValue(getTodayStart()) : normalizePlannedDate(dateValue);
-      const normalizedShift = normalizePlannedShift(shift);
-      if (!normalizedDate || !normalizedShift) return;
-
-      pendingShiftAllocation = { dateValue: normalizedDate, shift: normalizedShift };
-      const formattedDate = parseLocalDate(normalizedDate).toLocaleDateString('pt-BR', {
-        weekday: 'long', day: '2-digit', month: '2-digit'
-      });
-      shiftAllocationTitle.textContent = `Alocar em ${getShiftLabel(normalizedShift).toLowerCase()}`;
-      shiftAllocationContext.textContent = `${formattedDate} · ${getShiftLabel(normalizedShift)}. Escolha uma tarefa pendente.`;
-      shiftTaskSelect.innerHTML = '';
-
-      const tasks = getAllTasks()
-        .filter((task) => !task.checked)
-        .sort((firstTask, secondTask) => {
-          const firstDate = firstTask.dueDate || '9999-12-31';
-          const secondDate = secondTask.dueDate || '9999-12-31';
-          const dateCompare = firstDate.localeCompare(secondDate);
-          if (dateCompare !== 0) return dateCompare;
-          return getTaskPath(firstTask).localeCompare(getTaskPath(secondTask), 'pt-BR');
-        });
-
-      if (tasks.length === 0) {
-        const option = document.createElement('option');
-        option.value = '';
-        option.textContent = 'Nenhuma tarefa pendente disponível';
-        shiftTaskSelect.append(option);
-        shiftTaskSelect.disabled = true;
-        saveShiftAllocationButton.disabled = true;
-      } else {
-        shiftTaskSelect.disabled = false;
-        saveShiftAllocationButton.disabled = false;
-        tasks.forEach((task) => {
-          const option = document.createElement('option');
-          option.value = task.id;
-          const due = task.dueDate ? ` · vence ${formatReportDate(task.dueDate)}` : '';
-          const currentPlan = task.plannedDate
-            ? ` · atual: ${formatReportDate(task.plannedDate)} ${getShiftLabel(task.plannedShift).toLowerCase()}`
-            : '';
-          option.textContent = `${getTaskPath(task)}${due}${currentPlan}`;
-          shiftTaskSelect.append(option);
-        });
-      }
-
-      shiftAllocationModal.classList.add('visible');
-      shiftTaskSelect.focus();
-    }
-
-    function closeShiftAllocationModal() {
-      shiftAllocationModal.classList.remove('visible');
-      pendingShiftAllocation = null;
-    }
-
-    function bindShiftAllocationButtons(root = document) {
-      root.querySelectorAll('[data-allocate-shift]').forEach((button) => {
-        if (button.dataset.shiftBound === 'true') return;
-        button.dataset.shiftBound = 'true';
-        button.addEventListener('click', () => {
-          const dateValue = button.dataset.allocateDate === 'today'
-            ? formatDateValue(getTodayStart())
-            : button.dataset.allocateDate;
-          openShiftAllocationModal(dateValue, button.dataset.allocateShift);
-        });
-      });
-    }
-
     function renderCalendarWeek() {
       if (!calendarWeekStart) calendarWeekStart = getCalendarWeekStart();
+
+      const datedTasksChanged = syncDatedTasksToPlanning();
+      if (datedTasksChanged) {
+        saveAppState();
+      }
 
       const todayValue = formatDateValue(getTodayStart());
       calendarList.innerHTML = '';
@@ -5005,8 +4631,7 @@
           title.textContent = shift.label;
           const count = document.createElement('span');
           count.className = 'calendar-shift-count';
-          const minutes = getShiftMinutes(tasks);
-          count.textContent = minutes > 0 ? `${tasks.length} · ${minutes} min` : String(tasks.length);
+          count.textContent = String(tasks.length);
           header.append(title, count);
           shiftBlock.append(header);
 
@@ -5022,13 +4647,6 @@
           }
           shiftBlock.append(list);
 
-          const addButton = document.createElement('button');
-          addButton.type = 'button';
-          addButton.className = 'calendar-shift-add';
-          addButton.textContent = '+ Alocar tarefa';
-          addButton.dataset.allocateDate = dateValue;
-          addButton.dataset.allocateShift = shift.id;
-          shiftBlock.append(addButton);
           bindPlanningDropZone(shiftBlock, dateValue, shift.id);
           shiftsWrap.append(shiftBlock);
         });
@@ -5037,7 +4655,6 @@
         calendarList.append(dayBlock);
       }
 
-      bindShiftAllocationButtons(calendarList);
     }
 
     calendarPreviousWeekButton.addEventListener('click', () => {
@@ -5051,24 +4668,6 @@
     });
 
 
-    cancelShiftAllocationButton.addEventListener('click', closeShiftAllocationModal);
-    shiftAllocationModal.addEventListener('click', (event) => {
-      if (event.target === shiftAllocationModal) closeShiftAllocationModal();
-    });
-    saveShiftAllocationButton.addEventListener('click', () => {
-      if (!pendingShiftAllocation || !shiftTaskSelect.value) return;
-      const task = findTaskById(shiftTaskSelect.value);
-      if (!task) return;
-      planTask(task, pendingShiftAllocation.dateValue, pendingShiftAllocation.shift);
-      closeShiftAllocationModal();
-      saveAppState();
-      renderTodayTab();
-      renderCalendarWeek();
-    });
-
-    bindShiftAllocationButtons(document);
-
-
 
     function getReorderTaskMeta(task) {
       const details = [];
@@ -5080,10 +4679,6 @@
 
       if (task.dueDate) {
         details.push(getDaysLabel(task.dueDate));
-      }
-
-      if (task.estimatedMinutes) {
-        details.push(`${task.estimatedMinutes} min`);
       }
 
       if (task.plannedDate === formatDateValue(getTodayStart()) && task.plannedShift) {
@@ -5272,24 +4867,6 @@
       clearDataButton.focus();
     });
 
-    saveDueButton.addEventListener('click', () => {
-      const selectedMode = document.querySelector('input[name="due-mode"]:checked').value;
-
-      if (selectedMode === 'days') {
-        const days = dueDaysInput.value === '' ? NaN : Number(dueDaysInput.value);
-        currentLevel.dueDate = Number.isFinite(days) && days >= 0
-          ? getDateFromDays(Math.floor(days))
-          : null;
-      } else {
-        currentLevel.dueDate = dueDateInput.value || null;
-      }
-
-      closeDueModal();
-      updateDaysButton();
-      saveAppState();
-      renderTodayTab();
-      if (calendarWeekStart) renderCalendarWeek();
-    });
 
     function isGoogleDriveConfigured() {
       return Boolean(
