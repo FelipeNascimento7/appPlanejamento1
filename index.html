@@ -2665,11 +2665,13 @@
     }
 
     function normalizeTaskTitle(value) {
-      const lowerTitle = String(value ?? '').trim().toLocaleLowerCase('pt-BR');
-      if (!lowerTitle) return '';
+      // Sem capitalização automática: preserva exatamente a caixa digitada,
+      // removendo apenas espaços externos acidentais.
+      return String(value ?? '').trim();
+    }
 
-      // Mantém o nome em formato de frase: somente a primeira letra encontrada em maiúscula.
-      return lowerTitle.replace(/\p{L}/u, (letter) => letter.toLocaleUpperCase('pt-BR'));
+    function normalizeTaskTitleKey(value) {
+      return String(value ?? '').trim().toLocaleLowerCase('pt-BR');
     }
 
     function taskHasSubtasks(task) {
@@ -2677,18 +2679,16 @@
     }
 
     function getTaskDisplayTitle(task) {
-      const normalizedTitle = normalizeTaskTitle(task?.title || '');
+      const originalTitle = normalizeTaskTitle(task?.title || '');
 
-      // Os sete dias que organizam a ROTINA são títulos estruturais e
-      // permanecem sempre em maiúsculas, mesmo quando ainda não têm subtarefas.
+      // Exceção estrutural já definida: os sete dias da ROTINA permanecem
+      // sempre em maiúsculas, independentemente de como forem armazenados.
       if (isRoutineDayStructureTask(task)) {
         const definition = routineDayDefinitions.find((day) => day.id === task.id);
-        return (definition?.label || normalizedTitle).toLocaleUpperCase('pt-BR');
+        return (definition?.label || originalTitle).toLocaleUpperCase('pt-BR');
       }
 
-      return taskHasSubtasks(task)
-        ? normalizedTitle.toLocaleUpperCase('pt-BR')
-        : normalizedTitle;
+      return originalTitle;
     }
 
     function applyTaskNamePresentation(element, task) {
@@ -2741,7 +2741,7 @@
 
     function getRoutineRoot() {
       return rootLevel.children.find((task) => task.id === routineRootId)
-        || rootLevel.children.find((task) => normalizeTaskTitle(task.title) === 'Rotina')
+        || rootLevel.children.find((task) => normalizeTaskTitleKey(task.title) === 'rotina')
         || null;
     }
 
@@ -2885,7 +2885,7 @@
 
       routineDayDefinitions.forEach((definition) => {
         let dayTask = routineRoot.children.find((task) => task.id === definition.id)
-          || routineRoot.children.find((task) => normalizeTaskTitle(task.title) === normalizeTaskTitle(definition.label));
+          || routineRoot.children.find((task) => normalizeTaskTitleKey(task.title) === normalizeTaskTitleKey(definition.label));
 
         if (!dayTask) {
           dayTask = createTaskData(definition.label, routineRoot, null, [], definition.id);
