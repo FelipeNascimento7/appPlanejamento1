@@ -2730,13 +2730,13 @@
 
     const routineRootId = 'routine-root';
     const routineDayDefinitions = [
+      { id: 'routine-day-0', weekday: 0, label: 'Domingo' },
       { id: 'routine-day-1', weekday: 1, label: 'Segunda-feira' },
       { id: 'routine-day-2', weekday: 2, label: 'Terça-feira' },
       { id: 'routine-day-3', weekday: 3, label: 'Quarta-feira' },
       { id: 'routine-day-4', weekday: 4, label: 'Quinta-feira' },
       { id: 'routine-day-5', weekday: 5, label: 'Sexta-feira' },
-      { id: 'routine-day-6', weekday: 6, label: 'Sábado' },
-      { id: 'routine-day-0', weekday: 0, label: 'Domingo' }
+      { id: 'routine-day-6', weekday: 6, label: 'Sábado' }
     ];
 
     function getRoutineRoot() {
@@ -2913,6 +2913,23 @@
 
         if (syncRoutineDescendants(dayTask, definition)) changed = true;
       });
+
+      // A ordem dos dias da ROTINA é estrutural e nunca depende de prazo,
+      // quantidade de subtarefas ou quantidade de tarefas vencidas.
+      const routineDayIds = new Set(routineDayDefinitions.map((definition) => definition.id));
+      const orderedRoutineDays = routineDayDefinitions
+        .map((definition) => routineRoot.children.find((task) => task.id === definition.id))
+        .filter(Boolean);
+      const nonDayChildren = routineRoot.children.filter((task) => !routineDayIds.has(task.id));
+      const desiredRoutineChildren = [...orderedRoutineDays, ...nonDayChildren];
+
+      if (
+        desiredRoutineChildren.length !== routineRoot.children.length
+        || desiredRoutineChildren.some((task, index) => routineRoot.children[index] !== task)
+      ) {
+        routineRoot.children = desiredRoutineChildren;
+        changed = true;
+      }
 
       return changed;
     }
@@ -3754,6 +3771,18 @@
         // ROTINA é um bloco especial e permanece sempre no topo do Planejamento.
         if (firstIsRoutine !== secondIsRoutine) {
           return firstIsRoutine ? -1 : 1;
+        }
+
+        const firstRoutineDayIndex = routineDayDefinitions.findIndex((day) => day.id === firstTask.id);
+        const secondRoutineDayIndex = routineDayDefinitions.findIndex((day) => day.id === secondTask.id);
+
+        // Dentro de ROTINA, DOMINGO → SÁBADO é uma ordem fixa.
+        // Ela tem prioridade absoluta sobre vencimentos e quantidade de subtarefas.
+        if (firstRoutineDayIndex >= 0 || secondRoutineDayIndex >= 0) {
+          if (firstRoutineDayIndex >= 0 && secondRoutineDayIndex >= 0) {
+            return firstRoutineDayIndex - secondRoutineDayIndex;
+          }
+          return firstRoutineDayIndex >= 0 ? -1 : 1;
         }
 
         const firstHasSubtasks = firstTask.children.length > 0;
