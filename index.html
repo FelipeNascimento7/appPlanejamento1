@@ -2107,6 +2107,46 @@
       }
     }
 
+
+
+    /* ===== SEMANA EM LARGURA TOTAL NO DESKTOP ===== */
+    @media (min-width: 901px) {
+      #calendario.calendar-tab {
+        width: calc(100vw - 32px);
+        max-width: none;
+        margin-left: 50%;
+        transform: translateX(-50%);
+      }
+
+      #calendario .calendar-list {
+        width: 100%;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 8px;
+        overflow-x: visible;
+      }
+
+      #calendario .calendar-day {
+        min-width: 0;
+        padding: 10px;
+      }
+
+      #calendario .calendar-shift {
+        min-width: 0;
+      }
+
+      #calendario .calendar-task-head {
+        min-width: 0;
+      }
+
+      #calendario .calendar-task-text,
+      #calendario .calendar-task-title,
+      #calendario .calendar-task-meta {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        white-space: normal;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2541,7 +2581,9 @@
     const editTaskModal = document.querySelector('#edit-task-modal');
     const editTaskNameInput = document.querySelector('#edit-task-name');
     const editTaskRecurrenceSelect = document.querySelector('#edit-task-recurrence');
+    const editTaskShiftLabel = document.querySelector('label[for="edit-task-shift"]');
     const editTaskShiftSelect = document.querySelector('#edit-task-shift');
+    const editTaskDateLabel = document.querySelector('label[for="edit-task-date"]');
     const editTaskDateInput = document.querySelector('#edit-task-date');
     const cancelEditTaskButton = document.querySelector('#cancel-edit-task');
     const saveEditTaskButton = document.querySelector('#save-edit-task');
@@ -2636,6 +2678,14 @@
 
     function getTaskDisplayTitle(task) {
       const normalizedTitle = normalizeTaskTitle(task?.title || '');
+
+      // Os sete dias que organizam a ROTINA são títulos estruturais e
+      // permanecem sempre em maiúsculas, mesmo quando ainda não têm subtarefas.
+      if (isRoutineDayStructureTask(task)) {
+        const definition = routineDayDefinitions.find((day) => day.id === task.id);
+        return (definition?.label || normalizedTitle).toLocaleUpperCase('pt-BR');
+      }
+
       return taskHasSubtasks(task)
         ? normalizedTitle.toLocaleUpperCase('pt-BR')
         : normalizedTitle;
@@ -2711,6 +2761,20 @@
 
     function getRoutineDayDefinitionForTask(task) {
       return task?.parent ? getRoutineDayDefinitionForLevel(task.parent) : null;
+    }
+
+    function isRoutineDayStructureTask(task) {
+      return Boolean(
+        task
+        && task.parent?.id === routineRootId
+        && routineDayDefinitions.some((day) => day.id === task.id)
+      );
+    }
+
+    function isRoutineStructureTask(task) {
+      if (!task) return false;
+      if (task.id === routineRootId) return true;
+      return isRoutineDayStructureTask(task);
     }
 
     function isRoutineRecurringTask(task) {
@@ -2808,6 +2872,11 @@
       }
 
       routineRoot.title = normalizeTaskTitle('ROTINA');
+      if (routineRoot.dueDate !== null) changed = true;
+      if (routineRoot.recurrence !== null) changed = true;
+      if (routineRoot.plannedDate !== null) changed = true;
+      if (routineRoot.plannedShift !== null) changed = true;
+      if (routineRoot.checked) changed = true;
       routineRoot.dueDate = null;
       routineRoot.recurrence = null;
       routineRoot.plannedDate = null;
@@ -2828,7 +2897,14 @@
         }
 
         dayTask.parent = routineRoot;
-        dayTask.title = normalizeTaskTitle(definition.label);
+        // O nome persistido dos dias também fica em maiúsculas para que
+        // breadcrumbs, caminhos e demais telas usem o mesmo padrão visual.
+        dayTask.title = definition.label.toLocaleUpperCase('pt-BR');
+        if (dayTask.dueDate !== null) changed = true;
+        if (dayTask.recurrence !== null) changed = true;
+        if (dayTask.plannedDate !== null) changed = true;
+        if (dayTask.plannedShift !== null) changed = true;
+        if (dayTask.checked) changed = true;
         dayTask.dueDate = null;
         dayTask.recurrence = null;
         dayTask.plannedDate = null;
@@ -3784,7 +3860,7 @@
       const titleContent = document.createElement('span');
       titleContent.className = 'task-title-content';
 
-      if (task.dueDate) {
+      if (task.dueDate && !isRoutineStructureTask(task)) {
         titleContent.append(createDueCheckbox(task));
       }
 
@@ -4649,6 +4725,8 @@
     }
 
     function createTaskDaysBadge(task) {
+      if (isRoutineStructureTask(task)) return null;
+
       const selectedShift = normalizePlannedShift(task.plannedShift);
       if (!task.dueDate && !selectedShift) {
         return null;
@@ -4809,15 +4887,18 @@
       const newTask = createTaskData(taskTitle, currentLevel);
       const routineDay = getRoutineDayDefinitionForLevel(currentLevel);
       if (routineDay) {
-        newTask.recurrence = 'weekly';
-        newTask.dueDate = getDateOnOrAfterForWeekday(formatDateValue(getTodayStart()), routineDay.weekday);
-        newTask.plannedDate = newTask.dueDate;
-        newTask.plannedShift = 'morning';
+        // Toda tarefa criada dentro de um dia da ROTINA nasce semanal e já recebe
+        // a ocorrência válida mais próxima: hoje, quando o dia coincide com hoje,
+        // ou a próxima data futura daquele mesmo dia da semana.
+        syncRoutineTask(newTask, routineDay, formatDateValue(getTodayStart()));
       }
       currentLevel.children.push(newTask);
 
       saveAppState();
       renderCurrentLevel();
+      renderTodayTab();
+      renderQueue();
+      if (calendarWeekStart) renderCalendarWeek();
       taskInput.focus();
     });
 
@@ -4828,11 +4909,27 @@
 
       editTargetTask = task;
       editTaskNameInput.value = task.title || '';
+
+      const isRoutineStructure = isRoutineStructureTask(task);
       const routineDay = getRoutineDayDefinitionForTask(task);
+
       editTaskRecurrenceSelect.value = routineDay ? 'weekly' : (normalizeRecurrence(task.recurrence) || 'none');
       editTaskRecurrenceSelect.disabled = Boolean(routineDay);
-      editTaskShiftSelect.value = normalizePlannedShift(task.plannedShift) || getCurrentDayShift();
-      editTaskDateInput.value = task.dueDate || '';
+
+      // ROTINA e os sete dias são apenas organizadores: não possuem Data nem Turno.
+      editTaskShiftLabel.hidden = isRoutineStructure;
+      editTaskShiftSelect.hidden = isRoutineStructure;
+      editTaskDateLabel.hidden = isRoutineStructure;
+      editTaskDateInput.hidden = isRoutineStructure;
+
+      if (isRoutineStructure) {
+        editTaskShiftSelect.value = 'morning';
+        editTaskDateInput.value = '';
+      } else {
+        editTaskShiftSelect.value = normalizePlannedShift(task.plannedShift) || getCurrentDayShift();
+        editTaskDateInput.value = task.dueDate || '';
+      }
+
       editTaskModal.classList.add('visible');
       editTaskNameInput.focus();
       editTaskNameInput.select();
@@ -4841,6 +4938,10 @@
     function closeEditTaskModal() {
       editTaskModal.classList.remove('visible');
       editTaskRecurrenceSelect.disabled = false;
+      editTaskShiftLabel.hidden = false;
+      editTaskShiftSelect.hidden = false;
+      editTaskDateLabel.hidden = false;
+      editTaskDateInput.hidden = false;
       editTargetTask = null;
       taskInput.focus();
     }
@@ -4866,17 +4967,28 @@
 
       const previousDueDate = normalizePlannedDate(editTargetTask.dueDate);
       let newDueDate = normalizePlannedDate(editTaskDateInput.value);
+      const isRoutineStructure = isRoutineStructureTask(editTargetTask);
       const routineDay = getRoutineDayDefinitionForTask(editTargetTask);
 
-      editTargetTask.title = newTitle;
-      editTargetTask.plannedShift = normalizePlannedShift(editTaskShiftSelect.value) || 'morning';
+      editTargetTask.title = isRoutineDayStructureTask(editTargetTask)
+        ? newTitle.toLocaleUpperCase('pt-BR')
+        : newTitle;
 
-      if (routineDay) {
+      if (isRoutineStructure) {
+        // ROTINA e Segunda–Domingo são somente contêineres organizacionais.
+        editTargetTask.recurrence = null;
+        editTargetTask.dueDate = null;
+        editTargetTask.plannedDate = null;
+        editTargetTask.plannedShift = null;
+        editTargetTask.checked = false;
+      } else if (routineDay) {
+        editTargetTask.plannedShift = normalizePlannedShift(editTaskShiftSelect.value) || 'morning';
         newDueDate = getDateOnOrAfterForWeekday(newDueDate || formatDateValue(getTodayStart()), routineDay.weekday);
         editTargetTask.recurrence = 'weekly';
         editTargetTask.dueDate = newDueDate;
         editTargetTask.plannedDate = newDueDate;
       } else {
+        editTargetTask.plannedShift = normalizePlannedShift(editTaskShiftSelect.value) || 'morning';
         editTargetTask.recurrence = normalizeRecurrence(editTaskRecurrenceSelect.value);
         editTargetTask.dueDate = newDueDate;
 
