@@ -1626,29 +1626,6 @@
       margin-top: 10px;
     }
 
-    .today-card.has-drag-control {
-      grid-template-columns: auto minmax(0, 1fr) auto auto;
-    }
-
-    .task-drag-handle {
-      min-width: 42px;
-      min-height: 54px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-right: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 1rem;
-      font-weight: 900;
-      cursor: grab;
-      user-select: none;
-      touch-action: none;
-    }
-
-    .task-drag-handle:active {
-      cursor: grabbing;
-    }
-
     .planned-task-draggable.is-dragging {
       opacity: 0.42;
     }
@@ -1759,34 +1736,6 @@
 
     @media (max-width: 620px) {
 
-      .today-card.has-drag-control {
-        grid-template-columns: auto minmax(0, 1fr) auto;
-      }
-
-      .today-card.has-drag-control .task-drag-handle {
-        grid-column: 1;
-        grid-row: 1;
-      }
-
-      .today-card.has-drag-control .today-main {
-        grid-column: 2;
-        grid-row: 1;
-      }
-
-      .today-card.has-drag-control .today-action {
-        grid-column: 3;
-        grid-row: 1;
-      }
-
-      .today-card.has-drag-control .task-days {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        min-height: 40px;
-        justify-content: center;
-        text-align: center;
-        border-left: 0;
-        border-top: 1px solid var(--line);
-      }
     }
 
 
@@ -2694,34 +2643,6 @@
       });
     }
 
-    function makeTaskDragHandle(task, cardElement) {
-      const handle = document.createElement('span');
-      handle.className = 'task-drag-handle';
-      handle.textContent = '⠿';
-      handle.title = 'Arraste para outro turno';
-      handle.setAttribute('aria-label', `Arrastar ${task.title} para outro turno`);
-      handle.setAttribute('role', 'button');
-      handle.setAttribute('tabindex', '0');
-      handle.draggable = true;
-
-      handle.addEventListener('dragstart', (event) => {
-        draggedPlannedTaskId = task.id;
-        cardElement.classList.add('is-dragging');
-        if (event.dataTransfer) {
-          event.dataTransfer.effectAllowed = 'move';
-          event.dataTransfer.setData('text/plain', task.id);
-        }
-      });
-
-      handle.addEventListener('dragend', () => {
-        draggedPlannedTaskId = null;
-        cardElement.classList.remove('is-dragging');
-        clearPlanningDropTargets();
-      });
-
-      return handle;
-    }
-
     function bindPlanningDropZone(element, dateValue, shift) {
       const normalizedDate = normalizePlannedDate(dateValue);
       const normalizedShift = normalizePlannedShift(shift);
@@ -2902,12 +2823,6 @@
       task.plannedDate = normalizedDate;
       task.plannedShift = normalizedShift;
       syncTodayPlanFromTaskPlans();
-    }
-
-    function unplanTask(task) {
-      if (!task) return;
-      task.plannedDate = null;
-      todayPlan = todayPlan.filter((candidate) => candidate !== task);
     }
 
     function getRecurrenceLabel(value) {
@@ -3772,20 +3687,15 @@
         item.append(daysBadge);
       }
 
-      const todayValue = formatDateValue(getTodayStart());
-      if (task.plannedDate === todayValue) {
-        item.classList.add('has-drag-control', 'planned-task-draggable');
-        const dragHandle = makeTaskDragHandle(task, item);
-        item.prepend(dragHandle);
+      if (actionLabel && typeof actionHandler === 'function') {
+        const actionButton = document.createElement('button');
+        actionButton.className = 'today-action';
+        actionButton.type = 'button';
+        actionButton.textContent = actionLabel;
+        actionButton.addEventListener('click', actionHandler);
+        item.append(actionButton);
       }
 
-      const actionButton = document.createElement('button');
-      actionButton.className = 'today-action';
-      actionButton.type = 'button';
-      actionButton.textContent = actionLabel;
-      actionButton.addEventListener('click', actionHandler);
-
-      item.append(actionButton);
       return item;
     }
 
@@ -3970,22 +3880,11 @@
           listElement,
           tasks,
           `Nenhuma tarefa neste turno (${shift.label.toLowerCase()}).`,
-          'Remover',
-          (task) => {
-            unplanTask(task);
-            saveAppState();
-            renderTodayTab();
-            if (calendarWeekStart) renderCalendarWeek();
-          }
+          null,
+          null
         );
       });
 
-      document.querySelectorAll('.today-shift-section').forEach((section) => {
-        const shift = section.dataset.shift;
-        if (section.dataset.dropBound === 'true') return;
-        section.dataset.dropBound = 'true';
-        bindPlanningDropZone(section, formatDateValue(getTodayStart()), shift);
-      });
     }
 
     function renderTodayTab() {
@@ -4781,12 +4680,19 @@
       return getAllTasks()
         .filter((task) => task.dueDate)
         .sort((firstTask, secondTask) => {
+          // 1º critério: data (mais próxima primeiro).
           const dateComparison = firstTask.dueDate.localeCompare(secondTask.dueDate);
-
           if (dateComparison !== 0) {
             return dateComparison;
           }
 
+          // 2º critério: turno (Manhã → Tarde → Noite → Sem turno).
+          const shiftComparison = getShiftIndex(firstTask.plannedShift) - getShiftIndex(secondTask.plannedShift);
+          if (shiftComparison !== 0) {
+            return shiftComparison;
+          }
+
+          // 3º critério: caminho/nome para manter a ordenação estável dentro do mesmo turno.
           return getTaskPath(firstTask).localeCompare(getTaskPath(secondTask), 'pt-BR');
         });
     }
