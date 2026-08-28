@@ -1359,8 +1359,16 @@
         scroll-snap-stop: always;
       }
 
-      .queue-item {
-        grid-template-columns: 104px minmax(0, 1fr);
+      .queue-item,
+      .queue-item.queue-item-with-completion {
+        grid-template-columns: 104px minmax(0, 1fr) 54px;
+      }
+
+      .queue-completion {
+        grid-column: 3;
+        grid-row: 1;
+        min-width: 54px;
+        min-height: 66px;
       }
 
       .queue-date {
@@ -1906,10 +1914,41 @@
       transition: border-color 140ms ease, background-color 140ms ease;
     }
 
+    .queue-item.queue-item-with-completion {
+      grid-template-columns: 132px minmax(0, 1fr) auto 58px;
+    }
+
+    .queue-completion {
+      min-width: 58px;
+      min-height: 66px;
+      border-left: 1px solid var(--line);
+      background: transparent;
+    }
+
+    .queue-completion:hover {
+      background: var(--accent-soft);
+    }
+
+    .queue-completion .due-checkbox {
+      width: 22px;
+      height: 22px;
+    }
+
     @media (max-width: 620px) {
       .calendar-mode-row,
       .calendar-mode-button {
         width: 100%;
+      }
+
+      .queue-item.queue-item-with-completion {
+        grid-template-columns: 104px minmax(0, 1fr) 54px;
+      }
+
+      .queue-completion {
+        grid-column: 3;
+        grid-row: 1;
+        min-width: 54px;
+        min-height: 66px;
       }
     }
 
@@ -2749,7 +2788,15 @@
         }
 
         const dueDate = normalizePlannedDate(task.dueDate);
-        if (!dueDate || task.checked) {
+        if (!dueDate) {
+          if (task.plannedShift !== null) {
+            task.plannedShift = null;
+            changed = true;
+          }
+          return;
+        }
+
+        if (task.checked) {
           return;
         }
 
@@ -3214,6 +3261,40 @@
       return formatDateValue(dueDate);
     }
 
+    function rescheduleUncompletedRoutineTasks(currentDateValue) {
+      const normalizedCurrentDate = normalizePlannedDate(currentDateValue);
+      if (!normalizedCurrentDate) return false;
+
+      let changed = false;
+
+      getAllTasks().forEach((task) => {
+        if (!isRoutineRecurringTask(task) || taskHasSubtasks(task) || task.checked) {
+          return;
+        }
+
+        const routineDay = getRoutineDayDefinitionForTask(task);
+        const scheduledDate = normalizePlannedDate(task.plannedDate) || normalizePlannedDate(task.dueDate);
+
+        // Só reage agenda ocorrências da rotina que realmente ficaram para trás.
+        if (!routineDay || !scheduledDate || scheduledDate >= normalizedCurrentDate) {
+          return;
+        }
+
+        // A próxima ocorrência é sempre o próximo dia válido da própria rotina.
+        // Se o app só for aberto vários dias depois, a data escolhida nunca fica no passado.
+        const nextRoutineDate = getDateOnOrAfterForWeekday(normalizedCurrentDate, routineDay.weekday);
+
+        task.recurrence = 'weekly';
+        task.dueDate = nextRoutineDate;
+        task.plannedDate = nextRoutineDate;
+        task.plannedShift = normalizePlannedShift(task.plannedShift) || 'morning';
+        task.checked = false;
+        changed = true;
+      });
+
+      return changed;
+    }
+
     function refreshDateSensitiveViews() {
       const currentDate = formatDateValue(getTodayStart());
 
@@ -3222,9 +3303,18 @@
       }
 
       const previousDate = lastKnownDate;
+
+      // Congela o total planejado do dia encerrado antes de mover qualquer tarefa.
+      // Tarefas de rotina não concluídas permanecem no denominador e NÃO entram
+      // como concluídas, pois este fluxo não chama recordDailyCompletion().
+      rememberDailyPlannedCount(previousDate);
       saveDailyReportSnapshot(previousDate);
 
-      // O que ficou pendente no dia anterior não desaparece: volta para a manhã de hoje.
+      // Rotinas não concluídas não viram pendências comuns: são reagendadas para
+      // a próxima ocorrência válida do respectivo dia da semana.
+      rescheduleUncompletedRoutineTasks(currentDate);
+
+      // O que ficou pendente no dia anterior e não é rotina volta para hoje.
       getAllTasks().forEach((task) => {
         if (isRoutineRecurringTask(task)) {
           return;
@@ -3240,6 +3330,8 @@
       syncTodayPlanFromTaskPlans();
       renderCurrentLevel();
       renderTodayTab();
+      renderQueue();
+      if (calendarWeekStart) renderCalendarWeek();
       saveAppState();
     }
 
@@ -4413,6 +4505,17 @@
       taskInput.focus();
     });
 
+    function updateEditTaskShiftAvailability() {
+      if (!editTargetTask || editTaskShiftSelect.hidden) {
+        return;
+      }
+
+      const hasDate = Boolean(normalizePlannedDate(editTaskDateInput.value));
+      editTaskShiftSelect.disabled = !hasDate;
+      editTaskShiftSelect.setAttribute('aria-disabled', String(!hasDate));
+      editTaskShiftSelect.title = hasDate ? '' : 'Defina uma data para habilitar o turno.';
+    }
+
     function openEditTaskModal(task) {
       if (!task || !task.parent) {
         return;
@@ -4443,10 +4546,12 @@
       if (schedulingLocked) {
         editTaskRecurrenceSelect.value = 'none';
         editTaskShiftSelect.value = 'morning';
+        editTaskShiftSelect.disabled = true;
         editTaskDateInput.value = '';
       } else {
-        editTaskShiftSelect.value = normalizePlannedShift(task.plannedShift) || getCurrentDayShift();
         editTaskDateInput.value = task.dueDate || '';
+        editTaskShiftSelect.value = normalizePlannedShift(task.plannedShift) || getCurrentDayShift();
+        updateEditTaskShiftAvailability();
       }
 
       editTaskModal.classList.add('visible');
@@ -4461,6 +4566,9 @@
       editTaskRecurrenceSelect.disabled = false;
       editTaskShiftLabel.hidden = false;
       editTaskShiftSelect.hidden = false;
+      editTaskShiftSelect.disabled = false;
+      editTaskShiftSelect.removeAttribute('aria-disabled');
+      editTaskShiftSelect.title = '';
       editTaskDateLabel.hidden = false;
       editTaskDateInput.hidden = false;
       editTargetTask = null;
@@ -4468,6 +4576,8 @@
     }
 
     cancelEditTaskButton.addEventListener('click', closeEditTaskModal);
+    editTaskDateInput.addEventListener('input', updateEditTaskShiftAvailability);
+    editTaskDateInput.addEventListener('change', updateEditTaskShiftAvailability);
 
     editTaskModal.addEventListener('click', (event) => {
       if (event.target === editTaskModal) {
@@ -4510,15 +4620,16 @@
         editTargetTask.dueDate = newDueDate;
         editTargetTask.plannedDate = newDueDate;
       } else {
-        editTargetTask.plannedShift = normalizePlannedShift(editTaskShiftSelect.value) || 'morning';
         editTargetTask.recurrence = normalizeRecurrence(editTaskRecurrenceSelect.value);
         editTargetTask.dueDate = newDueDate;
 
-        // A Data escolhida no modal também define o dia em Hoje/Semana.
+        // Sem Data não existe Turno: a tarefa deixa de participar do planejamento diário.
         if (newDueDate) {
           editTargetTask.plannedDate = newDueDate;
-        } else if (previousDueDate && editTargetTask.plannedDate === previousDueDate) {
+          editTargetTask.plannedShift = normalizePlannedShift(editTaskShiftSelect.value) || 'morning';
+        } else {
           editTargetTask.plannedDate = null;
+          editTargetTask.plannedShift = null;
         }
       }
 
@@ -4700,7 +4811,7 @@
 
     function createQueueItem(task) {
       const item = document.createElement('li');
-      item.className = 'queue-item';
+      item.className = 'queue-item queue-item-with-completion';
 
       const dateBox = document.createElement('div');
       dateBox.className = 'queue-date';
@@ -4757,7 +4868,11 @@
         }
       });
 
-      item.append(dateBox, main, meta);
+      const completionControl = createDueCheckbox(task);
+      completionControl.classList.add('queue-completion');
+      completionControl.title = `Concluir ${getTaskDisplayTitle(task)}`;
+
+      item.append(dateBox, main, meta, completionControl);
       return item;
     }
 
