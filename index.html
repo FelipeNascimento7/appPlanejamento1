@@ -521,10 +521,6 @@
       background: var(--surface);
     }
 
-    .today-time-button {
-      justify-self: start;
-    }
-
     .today-time-summary {
       color: var(--text);
       font-weight: 800;
@@ -854,78 +850,6 @@
       background: var(--surface);
       color: var(--muted);
       text-align: center;
-    }
-
-
-
-    .reorder-dialog {
-      width: min(560px, 100%);
-    }
-
-    .reorder-list {
-      display: grid;
-      gap: 10px;
-      width: 100%;
-      max-height: min(62dvh, 520px);
-      margin: 16px 0 18px;
-      overflow: auto;
-    }
-
-    .reorder-item {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto auto;
-      align-items: stretch;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--surface);
-    }
-
-    .reorder-item-main {
-      min-width: 0;
-      display: grid;
-      gap: 3px;
-      padding: 12px;
-    }
-
-    .reorder-item-title {
-      color: var(--text);
-      font-weight: 900;
-      line-height: 1.25;
-      overflow-wrap: anywhere;
-    }
-
-    .reorder-item-meta {
-      color: var(--muted);
-      font-size: 0.86rem;
-      line-height: 1.35;
-      overflow-wrap: anywhere;
-    }
-
-    .reorder-move-button {
-      min-width: var(--tap-size);
-      min-height: 100%;
-      padding: 10px 12px;
-      border: 0;
-      border-left: 1px solid var(--line);
-      background: transparent;
-      color: var(--text);
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .reorder-move-button:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    .reorder-empty {
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      color: var(--muted);
-      text-align: center;
-      background: var(--surface);
     }
 
     .today-area {
@@ -1399,10 +1323,6 @@
         flex-direction: column;
       }
 
-      .today-time-button {
-        width: 100%;
-      }
-
       .calendar-dialog {
         width: 100%;
       }
@@ -1527,34 +1447,6 @@
       line-height: 1.25;
     }
 
-    .daily-start-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 14px;
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: calc(var(--radius) + 2px);
-      background: var(--surface-muted);
-    }
-
-    .daily-start-card.is-ready {
-      background: var(--surface);
-    }
-
-    .daily-start-card strong {
-      display: block;
-      margin-bottom: 3px;
-    }
-
-    .daily-start-card p {
-      font-size: 0.88rem;
-    }
-
-    .primary-execution-button,
-    .complete-execution-button,
-    .secondary-execution-button,
     .finish-day-inline {
       min-height: var(--tap-size);
       border-radius: 12px;
@@ -1563,38 +1455,6 @@
       cursor: pointer;
     }
 
-    .primary-execution-button {
-      border: 1px solid var(--accent);
-      background: var(--accent);
-      color: var(--surface);
-    }
-
-    .complete-execution-button {
-      border: 1px solid var(--accent);
-      background: var(--surface);
-      color: var(--text);
-    }
-
-    .secondary-execution-button {
-      border: 1px solid var(--line);
-      background: transparent;
-      color: var(--muted);
-    }
-
-    .execution-capacity {
-      margin-bottom: 18px;
-    }
-
-    .focus-zone {
-      margin: 20px 0 14px;
-      padding: 22px;
-      border: 2px solid var(--accent);
-      border-radius: calc(var(--radius) + 8px);
-      background: var(--surface);
-    }
-
-    .focus-zone-header,
-    .section-heading-row,
     .consistency-strip {
       display: flex;
       align-items: center;
@@ -1602,106 +1462,11 @@
       gap: 14px;
     }
 
-    .focus-zone-header h2,
-    .section-heading-row h2,
     .consistency-strip h2 {
       margin: 2px 0 0;
       font-size: 1.08rem;
     }
 
-    .focus-status {
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--text);
-      font-size: 0.75rem;
-      font-weight: 800;
-    }
-
-    .focus-status.running {
-      background: var(--accent);
-      color: var(--surface);
-    }
-
-    .focus-empty {
-      display: grid;
-      gap: 4px;
-      padding: 30px 0 12px;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .focus-empty strong {
-      color: var(--text);
-      font-size: 1.05rem;
-    }
-
-    .focus-task {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 18px;
-      align-items: end;
-      padding: 26px 0 20px;
-    }
-
-    .focus-task-main h3 {
-      margin: 0 0 6px;
-      font-size: clamp(1.45rem, 5vw, 2rem);
-      line-height: 1.12;
-      letter-spacing: -0.035em;
-    }
-
-    .focus-task-main p {
-      font-size: 0.88rem;
-    }
-
-    .focus-task-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-top: 12px;
-    }
-
-    .focus-meta-chip {
-      padding: 5px 9px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: var(--muted);
-      font-size: 0.78rem;
-      font-weight: 700;
-    }
-
-    .focus-meta-chip.urgent {
-      border-color: var(--danger);
-      color: var(--danger);
-    }
-
-    .focus-clock {
-      text-align: right;
-    }
-
-    .focus-clock span {
-      display: block;
-      color: var(--muted);
-      font-size: 0.74rem;
-      font-weight: 700;
-    }
-
-    .focus-clock strong {
-      display: block;
-      margin-top: 3px;
-      font-variant-numeric: tabular-nums;
-      font-size: 1.32rem;
-      letter-spacing: -0.03em;
-    }
-
-    .focus-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 8px;
-    }
-
-    .execution-next,
     .today-route-details,
     .consistency-strip {
       margin-top: 14px;
@@ -1711,63 +1476,10 @@
       background: var(--surface);
     }
 
-    .route-count,
     .suggestion-count {
       color: var(--muted);
       font-size: 0.78rem;
       font-weight: 700;
-    }
-
-    .execution-next-list {
-      display: grid;
-      gap: 0;
-      margin: 12px 0 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .execution-next-item {
-      display: grid;
-      grid-template-columns: 30px minmax(0, 1fr) auto;
-      gap: 10px;
-      align-items: center;
-      padding: 11px 0;
-      border-top: 1px solid var(--line);
-    }
-
-    .execution-next-item:first-child {
-      border-top: 0;
-    }
-
-    .execution-next-index {
-      display: grid;
-      width: 28px;
-      height: 28px;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--surface-muted);
-      color: var(--muted);
-      font-size: 0.76rem;
-      font-weight: 800;
-    }
-
-    .execution-next-copy {
-      min-width: 0;
-    }
-
-    .execution-next-copy strong,
-    .execution-next-copy span {
-      display: block;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .execution-next-copy span,
-    .execution-next-shift {
-      color: var(--muted);
-      font-size: 0.76rem;
     }
 
     .today-route-details summary {
@@ -1804,16 +1516,25 @@
     }
 
     .consistency-dot {
-      width: 18px;
-      height: 18px;
+      min-width: 46px;
+      height: 34px;
+      display: inline-grid;
+      place-items: center;
+      padding: 0 7px;
       border: 1px solid var(--line);
-      border-radius: 50%;
+      border-radius: 999px;
       background: var(--surface-muted);
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
     }
 
     .consistency-dot.did-work {
       border-color: var(--accent);
       background: var(--accent);
+      color: var(--surface);
     }
 
     .consistency-dot.is-today {
@@ -1839,91 +1560,29 @@
         text-align: left;
       }
 
-      .daily-start-card,
-      .focus-zone-header,
-      .section-heading-row,
       .consistency-strip {
         align-items: stretch;
         flex-direction: column;
       }
 
-      .focus-task {
-        grid-template-columns: 1fr;
-        align-items: start;
-      }
-
-      .focus-clock {
-        text-align: left;
-      }
-
-      .focus-actions {
-        grid-template-columns: 1fr;
-      }
-
       .consistency-days {
-        justify-content: space-between;
         width: 100%;
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .consistency-dot {
+        width: 100%;
+        min-width: 0;
+        height: 30px;
+        padding-inline: 3px;
+        font-size: 0.62rem;
       }
     }
 
 
     /* ===== PLANEJAMENTO POR TURNOS ===== */
-    .shift-summary-panel {
-      gap: 12px;
-    }
-
-    .shift-panel-heading {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .shift-panel-heading strong,
-    .shift-panel-heading span {
-      display: block;
-    }
-
-    .shift-panel-heading span {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 0.84rem;
-    }
-
-    .today-shift-overview {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .shift-overview-card {
-      min-width: 0;
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: var(--surface-muted);
-    }
-
-    .shift-overview-card.current {
-      outline: 2px solid var(--accent);
-      outline-offset: -2px;
-    }
-
-    .shift-overview-card strong,
-    .shift-overview-card span {
-      display: block;
-    }
-
-    .shift-overview-card strong {
-      font-size: 0.9rem;
-    }
-
-    .shift-overview-card span {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 0.76rem;
-      line-height: 1.3;
-    }
 
     .today-shift-groups {
       display: grid;
@@ -2091,14 +1750,6 @@
     }
 
     @media (max-width: 620px) {
-      .shift-panel-heading {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .today-shift-overview {
-        grid-template-columns: 1fr;
-      }
 
       .today-card.has-drag-control {
         grid-template-columns: auto minmax(0, 1fr) auto;
@@ -2200,6 +1851,68 @@
       }
     }
 
+    /* ===== INTERAÇÕES DA FILA E DA SEMANA ===== */
+    .calendar-mode-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 14px;
+    }
+
+    .calendar-mode-button {
+      min-height: var(--tap-size);
+      padding: 10px 16px;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: var(--surface);
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .calendar-mode-button:hover {
+      opacity: 0.88;
+    }
+
+    .calendar-task[data-calendar-mode="edit"],
+    .calendar-task[data-calendar-mode="complete"] {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .calendar-task[data-calendar-mode="edit"]:hover,
+    .calendar-task[data-calendar-mode="complete"]:hover,
+    .queue-item.queue-item-clickable:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .calendar-task[data-calendar-mode="move"] {
+      cursor: grab;
+    }
+
+    .calendar-task[data-calendar-mode="move"]:active {
+      cursor: grabbing;
+    }
+
+    .calendar-task:focus-visible,
+    .queue-item.queue-item-clickable:focus-visible,
+    .calendar-mode-button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .queue-item.queue-item-clickable {
+      cursor: pointer;
+      transition: border-color 140ms ease, background-color 140ms ease;
+    }
+
+    @media (max-width: 620px) {
+      .calendar-mode-row,
+      .calendar-mode-button {
+        width: 100%;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2256,71 +1969,6 @@
           </div>
         </div>
 
-        <div class="daily-start-card" id="daily-start-card">
-          <div>
-            <strong>Monte o dia antes de começar</strong>
-            <p id="daily-start-message">O app pode puxar primeiro as tarefas vencidas e as que vencem hoje.</p>
-          </div>
-          <button class="primary-execution-button" id="auto-plan-button" type="button">Montar meu dia</button>
-        </div>
-
-        <div class="today-day-tools shift-summary-panel" aria-label="Planejamento por turnos do dia">
-          <div class="shift-panel-heading">
-            <div>
-              <strong>Turnos de hoje</strong>
-              <span>Distribua o que será executado pela manhã, à tarde e à noite.</span>
-            </div>
-            <button class="export-button today-time-button" id="reorder-today-button" type="button">Reordenar nos turnos</button>
-          </div>
-          <div class="today-shift-overview" id="today-shift-overview" aria-label="Resumo dos turnos"></div>
-        </div>
-
-        <section class="focus-zone" aria-labelledby="focus-zone-title">
-          <div class="focus-zone-header">
-            <div>
-              <span class="execution-eyebrow">AGORA</span>
-              <h2 id="focus-zone-title">Uma tarefa por vez</h2>
-            </div>
-            <span class="focus-status" id="focus-status">Pronto</span>
-          </div>
-
-          <div class="focus-empty" id="focus-empty">
-            <strong>Seu roteiro ainda está vazio.</strong>
-            <span>Adicione tarefas ao dia ou use “Montar meu dia”.</span>
-          </div>
-
-          <div class="focus-task" id="focus-task" hidden>
-            <div class="focus-task-main">
-              <h3 id="focus-task-title"></h3>
-              <p id="focus-task-path"></p>
-              <div class="focus-task-meta" id="focus-task-meta"></div>
-            </div>
-            <div class="focus-clock" aria-label="Tempo de foco nesta tarefa">
-              <span>tempo em foco</span>
-              <strong id="focus-timer">00:00:00</strong>
-            </div>
-          </div>
-
-          <div class="focus-actions" id="focus-actions" hidden>
-            <button class="primary-execution-button" id="focus-start-pause" type="button">Iniciar</button>
-            <button class="complete-execution-button" id="focus-complete" type="button">Concluir tarefa</button>
-            <button class="secondary-execution-button" id="focus-skip" type="button">Fazer depois</button>
-          </div>
-        </section>
-
-        <section class="execution-next" aria-labelledby="execution-next-title">
-          <div class="section-heading-row">
-            <div>
-              <span class="execution-eyebrow">DEPOIS</span>
-              <h2 id="execution-next-title">Próximas do roteiro</h2>
-            </div>
-            <span class="route-count" id="route-count">0 restantes</span>
-          </div>
-          <ol class="execution-next-list" id="execution-next-list">
-            <li class="today-empty">Nenhuma próxima tarefa.</li>
-          </ol>
-        </section>
-
         <details class="today-route-details" open>
           <summary>Roteiro de hoje por turnos</summary>
           <p>Arraste a tarefa pelo ícone ⠿ e solte em Manhã, Tarde ou Noite. O vencimento continua independente.</p>
@@ -2366,7 +2014,10 @@
       </section>
 
       <section class="tab-panel calendar-tab" id="calendario" aria-labelledby="tab-calendario">
-        <p>Planeje a execução da semana distribuindo tarefas entre manhã, tarde e noite. Arraste cada tarefa pelo ícone ⠿ até o turno desejado; a data de vencimento não é alterada.</p>
+        <p>Escolha o modo de interação: editar abre a tarefa, concluir abre a confirmação e mover permite arrastar entre dias e turnos. Ao mover, a data de vencimento não é alterada.</p>
+        <div class="calendar-mode-row">
+          <button class="calendar-mode-button" id="calendar-mode-button" type="button" data-mode="edit">Modo: Editar</button>
+        </div>
         <div class="calendar-toolbar" aria-label="Navegação semanal do calendário">
           <button class="calendar-nav-button" id="calendar-previous-week" type="button" aria-label="Semana anterior">←</button>
           <span class="calendar-week-label" id="calendar-week-label"></span>
@@ -2376,7 +2027,7 @@
       </section>
 
       <section class="tab-panel" id="fila" aria-labelledby="tab-fila">
-        <p>Todas as tarefas com data, ordenadas da mais antiga para a mais recente.</p>
+        <p>Todas as tarefas com data, ordenadas da mais antiga para a mais recente. Clique em uma tarefa para editar.</p>
         <ul class="queue-list" id="queue-list" aria-label="Fila de tarefas por data">
           <li class="queue-empty">Nenhuma tarefa com data definida.</li>
         </ul>
@@ -2404,7 +2055,7 @@
       <h2 id="completion-title">Concluir tarefa?</h2>
       <p id="completion-message">Confirme a conclusão e escolha o que fazer com a tarefa.</p>
 
-      <div class="completion-options" id="completion-options" role="radiogroup" aria-label="Destino da tarefa concluída">
+      <div class="completion-options" id="completion-options" role="radiogroup" aria-label="Ação para a tarefa">
         <label class="completion-option">
           <input type="radio" name="completion-action" value="delete">
           <span>
@@ -2418,6 +2069,14 @@
           <span>
             <strong>Escolher uma nova data</strong>
             <span>Mantém a tarefa e agenda sua próxima execução para outra data.</span>
+          </span>
+        </label>
+
+        <label class="completion-option">
+          <input type="radio" name="completion-action" value="postpone">
+          <span>
+            <strong>Adiar para amanhã</strong>
+            <span>Move a tarefa para amanhã e mantém o turno atual.</span>
           </span>
         </label>
 
@@ -2492,19 +2151,6 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="reorder-today-modal" role="dialog" aria-modal="true" aria-labelledby="reorder-today-title">
-    <div class="confirm-dialog reorder-dialog">
-      <h2 id="reorder-today-title">Reordenar</h2>
-      <p>Altere a ordem das tarefas dentro de cada turno do planejamento de hoje.</p>
-      <div class="reorder-list" id="reorder-today-list" aria-label="Reordenar planejamento de hoje">
-        <div class="reorder-empty">Nenhuma tarefa adicionada ao planejamento de hoje.</div>
-      </div>
-      <div class="modal-actions">
-        <button class="cancel-button" id="close-reorder-today" type="button">Fechar</button>
-      </div>
-    </div>
-  </div>
-
   <div class="modal-backdrop" id="finish-day-modal" role="dialog" aria-modal="true" aria-labelledby="finish-day-title">
     <div class="confirm-dialog">
       <h2 id="finish-day-title">Concluir o dia?</h2>
@@ -2572,35 +2218,15 @@
     const todayMorningSummary = document.querySelector('#today-morning-summary');
     const todayAfternoonSummary = document.querySelector('#today-afternoon-summary');
     const todayNightSummary = document.querySelector('#today-night-summary');
-    const todayShiftOverview = document.querySelector('#today-shift-overview');
     const todayDueList = document.querySelector('#today-due-list');
     const calendarList = document.querySelector('#calendar-list');
     const calendarPreviousWeekButton = document.querySelector('#calendar-previous-week');
     const calendarNextWeekButton = document.querySelector('#calendar-next-week');
     const calendarWeekLabel = document.querySelector('#calendar-week-label');
+    const calendarModeButton = document.querySelector('#calendar-mode-button');
     const queueList = document.querySelector('#queue-list');
-    const reorderTodayButton = document.querySelector('#reorder-today-button');
-    const reorderTodayModal = document.querySelector('#reorder-today-modal');
-    const reorderTodayList = document.querySelector('#reorder-today-list');
-    const closeReorderTodayButton = document.querySelector('#close-reorder-today');
     const todayDateLabel = document.querySelector('#today-date-label');
     const todayCompletedCount = document.querySelector('#today-completed-count');
-    const dailyStartCard = document.querySelector('#daily-start-card');
-    const dailyStartMessage = document.querySelector('#daily-start-message');
-    const autoPlanButton = document.querySelector('#auto-plan-button');
-    const focusEmpty = document.querySelector('#focus-empty');
-    const focusTask = document.querySelector('#focus-task');
-    const focusTaskTitle = document.querySelector('#focus-task-title');
-    const focusTaskPath = document.querySelector('#focus-task-path');
-    const focusTaskMeta = document.querySelector('#focus-task-meta');
-    const focusTimer = document.querySelector('#focus-timer');
-    const focusStatus = document.querySelector('#focus-status');
-    const focusActions = document.querySelector('#focus-actions');
-    const focusStartPauseButton = document.querySelector('#focus-start-pause');
-    const focusCompleteButton = document.querySelector('#focus-complete');
-    const focusSkipButton = document.querySelector('#focus-skip');
-    const executionNextList = document.querySelector('#execution-next-list');
-    const routeCount = document.querySelector('#route-count');
     const suggestionCount = document.querySelector('#suggestion-count');
     const consistencyDays = document.querySelector('#consistency-days');
     const finishDayInlineButton = document.querySelector('#finish-day-inline-button');
@@ -2681,15 +2307,11 @@
     let pendingDriveSave = false;
     let shouldForceLocalStateToDrive = false;
     let calendarWeekStart = null;
+    let calendarInteractionMode = 'edit';
     let editTargetTask = null;
     let executionState = {
-      currentTaskId: null,
-      running: false,
-      startedAt: null,
-      elapsedByTask: {},
       dailyHistory: {}
     };
-    let executionTimerInterval = null;
 
     function normalizeTheme(value) {
       return value === 'dark' ? 'dark' : 'light';
@@ -3067,6 +2689,7 @@
       if (!normalizedDate || !normalizedShift) return;
 
       element.addEventListener('dragover', (event) => {
+        if (calendarInteractionMode !== 'move') return;
         const taskId = draggedPlannedTaskId || event.dataTransfer?.getData('text/plain');
         if (!taskId) return;
         event.preventDefault();
@@ -3081,6 +2704,7 @@
       });
 
       element.addEventListener('drop', (event) => {
+        if (calendarInteractionMode !== 'move') return;
         event.preventDefault();
         const taskId = draggedPlannedTaskId || event.dataTransfer?.getData('text/plain');
         clearPlanningDropTargets();
@@ -3231,19 +2855,12 @@
       task.plannedDate = normalizedDate;
       task.plannedShift = normalizedShift;
       syncTodayPlanFromTaskPlans();
-      if (!executionState.currentTaskId && normalizedDate === formatDateValue(getTodayStart())) {
-        executionState.currentTaskId = todayPlan.find((candidate) => !candidate.checked)?.id || null;
-      }
     }
 
     function unplanTask(task) {
       if (!task) return;
       task.plannedDate = null;
       todayPlan = todayPlan.filter((candidate) => candidate !== task);
-      if (executionState.currentTaskId === task.id) {
-        pauseExecutionTimer(false);
-        executionState.currentTaskId = todayPlan.find((candidate) => !candidate.checked)?.id || null;
-      }
     }
 
     function getRecurrenceLabel(value) {
@@ -3618,12 +3235,9 @@
         }
       });
 
-      pauseExecutionTimer(false);
-      executionState.currentTaskId = null;
       completeCheckedTasksForAutomaticDayClose(previousDate);
       lastKnownDate = currentDate;
       syncTodayPlanFromTaskPlans();
-      executionState.currentTaskId = todayPlan.find((task) => !task.checked)?.id || null;
       renderCurrentLevel();
       renderTodayTab();
       saveAppState();
@@ -3704,6 +3318,9 @@
       const action = getSelectedCompletionAction();
       const needsNewDate = action === 'reschedule';
       completionNewDateField.hidden = !needsNewDate;
+      confirmCompletionButton.textContent = action === 'postpone'
+        ? 'Adiar tarefa'
+        : 'Confirmar conclusão';
 
       const hasValidDate = Boolean(normalizePlannedDate(completionNewDateInput.value));
       confirmCompletionButton.disabled = !action || (needsNewDate && !hasValidDate);
@@ -3776,12 +3393,11 @@
       if (!task || !task.parent) return false;
 
       const wasAlreadyCompleted = Boolean(task.checked);
-      if (executionState.currentTaskId === task.id) {
-        pauseExecutionTimer(false);
-      }
+      const isPostponing = action === 'postpone';
 
-      if (!wasAlreadyCompleted) {
-        recordDailyExecution(task);
+      rememberDailyPlannedCount(formatDateValue(getTodayStart()));
+      if (!wasAlreadyCompleted && !isPostponing) {
+        recordDailyCompletion();
       }
 
       if (action === 'delete') {
@@ -3793,6 +3409,14 @@
         task.dueDate = normalizedDate;
         task.plannedDate = normalizedDate;
         task.plannedShift = normalizePlannedShift(task.plannedShift) || 'morning';
+      } else if (action === 'postpone') {
+        const tomorrow = new Date(getTodayStart());
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowValue = formatDateValue(tomorrow);
+        task.checked = false;
+        task.dueDate = tomorrowValue;
+        task.plannedDate = tomorrowValue;
+        task.plannedShift = normalizePlannedShift(task.plannedShift) || getCurrentDayShift();
       } else if (action === 'undated') {
         task.checked = false;
         task.dueDate = null;
@@ -3814,7 +3438,6 @@
 
       cleanupTodayPlan();
       syncTodayPlanFromTaskPlans();
-      executionState.currentTaskId = todayPlan.find((candidate) => !candidate.checked)?.id || null;
       return true;
     }
 
@@ -3873,6 +3496,7 @@
 
       if (!finalizeTaskCompletion(task, action, newDate)) return;
 
+      saveDailyReportSnapshot(lastKnownDate);
       closeCompletionModal();
       saveAppState();
       renderCurrentLevel();
@@ -4098,14 +3722,51 @@
     }
 
     function getDailyReportSnapshot(dateValue = lastKnownDate) {
-      const plannedTasks = getTodayPlannedTaskCount();
-      const completedTasks = Math.min(getTodayCompletedTaskCount(), plannedTasks);
+      const history = executionState.dailyHistory[dateValue] && typeof executionState.dailyHistory[dateValue] === 'object'
+        ? executionState.dailyHistory[dateValue]
+        : {};
+      const recordedCompleted = Math.max(0, Math.floor(Number(history.completedCount) || 0));
+      const recordedPlanned = Math.max(0, Math.floor(Number(history.plannedCount) || 0));
 
+      if (dateValue === lastKnownDate) {
+        const checkedInPlan = getTodayCompletedTaskCount();
+        const completedTasks = Math.max(recordedCompleted, checkedInPlan);
+        const plannedTasks = Math.max(recordedPlanned, getTodayPlannedTaskCount() + recordedCompleted, completedTasks);
+
+        return {
+          date: dateValue,
+          plannedTasks,
+          completedTasks: Math.min(completedTasks, plannedTasks),
+          conclusion: getConclusionPercentage(Math.min(completedTasks, plannedTasks), plannedTasks)
+        };
+      }
+
+      const savedReport = dailyReports
+        .map(normalizeDailyReport)
+        .find((report) => report && report.date === dateValue);
+
+      if (savedReport) {
+        return savedReport;
+      }
+
+      if (recordedPlanned > 0) {
+        const plannedTasks = recordedPlanned;
+        const completedTasks = Math.min(recordedCompleted, plannedTasks);
+        return {
+          date: dateValue,
+          plannedTasks,
+          completedTasks,
+          conclusion: getConclusionPercentage(completedTasks, plannedTasks)
+        };
+      }
+
+      // Históricos antigos podem ter apenas a quantidade concluída, sem o total planejado.
+      // Sem denominador não inventamos uma porcentagem retroativa.
       return {
         date: dateValue,
-        plannedTasks,
-        completedTasks,
-        conclusion: getConclusionPercentage(completedTasks, plannedTasks)
+        plannedTasks: 0,
+        completedTasks: 0,
+        conclusion: 0
       };
     }
 
@@ -4202,25 +3863,6 @@
       return `${count} tarefa${count === 1 ? '' : 's'}`;
     }
 
-    function renderTodayShiftOverview() {
-      const currentShift = getCurrentDayShift();
-      todayShiftOverview.innerHTML = '';
-
-      dayShifts.forEach((shift) => {
-        const tasks = getShiftTasksForToday(shift.id);
-        const card = document.createElement('div');
-        card.className = 'shift-overview-card';
-        if (shift.id === currentShift) card.classList.add('current');
-
-        const title = document.createElement('strong');
-        title.textContent = shift.label;
-        const meta = document.createElement('span');
-        meta.textContent = formatShiftSummary(tasks);
-        card.append(title, meta);
-        todayShiftOverview.append(card);
-      });
-    }
-
     function renderTodayShiftLists() {
       const listMap = {
         morning: [todayMorningList, todayMorningSummary],
@@ -4263,8 +3905,6 @@
 
       syncTodayPlanFromTaskPlans();
       renderTodayShiftLists();
-      renderTodayShiftOverview();
-
       renderTodayList(
         todayDueList,
         getTodayCandidates(),
@@ -4273,20 +3913,13 @@
         (task) => {
           if (!isTaskInTodayPlan(task)) {
             planTask(task, formatDateValue(getTodayStart()), normalizePlannedShift(task.plannedShift) || getCurrentDayShift());
-            if (!executionState.currentTaskId) {
-              executionState.currentTaskId = task.id;
-            }
             saveAppState();
           }
           renderTodayTab();
         }
       );
 
-      if (reorderTodayModal.classList.contains('visible')) {
-        renderReorderTodayList();
-      }
-
-      renderExecutionExperience();
+      renderTodayExecutionSummary();
     }
 
     function isTaskInsideDeletedTask(task, deletedTask) {
@@ -4318,285 +3951,44 @@
 
     function normalizeExecutionState(value) {
       const safe = value && typeof value === 'object' ? value : {};
-      const elapsedByTask = safe.elapsedByTask && typeof safe.elapsedByTask === 'object'
-        ? safe.elapsedByTask
-        : {};
       const dailyHistory = safe.dailyHistory && typeof safe.dailyHistory === 'object'
         ? safe.dailyHistory
         : {};
 
       return {
-        currentTaskId: safe.currentTaskId !== null && safe.currentTaskId !== undefined && safe.currentTaskId !== '' ? String(safe.currentTaskId) : null,
-        running: Boolean(safe.running && safe.startedAt),
-        startedAt: safe.running && safe.startedAt ? Number(safe.startedAt) : null,
-        elapsedByTask: { ...elapsedByTask },
         dailyHistory: { ...dailyHistory }
       };
     }
 
     function getSerializableExecutionState() {
-      const state = normalizeExecutionState(executionState);
-
-      if (state.running && state.currentTaskId && state.startedAt) {
-        const taskId = String(state.currentTaskId);
-        const extraSeconds = Math.max(0, Math.floor((Date.now() - state.startedAt) / 1000));
-        state.elapsedByTask[taskId] = (Number(state.elapsedByTask[taskId]) || 0) + extraSeconds;
-      }
-
-      return state;
+      return normalizeExecutionState(executionState);
     }
 
-    function getExecutionTask() {
-      let task = executionState.currentTaskId ? findTaskById(executionState.currentTaskId) : null;
-
-      if (!task || !todayPlan.includes(task) || task.checked) {
-        task = todayPlan.find((candidate) => !candidate.checked) || null;
-        executionState.currentTaskId = task ? task.id : null;
-
-        if (!task) {
-          pauseExecutionTimer(false);
-        }
-      }
-
-      return task;
-    }
-
-    function getTaskElapsedSeconds(task) {
-      if (!task) {
-        return 0;
-      }
-
-      const taskId = String(task.id);
-      let seconds = Number(executionState.elapsedByTask[taskId]) || 0;
-
-      if (executionState.running && executionState.currentTaskId === task.id && executionState.startedAt) {
-        seconds += Math.max(0, Math.floor((Date.now() - executionState.startedAt) / 1000));
-      }
-
-      return seconds;
-    }
-
-    function formatExecutionTime(totalSeconds) {
-      const safeSeconds = Math.max(0, Math.floor(Number(totalSeconds) || 0));
-      const hours = Math.floor(safeSeconds / 3600);
-      const minutes = Math.floor((safeSeconds % 3600) / 60);
-      const seconds = safeSeconds % 60;
-      return [hours, minutes, seconds].map((value) => String(value).padStart(2, '0')).join(':');
-    }
-
-    function commitRunningTime() {
-      if (!executionState.running || !executionState.currentTaskId || !executionState.startedAt) {
-        return;
-      }
-
-      const taskId = String(executionState.currentTaskId);
-      const extraSeconds = Math.max(0, Math.floor((Date.now() - executionState.startedAt) / 1000));
-      executionState.elapsedByTask[taskId] = (Number(executionState.elapsedByTask[taskId]) || 0) + extraSeconds;
-      executionState.startedAt = Date.now();
-    }
-
-    function pauseExecutionTimer(shouldSave = true) {
-      if (executionState.running) {
-        commitRunningTime();
-      }
-
-      executionState.running = false;
-      executionState.startedAt = null;
-
-      if (executionTimerInterval) {
-        clearInterval(executionTimerInterval);
-        executionTimerInterval = null;
-      }
-
-      if (shouldSave) {
-        saveAppState();
-      }
-    }
-
-    function startExecutionTimer() {
-      const task = getExecutionTask();
-
-      if (!task || executionState.running) {
-        return;
-      }
-
-      executionState.running = true;
-      executionState.startedAt = Date.now();
-      saveAppState();
-      ensureExecutionTimerInterval();
-      renderExecutionExperience();
-    }
-
-    function ensureExecutionTimerInterval() {
-      if (!executionState.running || executionTimerInterval) {
-        return;
-      }
-
-      executionTimerInterval = setInterval(() => {
-        const task = getExecutionTask();
-        if (!task) {
-          pauseExecutionTimer(false);
-          renderExecutionExperience();
-          return;
-        }
-
-        focusTimer.textContent = formatExecutionTime(getTaskElapsedSeconds(task));
-      }, 1000);
-    }
-
-    function recordDailyExecution(task) {
-      const dateValue = formatDateValue(getTodayStart());
+    function rememberDailyPlannedCount(dateValue = lastKnownDate) {
       const current = executionState.dailyHistory[dateValue] && typeof executionState.dailyHistory[dateValue] === 'object'
         ? executionState.dailyHistory[dateValue]
-        : { completedCount: 0, focusedSeconds: 0 };
+        : { completedCount: 0, plannedCount: 0 };
+      const completedCount = Math.max(0, Math.floor(Number(current.completedCount) || 0));
+      const activePlanCount = dateValue === lastKnownDate ? todayPlan.length : 0;
+      current.plannedCount = Math.max(
+        Math.max(0, Math.floor(Number(current.plannedCount) || 0)),
+        activePlanCount + completedCount
+      );
+      executionState.dailyHistory[dateValue] = current;
+      return current;
+    }
+
+    function recordDailyCompletion() {
+      const dateValue = formatDateValue(getTodayStart());
+      const current = rememberDailyPlannedCount(dateValue);
+
       current.completedCount = (Number(current.completedCount) || 0) + 1;
-      current.focusedSeconds = (Number(current.focusedSeconds) || 0) + getTaskElapsedSeconds(task);
+      current.plannedCount = Math.max(Number(current.plannedCount) || 0, Number(current.completedCount) || 0);
       executionState.dailyHistory[dateValue] = current;
 
       const historyDates = Object.keys(executionState.dailyHistory).sort().reverse();
       historyDates.slice(45).forEach((date) => {
         delete executionState.dailyHistory[date];
-      });
-    }
-
-    function completeExecutionTask() {
-      const task = getExecutionTask();
-      if (!task) {
-        return;
-      }
-
-      pauseExecutionTimer(false);
-      if (isRoutineRecurringTask(task)) {
-        openCompletionModal(task);
-        return;
-      }
-
-      recordDailyExecution(task);
-      task.checked = true;
-      const currentIndex = todayPlan.indexOf(task);
-      const nextTask = todayPlan.slice(currentIndex + 1).find((candidate) => !candidate.checked)
-        || todayPlan.find((candidate) => !candidate.checked && candidate !== task)
-        || null;
-      executionState.currentTaskId = nextTask ? nextTask.id : null;
-      saveAppState();
-      renderCurrentLevel();
-      renderTodayTab();
-    }
-
-    function skipExecutionTask() {
-      const task = getExecutionTask();
-      if (!task || todayPlan.length < 2) {
-        return;
-      }
-
-      pauseExecutionTimer(false);
-      const index = todayPlan.indexOf(task);
-      if (index >= 0) {
-        todayPlan.splice(index, 1);
-        const taskShift = normalizePlannedShift(task.plannedShift) || 'morning';
-        const sameShiftIndexes = todayPlan
-          .map((candidate, candidateIndex) => !candidate.checked && normalizePlannedShift(candidate.plannedShift) === taskShift ? candidateIndex : -1)
-          .filter((candidateIndex) => candidateIndex >= 0);
-
-        if (sameShiftIndexes.length > 0) {
-          todayPlan.splice(Math.max(...sameShiftIndexes) + 1, 0, task);
-        } else {
-          const nextShift = dayShifts[getShiftIndex(taskShift) + 1];
-          if (nextShift) {
-            task.plannedShift = nextShift.id;
-          }
-          todayPlan.push(task);
-          sortTodayPlanByShift();
-        }
-      }
-      executionState.currentTaskId = todayPlan.find((candidate) => !candidate.checked)?.id || null;
-      saveAppState();
-      renderTodayTab();
-      if (calendarWeekStart) renderCalendarWeek();
-    }
-
-    function buildAutomaticTodayPlan() {
-      const existing = new Set(todayPlan.map((task) => task.id));
-      const allCandidates = getAllTasks()
-        .filter((task) => !taskHasSubtasks(task) && !task.checked && !existing.has(task.id) && !task.plannedDate)
-        .sort((firstTask, secondTask) => {
-          const firstDate = firstTask.dueDate || '9999-12-31';
-          const secondDate = secondTask.dueDate || '9999-12-31';
-          const dateCompare = firstDate.localeCompare(secondDate);
-          if (dateCompare !== 0) return dateCompare;
-          return getTaskPath(firstTask).localeCompare(getTaskPath(secondTask), 'pt-BR');
-        });
-
-      if (allCandidates.length === 0) {
-        renderExecutionExperience();
-        return;
-      }
-
-      const urgentCandidates = allCandidates.filter((task) => task.dueDate && getDaysRemaining(task.dueDate) <= 0);
-      const futureCandidates = allCandidates.filter((task) => !urgentCandidates.includes(task));
-      const candidates = [...urgentCandidates, ...futureCandidates].slice(0, 9);
-      const todayValue = formatDateValue(getTodayStart());
-      const currentShiftIndex = Math.max(0, getShiftIndex(getCurrentDayShift()));
-      const activeShifts = dayShifts.slice(currentShiftIndex);
-      const shiftsToUse = activeShifts.length > 0 ? activeShifts : dayShifts;
-
-      candidates.forEach((task, index) => {
-        const targetShift = normalizePlannedShift(task.plannedShift) || shiftsToUse[index % shiftsToUse.length].id;
-        planTask(task, todayValue, targetShift);
-      });
-
-      sortTodayPlanByShift();
-      executionState.currentTaskId = todayPlan.find((task) => !task.checked)?.id || null;
-      saveAppState();
-      renderTodayTab();
-      if (calendarWeekStart) renderCalendarWeek();
-    }
-
-    function createFocusMetaChip(text, urgent = false) {
-      const chip = document.createElement('span');
-      chip.className = 'focus-meta-chip';
-      if (urgent) {
-        chip.classList.add('urgent');
-      }
-      chip.textContent = text;
-      return chip;
-    }
-
-    function renderNextExecutionTasks(currentTask) {
-      const pending = todayPlan.filter((task) => !task.checked && task !== currentTask);
-      executionNextList.innerHTML = '';
-      routeCount.textContent = `${pending.length} restante${pending.length === 1 ? '' : 's'}`;
-
-      if (pending.length === 0) {
-        const emptyItem = document.createElement('li');
-        emptyItem.className = 'today-empty';
-        emptyItem.textContent = currentTask ? 'Esta é a última tarefa do roteiro.' : 'Nenhuma próxima tarefa.';
-        executionNextList.append(emptyItem);
-        return;
-      }
-
-      pending.slice(0, 4).forEach((task, index) => {
-        const item = document.createElement('li');
-        item.className = 'execution-next-item';
-
-        const number = document.createElement('span');
-        number.className = 'execution-next-index';
-        number.textContent = String(index + 1);
-
-        const copy = document.createElement('div');
-        copy.className = 'execution-next-copy';
-        const title = document.createElement('strong');
-        applyTaskNamePresentation(title, task);
-        const path = document.createElement('span');
-        path.textContent = getTaskPath(task);
-        copy.append(title, path);
-
-        const shift = document.createElement('span');
-        shift.className = 'execution-next-shift';
-        shift.textContent = getShiftLabel(task.plannedShift);
-
-        item.append(number, copy, shift);
-        executionNextList.append(item);
       });
     }
 
@@ -4607,18 +3999,23 @@
       for (let offset = 6; offset >= 0; offset -= 1) {
         const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - offset);
         const dateValue = formatDateValue(date);
-        const history = executionState.dailyHistory[dateValue] || {};
+        const report = getDailyReportSnapshot(dateValue);
+        const percentage = Number(report?.conclusion) || 0;
+        const completedCount = Number(report?.completedTasks) || 0;
+        const plannedCount = Number(report?.plannedTasks) || 0;
         const day = document.createElement('div');
         day.className = 'consistency-day';
         const dot = document.createElement('span');
         dot.className = 'consistency-dot';
-        if ((Number(history.completedCount) || 0) > 0) {
+        dot.textContent = `${percentage}%`;
+        if (percentage > 0) {
           dot.classList.add('did-work');
         }
         if (offset === 0) {
           dot.classList.add('is-today');
         }
-        dot.title = `${formatReportDate(dateValue)}: ${Number(history.completedCount) || 0} concluída(s)`;
+        dot.title = `${formatReportDate(dateValue)}: ${completedCount} de ${plannedCount} tarefa(s) concluída(s) · ${percentage}%`;
+        dot.setAttribute('aria-label', `${formatReportDate(dateValue)}: ${percentage}% de conclusão`);
         const label = document.createElement('span');
         label.textContent = date.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '').slice(0, 3);
         day.append(dot, label);
@@ -4626,8 +4023,7 @@
       }
     }
 
-    function renderExecutionExperience() {
-      const currentTask = getExecutionTask();
+    function renderTodayExecutionSummary() {
       const todayValue = formatDateValue(getTodayStart());
       const history = executionState.dailyHistory[todayValue] || {};
       const completedToday = Number(history.completedCount) || 0;
@@ -4641,66 +4037,9 @@
       todayCompletedCount.textContent = String(completedToday);
       suggestionCount.textContent = urgentOutsidePlan > 0 ? `(${urgentOutsidePlan})` : '';
 
-      if (todayPlan.length === 0) {
-        dailyStartCard.classList.remove('is-ready');
-        dailyStartMessage.textContent = urgentOutsidePlan > 0
-          ? `${urgentOutsidePlan} pendência(s) urgente(s) esperando para entrar no seu dia.`
-          : 'O app pode montar um roteiro inicial com as tarefas mais próximas.';
-        autoPlanButton.textContent = 'Montar meu dia';
-      } else {
-        dailyStartCard.classList.add('is-ready');
-        dailyStartMessage.textContent = `Seu roteiro tem ${todayPlan.filter((task) => !task.checked).length} tarefa(s) pendente(s). Evite reorganizar enquanto estiver executando.`;
-        autoPlanButton.textContent = 'Completar roteiro';
-      }
-
-      focusEmpty.hidden = Boolean(currentTask);
-      focusTask.hidden = !currentTask;
-      focusActions.hidden = !currentTask;
-
-      if (!currentTask) {
-        focusStatus.textContent = todayPlan.length > 0 ? 'Roteiro concluído' : 'Pronto';
-        focusStatus.classList.remove('running');
-        focusTimer.textContent = '00:00:00';
-      } else {
-        applyTaskNamePresentation(focusTaskTitle, currentTask);
-        focusTaskPath.textContent = getTaskPath(currentTask);
-        focusTaskMeta.innerHTML = '';
-
-        focusTaskMeta.append(createFocusMetaChip(getShiftLabel(currentTask.plannedShift)));
-
-        if (currentTask.dueDate) {
-          const daysRemaining = getDaysRemaining(currentTask.dueDate);
-          focusTaskMeta.append(createFocusMetaChip(getDaysLabel(currentTask.dueDate), daysRemaining <= 0));
-        }
-
-        if (!currentTask.dueDate) {
-          focusTaskMeta.append(createFocusMetaChip('Sem data'));
-        }
-
-        focusTimer.textContent = formatExecutionTime(getTaskElapsedSeconds(currentTask));
-        focusStartPauseButton.textContent = executionState.running ? 'Pausar' : (getTaskElapsedSeconds(currentTask) > 0 ? 'Continuar' : 'Iniciar');
-        focusStatus.textContent = executionState.running ? 'Em foco' : 'Pronto';
-        focusStatus.classList.toggle('running', executionState.running);
-        ensureExecutionTimerInterval();
-      }
-
-      renderNextExecutionTasks(currentTask);
       renderConsistencyHistory();
     }
 
-    autoPlanButton.addEventListener('click', buildAutomaticTodayPlan);
-
-    focusStartPauseButton.addEventListener('click', () => {
-      if (executionState.running) {
-        pauseExecutionTimer();
-        renderExecutionExperience();
-      } else {
-        startExecutionTimer();
-      }
-    });
-
-    focusCompleteButton.addEventListener('click', completeExecutionTask);
-    focusSkipButton.addEventListener('click', skipExecutionTask);
     finishDayInlineButton.addEventListener('click', () => finishDayButton.click());
 
     function escapeCsvValue(value) {
@@ -5298,7 +4637,6 @@
     });
 
     confirmFinishDayButton.addEventListener('click', () => {
-      pauseExecutionTimer(false);
       const checkedTasks = getCheckedTasks();
 
       if (checkedTasks.length === 0) {
@@ -5320,7 +4658,6 @@
 
       cleanupTodayPlan();
       syncTodayPlanFromTaskPlans();
-      executionState.currentTaskId = todayPlan.find((task) => !task.checked)?.id || null;
       finishDayModal.classList.remove('visible');
       saveAppState();
       renderCurrentLevel();
@@ -5405,6 +4742,21 @@
       meta.className = 'queue-meta';
       meta.textContent = getQueueTaskMeta(task) || 'Com data';
 
+      item.classList.add('queue-item-clickable');
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('aria-label', `Editar ${getTaskDisplayTitle(task)}`);
+      item.title = 'Clique para editar a tarefa';
+
+      const openQueueTaskEditor = () => openEditTaskModal(task);
+      item.addEventListener('click', openQueueTaskEditor);
+      item.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openQueueTaskEditor();
+        }
+      });
+
       item.append(dateBox, main, meta);
       return item;
     }
@@ -5485,14 +4837,95 @@
       return details.join(' · ');
     }
 
+    const calendarInteractionModes = [
+      { id: 'edit', label: 'Editar' },
+      { id: 'complete', label: 'Concluir' },
+      { id: 'move', label: 'Mover' }
+    ];
+
+    function getCalendarInteractionModeDefinition() {
+      return calendarInteractionModes.find((mode) => mode.id === calendarInteractionMode)
+        || calendarInteractionModes[0];
+    }
+
+    function updateCalendarModeButton() {
+      if (!calendarModeButton) return;
+      const currentMode = getCalendarInteractionModeDefinition();
+      const currentIndex = calendarInteractionModes.findIndex((mode) => mode.id === currentMode.id);
+      const nextMode = calendarInteractionModes[(currentIndex + 1) % calendarInteractionModes.length];
+      calendarModeButton.dataset.mode = currentMode.id;
+      calendarModeButton.textContent = `Modo: ${currentMode.label}`;
+      calendarModeButton.setAttribute(
+        'aria-label',
+        `Modo atual: ${currentMode.label}. Clique para mudar para ${nextMode.label}.`
+      );
+      calendarModeButton.title = `Clique para mudar para ${nextMode.label}`;
+    }
+
+    function cycleCalendarInteractionMode() {
+      const currentIndex = calendarInteractionModes.findIndex((mode) => mode.id === calendarInteractionMode);
+      const nextIndex = currentIndex >= 0
+        ? (currentIndex + 1) % calendarInteractionModes.length
+        : 0;
+      calendarInteractionMode = calendarInteractionModes[nextIndex].id;
+      updateCalendarModeButton();
+      if (calendarWeekStart) renderCalendarWeek();
+    }
+
     function createCalendarTaskItem(task, dateValue) {
       const item = document.createElement('li');
-      item.className = 'calendar-task planned-task-draggable';
-      item.draggable = true;
-      item.title = 'Arraste a tarefa para outro dia ou turno';
-      item.setAttribute('aria-label', `Arrastar ${task.title} para outro dia ou turno`);
+      const mode = getCalendarInteractionModeDefinition();
+      const isMoveMode = mode.id === 'move';
+
+      item.className = 'calendar-task';
+      item.dataset.calendarMode = mode.id;
+      item.dataset.taskId = task.id;
+      item.draggable = isMoveMode;
+
+      if (mode.id === 'edit') {
+        item.title = 'Clique para editar a tarefa';
+        item.setAttribute('aria-label', `Editar ${getTaskDisplayTitle(task)}`);
+        item.setAttribute('role', 'button');
+        item.setAttribute('tabindex', '0');
+      } else if (mode.id === 'complete') {
+        item.title = 'Clique para concluir a tarefa';
+        item.setAttribute('aria-label', `Concluir ${getTaskDisplayTitle(task)}`);
+        item.setAttribute('role', 'button');
+        item.setAttribute('tabindex', '0');
+      } else {
+        item.classList.add('planned-task-draggable');
+        item.title = 'Arraste a tarefa para outro dia ou turno';
+        item.setAttribute('aria-label', `Arrastar ${getTaskDisplayTitle(task)} para outro dia ou turno`);
+      }
+
+      const activateCalendarTask = () => {
+        if (calendarInteractionMode === 'edit') {
+          openEditTaskModal(task);
+        } else if (calendarInteractionMode === 'complete') {
+          openCompletionModal(task);
+        }
+      };
+
+      item.addEventListener('click', () => {
+        if (calendarInteractionMode !== 'move') {
+          activateCalendarTask();
+        }
+      });
+
+      item.addEventListener('keydown', (event) => {
+        if (calendarInteractionMode === 'move') return;
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          activateCalendarTask();
+        }
+      });
 
       item.addEventListener('dragstart', (event) => {
+        if (calendarInteractionMode !== 'move') {
+          event.preventDefault();
+          return;
+        }
+
         draggedPlannedTaskId = task.id;
         item.classList.add('is-dragging');
         if (event.dataTransfer) {
@@ -5533,6 +4966,7 @@
 
     function renderCalendarWeek() {
       if (!calendarWeekStart) calendarWeekStart = getCalendarWeekStart();
+      updateCalendarModeButton();
 
       const datedTasksChanged = syncDatedTasksToPlanning();
       if (datedTasksChanged) {
@@ -5598,6 +5032,9 @@
 
     }
 
+    calendarModeButton.addEventListener('click', cycleCalendarInteractionMode);
+    updateCalendarModeButton();
+
     calendarPreviousWeekButton.addEventListener('click', () => {
       calendarWeekStart = addCalendarDays(calendarWeekStart || getCalendarWeekStart(), -7);
       renderCalendarWeek();
@@ -5606,127 +5043,6 @@
     calendarNextWeekButton.addEventListener('click', () => {
       calendarWeekStart = addCalendarDays(calendarWeekStart || getCalendarWeekStart(), 7);
       renderCalendarWeek();
-    });
-
-
-
-    function getReorderTaskMeta(task) {
-      const details = [];
-      const path = getTaskPath(task);
-
-      if (path) {
-        details.push(path);
-      }
-
-      if (task.dueDate) {
-        details.push(getDaysLabel(task.dueDate));
-      }
-
-      if (task.plannedDate === formatDateValue(getTodayStart()) && task.plannedShift) {
-        details.push(getShiftLabel(task.plannedShift));
-      }
-
-      return details.join(' · ');
-    }
-
-    function moveTodayPlanTask(index, direction) {
-      const task = todayPlan[index];
-      if (!task) return;
-
-      const shift = normalizePlannedShift(task.plannedShift);
-      const sameShiftIndexes = todayPlan
-        .map((candidate, candidateIndex) => normalizePlannedShift(candidate.plannedShift) === shift ? candidateIndex : -1)
-        .filter((candidateIndex) => candidateIndex >= 0);
-      const positionInShift = sameShiftIndexes.indexOf(index);
-      const targetPosition = positionInShift + direction;
-
-      if (positionInShift < 0 || targetPosition < 0 || targetPosition >= sameShiftIndexes.length) {
-        return;
-      }
-
-      const targetIndex = sameShiftIndexes[targetPosition];
-      const reorderedTodayPlan = [...todayPlan];
-      [reorderedTodayPlan[index], reorderedTodayPlan[targetIndex]] = [reorderedTodayPlan[targetIndex], reorderedTodayPlan[index]];
-      todayPlan = reorderedTodayPlan;
-      saveAppState();
-      renderTodayTab();
-      renderReorderTodayList();
-    }
-
-    function createReorderTodayItem(task, index) {
-      const item = document.createElement('div');
-      item.className = 'reorder-item';
-
-      const main = document.createElement('div');
-      main.className = 'reorder-item-main';
-
-      const title = document.createElement('span');
-      title.className = 'reorder-item-title';
-      applyTaskNamePresentation(title, task);
-
-      const meta = document.createElement('span');
-      meta.className = 'reorder-item-meta';
-      meta.textContent = getReorderTaskMeta(task) || `Posição ${index + 1}`;
-
-      main.append(title, meta);
-
-      const upButton = document.createElement('button');
-      upButton.className = 'reorder-move-button';
-      upButton.type = 'button';
-      upButton.textContent = '↑';
-      upButton.setAttribute('aria-label', `Mover ${task.title} para cima`);
-      const sameShiftIndexes = todayPlan
-        .map((candidate, candidateIndex) => normalizePlannedShift(candidate.plannedShift) === normalizePlannedShift(task.plannedShift) ? candidateIndex : -1)
-        .filter((candidateIndex) => candidateIndex >= 0);
-      const positionInShift = sameShiftIndexes.indexOf(index);
-      upButton.disabled = positionInShift <= 0;
-      upButton.addEventListener('click', () => moveTodayPlanTask(index, -1));
-
-      const downButton = document.createElement('button');
-      downButton.className = 'reorder-move-button';
-      downButton.type = 'button';
-      downButton.textContent = '↓';
-      downButton.setAttribute('aria-label', `Mover ${task.title} para baixo`);
-      downButton.disabled = positionInShift < 0 || positionInShift >= sameShiftIndexes.length - 1;
-      downButton.addEventListener('click', () => moveTodayPlanTask(index, 1));
-
-      item.append(main, upButton, downButton);
-      return item;
-    }
-
-    function renderReorderTodayList() {
-      reorderTodayList.innerHTML = '';
-
-      if (todayPlan.length === 0) {
-        const emptyState = document.createElement('div');
-        emptyState.className = 'reorder-empty';
-        emptyState.textContent = 'Nenhuma tarefa adicionada ao planejamento de hoje.';
-        reorderTodayList.append(emptyState);
-        return;
-      }
-
-      todayPlan.forEach((task, index) => {
-        reorderTodayList.append(createReorderTodayItem(task, index));
-      });
-    }
-
-    function closeReorderTodayModal() {
-      reorderTodayModal.classList.remove('visible');
-      reorderTodayButton.focus();
-    }
-
-    reorderTodayButton.addEventListener('click', () => {
-      renderReorderTodayList();
-      reorderTodayModal.classList.add('visible');
-      closeReorderTodayButton.focus();
-    });
-
-    closeReorderTodayButton.addEventListener('click', closeReorderTodayModal);
-
-    reorderTodayModal.addEventListener('click', (event) => {
-      if (event.target === reorderTodayModal) {
-        closeReorderTodayModal();
-      }
     });
 
     function closeReportModal() {
